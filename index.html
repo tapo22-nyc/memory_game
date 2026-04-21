@@ -331,7 +331,7 @@
       const card = e.currentTarget;
       if (locked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
 
-      if (flipped.length === 0) startTimer();
+      if (!timerID && moves === 0 && flipped.length === 0) startTimer();
 
       card.classList.add('flipped');
       flipped.push(card);
