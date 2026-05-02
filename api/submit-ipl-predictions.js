@@ -17,7 +17,6 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // 1. Save or update predictions
     for (const pick of predictions) {
       if (!pick.question_id || !pick.selected_option_id) {
         return res.status(400).json({
@@ -46,7 +45,6 @@ module.exports = async function handler(req, res) {
       `;
     }
 
-    // 2. Check if this match has correct answers entered
     const answerCheck = await sql`
       SELECT 
         COUNT(*) AS total_questions,
@@ -59,7 +57,6 @@ module.exports = async function handler(req, res) {
     const answeredQuestions = Number(answerCheck[0].answered_questions);
 
     if (totalQuestions > 0 && totalQuestions === answeredQuestions) {
-      // 3. Mark predictions correct/wrong
       await sql`
         UPDATE ipl_predictions p
         SET is_correct = CASE 
@@ -71,26 +68,13 @@ module.exports = async function handler(req, res) {
           AND p.match_id = ${Number(match_id)}
       `;
 
-      // 4. Award shared points among correct users
       await sql`
-        WITH correct_counts AS (
-          SELECT 
-            question_id,
-            COUNT(*) AS winners_count
-          FROM ipl_predictions
-          WHERE match_id = ${Number(match_id)}
-            AND is_correct = TRUE
-          GROUP BY question_id
-        )
-        UPDATE ipl_predictions p
-        SET points_won = 20.0 / c.winners_count
-        FROM correct_counts c
-        WHERE p.question_id = c.question_id
-          AND p.match_id = ${Number(match_id)}
-          AND p.is_correct = TRUE
+        UPDATE ipl_predictions
+        SET points_won = 20
+        WHERE match_id = ${Number(match_id)}
+          AND is_correct = TRUE
       `;
 
-      // 5. Wrong answers get 0
       await sql`
         UPDATE ipl_predictions
         SET points_won = 0
@@ -98,7 +82,6 @@ module.exports = async function handler(req, res) {
           AND is_correct = FALSE
       `;
 
-      // 6. Recalculate final user scores for this match
       await sql`
         INSERT INTO ipl_user_match_scores
           (user_id, match_id, total_entry_points, total_points_won, net_points, correct_answers)
