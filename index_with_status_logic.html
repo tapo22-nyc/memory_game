@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MTGames | IPL Prediction Arena</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #fff;
+      padding: 20px;
+    }
+
+    /* ── Navigation ── */
+    nav {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50px;
+      padding: 6px;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-btn {
+      padding: 8px 24px;
+      border: none;
+      border-radius: 50px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      background: transparent;
+      color: #a0aec0;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(90deg, #f72585, #7209b7);
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(247,37,133,0.4);
+    }
+
+    .nav-btn:not(.active):hover {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* ── Page sections ── */
+    .page { display: none; width: 100%; max-width: 600px; flex-direction: column; align-items: center; }
+    .page.active { display: flex; }
+
+    /* ── Shared headings ── */
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+      background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #a0aec0;
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    /* ── Memory game ── */
+    .stats { display: flex; gap: 32px; margin-bottom: 28px; }
+
+    .stat-box {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 10px 28px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #a0aec0;
+      margin-bottom: 2px;
+    }
+
+    .stat-value { font-size: 1.6rem; font-weight: 700; color: #4cc9f0; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .card { width: 110px; height: 110px; cursor: pointer; perspective: 600px; user-select: none; }
+
+    .card-inner {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 16px;
+    }
+
+    .card.flipped .card-inner,
+    .card.matched .card-inner { transform: rotateY(180deg); }
+
+    .card-face {
+      position: absolute; width: 100%; height: 100%;
+      border-radius: 16px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.8rem;
+    }
+
+    .card-back {
+      background: linear-gradient(135deg, #7209b7, #3a0ca3);
+      border: 2px solid rgba(255,255,255,0.15);
+      box-shadow: 0 4px 20px rgba(114,9,183,0.4);
+    }
+
+    .card-back::after { content: '✦'; font-size: 1.8rem; color: rgba(255,255,255,0.25); }
+
+    .card-front {
+      background: linear-gradient(135deg, #0f3460, #16213e);
+      border: 2px solid rgba(76,201,240,0.3);
+      box-shadow: 0 4px 20px rgba(76,201,240,0.2);
+      transform: rotateY(180deg);
+    }
+
+    .card.matched .card-front {
+      background: linear-gradient(135deg, #06d6a0, #1b9aaa);
+      border-color: rgba(6,214,160,0.6);
+      box-shadow: 0 4px 24px rgba(6,214,160,0.45);
+      animation: matchPulse 0.5s ease;
+    }
+
+    @keyframes matchPulse {
+      0%   { transform: rotateY(180deg) scale(1); }
+      50%  { transform: rotateY(180deg) scale(1.12); }
+      100% { transform: rotateY(180deg) scale(1); }
+    }
+
+    .card:not(.flipped):not(.matched):hover .card-inner {
+      transform: rotateY(15deg);
+      box-shadow: 0 8px 30px rgba(247,37,133,0.3);
+    }
+
+    /* ── Shared button ── */
+    .btn {
+      padding: 12px 36px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      background: linear-gradient(90deg, #f72585, #7209b7);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(247,37,133,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(247,37,133,0.55); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid rgba(247,37,133,0.6);
+      color: #f72585;
+      box-shadow: none;
+    }
+
+    .btn-outline:hover { background: rgba(247,37,133,0.1); box-shadow: 0 4px 16px rgba(247,37,133,0.2); }
+
+    /* ── Win overlay ── */
+    .win-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(10,10,30,0.82);
+      backdrop-filter: blur(6px);
+      align-items: center; justify-content: center;
+      z-index: 100;
+      flex-direction: column; gap: 16px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .win-overlay.show { display: flex; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .win-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 24px;
+      padding: 44px 56px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      animation: popIn 0.45s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    .win-emoji { font-size: 4rem; margin-bottom: 12px; }
+
+    .win-title {
+      font-size: 2.6rem; font-weight: 800;
+      background: linear-gradient(90deg, #f72585, #4cc9f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .win-stats { color: #a0aec0; font-size: 1rem; margin-bottom: 28px; line-height: 1.7; }
+    .win-stats span { color: #4cc9f0; font-weight: 700; }
+
+
+
+    /* ── Username onboarding modal ── */
+    .user-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,10,30,0.86);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .user-modal-overlay.show { display: flex; }
+
+    .user-modal-card {
+      width: 100%;
+      max-width: 430px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.55);
+      text-align: center;
+      animation: popIn 0.45s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    .user-modal-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #f72585, #4cc9f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .user-modal-copy {
+      color: #cbd5e0;
+      font-size: 0.94rem;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .username-input {
+      width: 100%;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(76,201,240,0.3);
+      border-radius: 14px;
+      padding: 14px 16px;
+      color: #fff;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    .username-input::placeholder { color: rgba(255,255,255,0.34); }
+
+    .username-input:focus {
+      border-color: rgba(76,201,240,0.7);
+      box-shadow: 0 0 0 3px rgba(76,201,240,0.12);
+    }
+
+    .user-modal-error {
+      min-height: 20px;
+      color: #f72585;
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+    }
+
+    .user-status {
+      display: none;
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 9px 14px;
+      color: #a0aec0;
+      font-size: 0.84rem;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .user-status span { color: #4cc9f0; font-weight: 700; }
+
+    .save-status {
+      min-height: 20px;
+      margin-top: -18px;
+      margin-bottom: 18px;
+      color: #a0aec0;
+      font-size: 0.84rem;
+      text-align: center;
+    }
+
+    /* ════════════════════════════
+       MANIFESTATION ROOM STYLES
+    ════════════════════════════ */
+
+    /* Today's daily focus */
+    .today-focus {
+      width: 100%;
+      background: rgba(76,201,240,0.07);
+      border: 1px solid rgba(76,201,240,0.18);
+      border-radius: 16px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .today-focus-icon { font-size: 1.5rem; line-height: 1; margin-top: 2px; }
+    .today-focus-inner { flex: 1; }
+
+    .today-focus-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #4cc9f0;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .today-focus-text { font-size: 0.9rem; color: #e2e8f0; line-height: 1.6; }
+
+    /* Welcome back banner */
+    .welcome-back {
+      display: none;
+      width: 100%;
+      background: rgba(6,214,160,0.09);
+      border: 1px solid rgba(6,214,160,0.22);
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-size: 0.88rem;
+      color: #06d6a0;
+      margin-bottom: 12px;
+    }
+
+    .manif-intro {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 20px 28px;
+      margin-bottom: 20px;
+      color: #cbd5e0;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      text-align: center;
+      backdrop-filter: blur(6px);
+    }
+
+    .manif-input-wrap { width: 100%; margin-bottom: 16px; }
+
+    .manif-input-wrap label {
+      display: block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #a0aec0;
+      margin-bottom: 8px;
+    }
+
+    .manif-textarea {
+      width: 100%;
+      min-height: 110px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(76,201,240,0.25);
+      border-radius: 16px;
+      padding: 16px;
+      color: #fff;
+      font-size: 1rem;
+      font-family: inherit;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .manif-textarea::placeholder { color: rgba(255,255,255,0.3); }
+
+    .manif-textarea:focus {
+      border-color: rgba(76,201,240,0.6);
+      box-shadow: 0 0 0 3px rgba(76,201,240,0.1);
+    }
+
+    .manif-error { display: none; color: #f72585; font-size: 0.88rem; margin-top: 6px; padding-left: 4px; }
+    .manif-error.visible { display: block; }
+
+    .manif-btn-row {
+      display: flex; gap: 12px;
+      width: 100%;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .manif-btn-row .btn { flex: 1; min-width: 140px; }
+
+    /* Output container */
+    .manif-output { display: none; width: 100%; flex-direction: column; gap: 20px; animation: fadeIn 0.4s ease; }
+    .manif-output.visible { display: flex; }
+
+    /* Goal banner */
+    .output-goal-banner {
+      background: linear-gradient(135deg, rgba(247,37,133,0.12), rgba(114,9,183,0.12));
+      border: 1px solid rgba(247,37,133,0.22);
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-size: 0.95rem;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+
+    .output-goal-banner span { color: #f72585; font-weight: 700; }
+
+    /* Output section wrapper */
+    .output-section {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 24px 28px;
+      backdrop-filter: blur(6px);
+    }
+
+    .output-section-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #4cc9f0;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .output-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(76,201,240,0.2);
+    }
+
+    /* Visualization accordion cards */
+    .viz-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .viz-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .viz-card:hover { border-color: rgba(76,201,240,0.3); box-shadow: 0 4px 16px rgba(76,201,240,0.08); }
+    .viz-card.open { border-color: rgba(247,37,133,0.4); box-shadow: 0 4px 20px rgba(247,37,133,0.12); }
+
+    /* Only the header is clickable to avoid closing while reading */
+    .viz-card-header {
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .viz-card-header-text { font-size: 0.9rem; font-weight: 700; color: #fff; line-height: 1.3; }
+
+    .viz-card-arrow {
+      min-width: 18px;
+      color: #4cc9f0;
+      font-size: 0.8rem;
+      transition: transform 0.3s ease;
+    }
+
+    .viz-card.open .viz-card-arrow { transform: rotate(180deg); }
+
+    /* max-height accordion — no padding on the body itself to avoid jump */
+    .viz-card-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+    .viz-card.open .viz-card-body { max-height: 500px; }
+
+    .viz-card-subtitle {
+      padding: 10px 16px 6px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      font-size: 0.75rem;
+      color: #4cc9f0;
+      font-weight: 600;
+    }
+
+    .viz-card-desc { padding: 6px 16px 16px; font-size: 0.87rem; color: #cbd5e0; line-height: 1.65; }
+
+    /* Affirmations */
+    .output-item { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+    .output-item:last-child { margin-bottom: 0; }
+
+    .output-bullet {
+      width: 28px; height: 28px; min-width: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7209b7, #3a0ca3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; color: #fff;
+      margin-top: 2px;
+    }
+
+    .output-item-text { color: #e2e8f0; font-size: 0.95rem; line-height: 1.65; }
+
+    /* 7-day plan */
+    .day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+
+    .day-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 10px 6px;
+      text-align: center;
+    }
+
+    .day-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: #4cc9f0; font-weight: 700; margin-bottom: 4px; }
+    .day-emoji { font-size: 1.3rem; margin-bottom: 4px; }
+    .day-focus-text { font-size: 0.72rem; color: #cbd5e0; line-height: 1.4; }
+
+    /* ── Responsive ── */
+    @media (max-width: 500px) {
+      .card { width: 72px; height: 72px; }
+      .card-face { font-size: 1.8rem; }
+      .grid { gap: 10px; }
+      h1 { font-size: 1.8rem; }
+      .stats { gap: 16px; }
+      .stat-box { padding: 8px 18px; }
+      .win-card { padding: 32px 20px; }
+      .viz-cards { grid-template-columns: 1fr; }
+      .day-grid { grid-template-columns: repeat(4, 1fr); }
+      .output-section { padding: 18px 16px; }
+      nav { gap: 4px; }
+      .nav-btn { padding: 8px 14px; font-size: 0.8rem; }
+      .manif-btn-row { flex-direction: column; }
+      .manif-btn-row .btn { width: 100%; }
+      .user-modal-card { padding: 24px 18px; }
+    }
+
+
+    /* ════════════════════════════
+       IPL PREDICTION ARENA STYLES
+    ════════════════════════════ */
+    #page-home { max-width: 1180px; }
+
+    .ipl-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .ipl-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 26px;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.25);
+    }
+
+    .ipl-hero {
+      padding: 36px;
+      position: relative;
+      overflow: hidden;
+      min-height: 350px;
+    }
+
+    .ipl-hero::after {
+      content: '';
+      width: 220px;
+      height: 220px;
+      position: absolute;
+      right: -70px;
+      bottom: -80px;
+      border-radius: 50%;
+      background: rgba(76,201,240,0.13);
+    }
+
+    .ipl-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(76,201,240,0.1);
+      border: 1px solid rgba(76,201,240,0.25);
+      color: #4cc9f0;
+      padding: 8px 13px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .ipl-hero h1 {
+      text-align: left;
+      font-size: clamp(2.2rem, 5vw, 4.1rem);
+      line-height: 1.04;
+      letter-spacing: -1.5px;
+      margin-bottom: 18px;
+      background: none;
+      -webkit-text-fill-color: #fff;
+      color: #fff;
+      max-width: 760px;
+    }
+
+    .ipl-gradient {
+      background: linear-gradient(90deg, #ffd166, #f72585, #4cc9f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .ipl-copy {
+      color: #cbd5e0;
+      line-height: 1.8;
+      font-size: 1rem;
+      max-width: 680px;
+      margin-bottom: 26px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .ipl-actions { display: flex; gap: 12px; flex-wrap: wrap; position: relative; z-index: 1; }
+
+    .ipl-user-bar {
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      padding: 12px 14px;
+      max-width: 620px;
+    }
+
+    .ipl-user-copy { color: #a0aec0; font-size: 0.88rem; line-height: 1.45; }
+    .ipl-user-copy span { color: #4cc9f0; font-weight: 900; }
+    .btn-small { padding: 9px 16px; font-size: 0.82rem; letter-spacing: 0.4px; }
+
+    .ipl-section-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #4cc9f0;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+
+    .ipl-rule-list { display: flex; flex-direction: column; gap: 14px; }
+
+    .ipl-rule {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      color: #d7deeb;
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    .ipl-rule-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ipl-rule strong { color: #fff; }
+
+    .match-list { display: grid; gap: 14px; }
+
+    .match-card {
+      border: 1px solid rgba(255,255,255,0.13);
+      background: rgba(255,255,255,0.055);
+      border-radius: 20px;
+      padding: 18px;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s, background 0.15s;
+    }
+
+    .match-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(76,201,240,0.45);
+      background: rgba(76,201,240,0.075);
+    }
+
+    .match-card.match-disabled {
+      cursor: default;
+    }
+
+    .match-card.match-disabled:hover {
+      transform: none;
+      border-color: rgba(255,255,255,0.13);
+      background: rgba(255,255,255,0.055);
+    }
+
+    .match-top, .teams {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .match-top { margin-bottom: 14px; }
+    .match-date { color: #a0aec0; font-size: 0.82rem; font-weight: 700; }
+
+    .status-badge {
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: rgba(6,214,160,0.12);
+      color: #06d6a0;
+      border: 1px solid rgba(6,214,160,0.22);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 900;
+    }
+
+    .status-badge.status-open {
+      background: rgba(6,214,160,0.12);
+      color: #06d6a0;
+      border-color: rgba(6,214,160,0.22);
+    }
+
+    .status-badge.status-locked {
+      background: rgba(255,209,102,0.13);
+      color: #ffd166;
+      border-color: rgba(255,209,102,0.28);
+    }
+
+    .status-badge.status-closed {
+      background: rgba(247,37,133,0.12);
+      color: #f72585;
+      border-color: rgba(247,37,133,0.28);
+    }
+
+    .teams { margin-bottom: 12px; }
+
+    .team { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+    .team-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      background: rgba(255,255,255,0.09);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 950;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .team-name { font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .versus { color: #ffd166; font-weight: 950; }
+    .match-meta { color: #a0aec0; font-size: 0.84rem; line-height: 1.5; }
+
+    .leaderboard-row {
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .leaderboard-row:last-child { border-bottom: none; }
+
+    .rank {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 950;
+      color: #ffd166;
+    }
+
+    .player-name { font-weight: 900; }
+    .player-meta { color: #a0aec0; font-size: 0.78rem; margin-top: 2px; }
+    .score { color: #06d6a0; font-weight: 950; }
+
+    .prediction-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,10,30,0.86);
+      backdrop-filter: blur(8px);
+      z-index: 180;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .prediction-modal-overlay.show { display: flex; }
+
+    .prediction-modal-card {
+      width: 100%;
+      max-width: 880px;
+      max-height: 90vh;
+      overflow: auto;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 26px;
+      padding: 26px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.55);
+      animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    .prediction-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .prediction-title { font-size: 1.7rem; font-weight: 900; margin-bottom: 6px; }
+    .prediction-subtitle { color: #a0aec0; font-size: 0.92rem; line-height: 1.55; }
+    .close-btn { padding: 8px 13px; min-width: auto; }
+
+    .questions { display: grid; gap: 14px; }
+
+    .question-card {
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .question-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .question-text { font-weight: 900; line-height: 1.45; }
+    .entry-fee { color: #f72585; font-size: 0.78rem; font-weight: 900; white-space: nowrap; }
+
+    .options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 11px;
+      cursor: pointer;
+      color: #e6edf7;
+      font-weight: 700;
+    }
+
+    .option:hover { border-color: rgba(76,201,240,0.55); background: rgba(76,201,240,0.1); }
+    .option input { accent-color: #4cc9f0; }
+
+    .option.option-disabled {
+      cursor: not-allowed;
+      opacity: 0.62;
+    }
+
+    .option.option-disabled:hover {
+      border-color: rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.055);
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .submit-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+    .helper-text { color: #a0aec0; font-size: 0.84rem; line-height: 1.5; }
+    .error-text { color: #ff5c8a; min-height: 20px; font-size: 0.85rem; margin-top: 10px; }
+    .success-text { color: #06d6a0; min-height: 20px; font-size: 0.9rem; margin-top: 10px; font-weight: 800; }
+
+    @media (max-width: 900px) {
+      .ipl-grid { grid-template-columns: 1fr; }
+      .prediction-header { flex-direction: column; }
+    }
+
+    @media (max-width: 500px) {
+      .ipl-hero { padding: 24px 18px; min-height: auto; }
+      .ipl-card { padding: 18px; }
+      .options { grid-template-columns: 1fr; }
+      .prediction-modal-card { padding: 20px 14px; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Username onboarding modal: appears on first visit before using MTGames -->
+  <div class="user-modal-overlay" id="userModal">
+    <div class="user-modal-card">
+      <div class="user-modal-title">Sign in to MTGames</div>
+      <p class="user-modal-copy">
+        Enter your existing username to continue, or create a new one. Your player identity stays linked to that username.
+      </p>
+      <input
+        id="usernameInput"
+        class="username-input"
+        type="text"
+        maxlength="24"
+        placeholder="e.g. tapo22"
+      />
+      <div class="user-modal-error" id="usernameError"></div>
+      <button class="btn" id="usernameBtn" onclick="createUserAccount()">Continue</button>
+    </div>
+  </div>
+
+  <!-- Prediction questions open only after a user chooses a match -->
+  <div class="prediction-modal-overlay" id="predictionModal">
+    <div class="prediction-modal-card">
+      <div class="prediction-header">
+        <div>
+          <div class="prediction-title" id="predictionTitle">Match Prediction Card</div>
+          <div class="prediction-subtitle" id="predictionSubtitle">Answer all 5 questions to lock your picks.</div>
+        </div>
+        <button class="btn btn-outline close-btn" onclick="closePredictionModal()">Close</button>
+      </div>
+      <div class="questions" id="questionsContainer"></div>
+      <div class="submit-row">
+        <div class="helper-text" id="predictionHelperText">Your picks will be saved to the database. You can edit them while the contest is open.</div>
+        <button class="btn" id="submitPredictionBtn" onclick="submitPredictions()">Lock My Predictions</button>
+      </div>
+      <div class="error-text" id="predictionError"></div>
+      <div class="success-text" id="predictionSuccess"></div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav>
+    <button class="nav-btn active" onclick="showPage('home')">IPL Arena</button>
+    <button class="nav-btn" onclick="showPage('manif')">Manifestation Room</button>
+  </nav>
+
+  <!-- ══════════════════════════════
+       PAGE: Home (IPL Prediction Arena)
+  ══════════════════════════════ -->
+  <div class="page active" id="page-home">
+    <div class="ipl-grid">
+      <section class="ipl-card ipl-hero">
+        <div class="ipl-eyebrow">🔥 Match Day Arena</div>
+        <h1>Predict the IPL match. <span class="ipl-gradient">Climb the leaderboard.</span></h1>
+        <p class="ipl-copy">
+          Choose a match from the available games, answer 5 prediction questions, and lock your picks before the game begins. The individual questions open only after you select a match.
+        </p>
+        <div class="ipl-actions">
+          <button class="btn" onclick="scrollToGames()">Choose a Match</button>
+        </div>
+        <div class="ipl-user-bar" id="iplUserBar"></div>
+      </section>
+
+      <aside class="ipl-card">
+        <div class="ipl-section-title">How scoring will work</div>
+        <div class="ipl-rule-list">
+          <div class="ipl-rule"><div class="ipl-rule-icon">🎟️</div><div><strong>Entry:</strong> 5 points charged for every question you answer.</div></div>
+          <div class="ipl-rule"><div class="ipl-rule-icon">✅</div><div><strong>Correct pick:</strong> 20 points awarded for that question.</div></div>
+          <div class="ipl-rule"><div class="ipl-rule-icon">🤝</div><div><strong>Shared answer:</strong> if 4 users get it right, each receives 5 points.</div></div>
+          <div class="ipl-rule"><div class="ipl-rule-icon">👑</div><div><strong>Admin result:</strong> super admin enters the final answers after the match.</div></div>
+        </div>
+      </aside>
+
+      <section class="ipl-card" id="gamesArea">
+        <div class="ipl-section-title">Available match games</div>
+        <div class="match-list" id="matchList"></div>
+      </section>
+
+      <aside class="ipl-card">
+        <div class="ipl-section-title">Leaderboard</div>
+        <div id="leaderboard"></div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       PAGE: Manifestation Room
+  ══════════════════════════════ -->
+  <div class="page" id="page-manif">
+    <h1>Manifestation Room</h1>
+    <p class="subtitle">Turn your goals into a daily practice</p>
+
+    <div class="user-status" id="userStatus"></div>
+
+    <!-- Daily focus — always visible, changes by day of week -->
+    <div class="today-focus">
+      <div class="today-focus-icon" id="todayFocusIcon">🌅</div>
+      <div class="today-focus-inner">
+        <div class="today-focus-label">Today's Practice</div>
+        <div class="today-focus-text" id="todayFocusText"></div>
+      </div>
+    </div>
+
+    <div class="manif-intro">
+      Write down one thing you want to bring into your life over the next 6 months.
+      Be honest and specific — the clearer your intention, the more focused your practice will be.
+    </div>
+
+    <!-- Shown when a saved goal is found in localStorage -->
+    <div class="welcome-back" id="welcomeBack">✨ Welcome back. Your saved intention is ready.</div>
+
+    <div class="manif-input-wrap">
+      <label for="manifInput">My goal for the next 6 months</label>
+      <textarea
+        id="manifInput"
+        class="manif-textarea"
+        placeholder="e.g. I want to land a new job in UX design that feels meaningful and pays me well."
+      ></textarea>
+      <div class="manif-error" id="manifError">
+        Please write your goal above before creating your practice. ✏️
+      </div>
+    </div>
+
+    <div class="manif-btn-row">
+      <button class="btn" id="createPracticeBtn" onclick="createPractice()">Create My Daily Practice</button>
+      <button class="btn btn-outline" onclick="clearManif()">Start Over</button>
+    </div>
+    <div class="save-status" id="saveStatus"></div>
+
+    <!-- Generated output injected here -->
+    <div class="manif-output" id="manifOutput"></div>
+  </div>
+
+  <script>
+    /* ════════════════════════════════════════
+       NAVIGATION
+    ════════════════════════════════════════ */
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('page-' + id).classList.add('active');
+      document.querySelectorAll('.nav-btn')[id === 'home' ? 0 : 1].classList.add('active');
+    }
+
+    /* ════════════════════════════════════════
+       MEMORY GAME (unchanged)
+    ════════════════════════════════════════ */
+    const EMOJIS = ['🐶','🐱','🦊','🐸','🦋','🌸','🍕','🍦'];
+    const TOTAL_PAIRS = 4;
+    let flipped = [], matched = 0, moves = 0, seconds = 0, timerID = null, locked = false;
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function fmt(s) { return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
+
+    function startTimer() {
+      stopTimer();
+      seconds = 0;
+      document.getElementById('timer').textContent = fmt(0);
+      timerID = setInterval(() => { seconds++; document.getElementById('timer').textContent = fmt(seconds); }, 1000);
+    }
+
+    function stopTimer() { clearInterval(timerID); timerID = null; }
+
+    function initGame() {
+      document.getElementById('winOverlay').classList.remove('show');
+      stopTimer();
+      flipped = []; matched = 0; moves = 0; locked = false;
+      document.getElementById('moves').textContent = '0';
+      document.getElementById('timer').textContent = '0:00';
+      document.getElementById('pairs').textContent = `0/${TOTAL_PAIRS}`;
+
+      const pool = shuffle([...EMOJIS]).slice(0, TOTAL_PAIRS);
+      const cards = shuffle([...pool, ...pool]);
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+
+      cards.forEach((emoji, i) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.emoji = emoji;
+        card.dataset.index = i;
+        card.innerHTML = `
+          <div class="card-inner">
+            <div class="card-face card-back"></div>
+            <div class="card-face card-front">${emoji}</div>
+          </div>`;
+        card.addEventListener('click', onCardClick);
+        grid.appendChild(card);
+      });
+    }
+
+    function onCardClick(e) {
+      const card = e.currentTarget;
+      if (locked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+      if (!timerID && moves === 0 && flipped.length === 0) startTimer();
+      card.classList.add('flipped');
+      flipped.push(card);
+      if (flipped.length === 2) { locked = true; moves++; document.getElementById('moves').textContent = moves; checkMatch(); }
+    }
+
+    function checkMatch() {
+      const [a, b] = flipped;
+      if (a.dataset.emoji === b.dataset.emoji) {
+        setTimeout(() => {
+          a.classList.add('matched'); b.classList.add('matched');
+          a.classList.remove('flipped'); b.classList.remove('flipped');
+          flipped = []; locked = false; matched++;
+          document.getElementById('pairs').textContent = `${matched}/${TOTAL_PAIRS}`;
+          if (matched === TOTAL_PAIRS) showWin();
+        }, 300);
+      } else {
+        setTimeout(() => { a.classList.remove('flipped'); b.classList.remove('flipped'); flipped = []; locked = false; }, 900);
+      }
+    }
+
+    function showWin() {
+      stopTimer();
+      document.getElementById('winStats').innerHTML = `Completed in <span>${fmt(seconds)}</span> with <span>${moves}</span> moves.`;
+      document.getElementById('winOverlay').classList.add('show');
+    }
+
+    /* ════════════════════════════════════════
+       MANIFESTATION ROOM
+    ════════════════════════════════════════ */
+
+    const STORAGE_KEY = 'manif_goal';
+    const USER_ID_KEY = 'mtgames_user_id';
+    const USER_NAME_KEY = 'mtgames_user_name';
+
+    /* ── Daily focus prompts, one per day of week (0 = Sunday) ── */
+    const DAILY_FOCUSES = [
+      { emoji: '✨', text: 'Take 5 minutes to rest and reflect on your progress — however small. Momentum is built in quiet moments too.' },
+      { emoji: '🎯', text: 'Write your goal down by hand today. Read it out loud, once. Let it feel real rather than theoretical.' },
+      { emoji: '💭', text: 'Ask yourself: what would I believe about myself if this goal were already done? Sit with that for 5 minutes.' },
+      { emoji: '🔍', text: 'Identify one small action you can take this week. One honest step forward counts more than ten plans.' },
+      { emoji: '🙏', text: 'Spend 2 minutes noticing what is already going well. Appreciation creates the mindset that brings more.' },
+      { emoji: '💬', text: 'Say your affirmations out loud today — not in your head. Hear your own voice say them and notice how it lands.' },
+      { emoji: '🌅', text: 'Picture the first ordinary morning after your goal is real — not the celebration, just a calm, regular day.' }
+    ];
+
+    /* ── Visualization exercise pools: 8 per category, 4 picked randomly each time ── */
+    const EXERCISE_POOLS = {
+
+      general: [
+        { header: 'The Future Scene',   title: 'Your Success Moment',
+          desc: 'Close your eyes and place yourself at the exact moment your goal becomes real. Where are you? What do you see, hear, feel? Let the scene be vivid and specific. Stay for 5 full minutes and notice what your body does.' },
+        { header: 'The Identity Shift', title: 'Becoming the Person Who Has This',
+          desc: 'The version of you who has already achieved this goal — how do they carry themselves? What do they believe about their own ability? Spend 5 minutes living as that version. Not pretending. Rehearsing what is already developing.' },
+        { header: 'The Hidden Block',   title: 'Finding What Is in the Way',
+          desc: 'Sit quietly and ask: "What part of me does not fully believe this is possible?" Notice the first honest answer. Do not fight it — just name it. Awareness of a block is the first step to moving through it.' },
+        { header: 'The Night Ritual',   title: 'End-of-Day Reflection',
+          desc: 'Before sleep, replay one moment from today where you acted like someone moving toward your goal — even a small one. If today was hard, ask what it taught you. Close with a single sentence of genuine gratitude for where you are.' },
+        { header: 'Change Your Life',   title: 'The Decision Moment',
+          desc: 'Think back to the moment you decided this goal was worth pursuing. Relive it. Feel the resolve that came with it. Spend 4 minutes letting that decision feel firm and clear — like something you already know to be true.' },
+        { header: 'The First Day',      title: 'Your First Ordinary Morning After',
+          desc: 'Imagine the first unremarkable morning after your goal is real — not the celebration, just a regular Tuesday. You wake up. Your life is different now. Walk through it slowly and let it feel normal, not magical.' },
+        { header: 'The Quiet Hour',     title: 'Midday Check-In',
+          desc: 'Pause for 3 minutes somewhere in the middle of your day. Ask: "Am I moving through today as the person I am becoming?" No judgment. Just notice. Then return with a little more intention than before.' },
+        { header: 'The Honest Letter',  title: 'A Letter From Your Future Self',
+          desc: 'Imagine the version of you who reached this goal writing you a short letter. What do they want you to know right now? What would they tell you to stop worrying about? Sit with that perspective for 5 minutes.' }
+      ],
+
+      career: [
+        { header: 'The Offer Call',       title: 'Hearing Yes',
+          desc: 'Close your eyes and picture receiving the call, email, or message with the good news. Feel what happens in your chest. Let yourself stay in that moment — not rushing past it — for 4 full minutes.' },
+        { header: 'The Interview Room',   title: 'Calm, Confident, and Ready',
+          desc: 'Visualize yourself in an interview or key professional moment, answering with clarity and ease. You are not performing — you are showing who you already are. Spend 5 minutes in this scene until it feels natural, not forced.' },
+        { header: 'The First Week',       title: 'Settling Into the Role',
+          desc: 'Picture your first week in the new position. There is a learning curve, but you are curious and capable. Walk through an ordinary, good week — the work, the people, the feeling of belonging there.' },
+        { header: 'The Identity Shift',   title: 'Becoming the Professional You Are Aiming to Be',
+          desc: 'The version of you who has this career goal — how do they speak in meetings? Handle setbacks? Spend 4 minutes rehearsing that version not as an act, but as a preview of what you are already becoming.' },
+        { header: 'The Hidden Block',     title: 'What Story Is Slowing You Down?',
+          desc: 'Ask quietly: "What do I believe about people like me and careers like this?" Notice any limiting story — "that level is for others," "I am not ready yet." Just name it. You cannot rewrite a story you have not read clearly.' },
+        { header: 'The Morning Commute',  title: 'Heading to Work You Actually Want',
+          desc: 'Picture yourself on the way to this job — your bag, your music, your mindset. You are going somewhere that genuinely matters to you. Spend 4 minutes in the steady, grounded feeling of a professional life that fits.' },
+        { header: 'The Night Ritual',     title: 'Reviewing a Good Day at Work',
+          desc: 'Imagine finishing a day at your goal role feeling genuinely satisfied. Not every day is perfect — today was just solid and real. Sit in that ordinary sense of professional belonging and growing capability.' },
+        { header: 'The Honest Letter',    title: 'Advice From the You Who Made It',
+          desc: 'Imagine yourself 6 months from now, settled into this career path, writing you a short note. What actually mattered? What fear turned out to be smaller than expected? Spend 5 minutes with their perspective.' }
+      ],
+
+      relationship: [
+        { header: 'The Quiet Morning',  title: 'An Ordinary Day Together',
+          desc: 'Imagine a regular morning in the relationship you are working toward — not a grand gesture, just ease, conversation, presence. Spend 5 minutes in the texture of an ordinary, genuinely good day.' },
+        { header: 'The Open Heart',     title: 'What You Are Really Looking For',
+          desc: 'Sit quietly and ask what you most need from this relationship — not just what you want, but what would genuinely make you feel loved and safe. Clarity about what you need is the foundation of finding it.' },
+        { header: 'The Identity Shift', title: 'Being Someone Ready for This',
+          desc: 'The version of you who has this relationship — what do they believe about love? How do they show up? Spend 5 minutes practicing being that version: open, self-assured, and genuinely ready.' },
+        { header: 'The Hidden Block',   title: 'The Fear Underneath the Goal',
+          desc: 'Ask yourself gently: "What am I afraid might happen if I actually got this?" Sometimes our deepest goals carry a quiet fear. Name it without judgment. Understanding what holds us back is how we start letting it go.' },
+        { header: 'The Future Scene',   title: 'A Moment of Real Connection',
+          desc: 'Picture a specific small moment — laughing together, sitting in comfortable silence, being truly understood. Not a highlight. A real, small moment of genuine connection. Stay here for 5 minutes.' },
+        { header: 'The Night Ritual',   title: 'Gratitude for the Love Already Present',
+          desc: 'Before sleep, acknowledge the love that already exists in your life — from friends, family, yourself. This is not about settling. It is about building from fullness rather than need.' },
+        { header: 'The Honest Letter',  title: 'What Future You Wants You to Know',
+          desc: 'Imagine yourself in the relationship you are working toward, writing a short note to present you. What does the person who found this love want you to stop being afraid of? Spend 5 minutes there.' },
+        { header: 'The First Day',      title: 'The Moment It Feels Real',
+          desc: 'Imagine the first time you feel truly settled — not the fireworks, but the quiet afternoon when you realize this is genuinely good. Spend 4 minutes in the calm certainty of that feeling.' }
+      ],
+
+      health: [
+        { header: 'The Strong Body',     title: 'Moving With Ease',
+          desc: 'Visualize your body in the state you are working toward — not a magazine image, but your real body, stronger and more capable. See yourself moving through your day with more energy, ease, and confidence.' },
+        { header: 'The Morning Routine', title: 'The Day That Makes It Real',
+          desc: 'Picture a morning where your healthy habits feel natural — not forced. You wake up, move your body, fuel yourself well. Spend 4 minutes in the ease of a day where health is just how you live.' },
+        { header: 'The Hidden Block',    title: 'What You Have Been Telling Your Body',
+          desc: 'Notice the inner story you carry about your body and what it can do. Is it kind? Is it accurate? Spend 5 minutes asking what a more supportive inner voice would say — then practice speaking that way.' },
+        { header: 'The Identity Shift',  title: 'Being Someone Who Takes Care of Themselves',
+          desc: 'The version of you living in the health you are building toward did not have perfect willpower — they just built different habits over time. Spend 4 minutes practicing being that person today.' },
+        { header: 'The Future Scene',    title: 'Six Months of Consistent Effort',
+          desc: 'Picture yourself six months from now, after real and consistent work. How does your body feel different? What can you do that you cannot do today? Let it feel earned and genuinely yours.' },
+        { header: 'The Night Ritual',    title: 'Honoring What You Did Today',
+          desc: 'Before sleep, acknowledge what you did for your health today — even something small. Did you move? Rest when needed? Make one good choice? Spend 4 minutes feeling genuine credit for the small actions that compound.' },
+        { header: 'The Finish Line',     title: 'Crossing It',
+          desc: 'Visualize reaching the physical milestone that represents your goal — finishing something, hitting a number, simply feeling genuinely well. Spend 5 minutes in the satisfaction of having done the work.' },
+        { header: 'The Honest Letter',   title: 'From the Healthier Version of You',
+          desc: 'Imagine the version of you who reached this health goal writing you a short note. What habits actually mattered? What did they stop overcomplicating? Spend 5 minutes with their honest advice.' }
+      ],
+
+      money: [
+        { header: 'The Stable Ground',  title: 'What Financial Peace Actually Feels Like',
+          desc: 'Picture what financial stability looks like in your specific life — paying a bill without anxiety, making a considered choice, sleeping without money stress. Spend 5 minutes in the ordinary grounded feeling of that.' },
+        { header: 'The Hidden Block',   title: 'Your Earliest Money Story',
+          desc: 'Ask: what did you learn about money growing up? Was it scarce? Stressful? Something others had but not you? Spend 5 minutes examining that story. You cannot choose a new relationship with money while running on an old script.' },
+        { header: 'The Identity Shift', title: 'Thinking Like Someone Who Builds Wealth',
+          desc: 'The version of you who reached your financial goal did not win the lottery. They made intentional decisions, a little more consistently, over time. Spend 4 minutes practicing their mindset: patient, curious, unafraid.' },
+        { header: 'The Future Scene',   title: 'Looking Back From Where You Want to Be',
+          desc: 'Imagine yourself 6 months from now, having hit your financial goal. What one decision, made early, made the biggest difference? Let the answer inform one thing you can choose to do this week.' },
+        { header: 'The First Day',      title: 'The Day It Feels Different',
+          desc: 'Picture the first day your financial situation genuinely feels better — not wealthy, just better. A buffer saved, a number reached, a business earning real money. Spend 4 minutes in the quiet confidence of that day.' },
+        { header: 'The Night Ritual',   title: 'One Honest Financial Reflection',
+          desc: 'Before sleep, spend 4 minutes in a calm, non-judgmental review of one money-related choice you made today. Did it align with your goal? If not, what would tomorrow look like instead? Reflection without guilt creates change.' },
+        { header: 'The Honest Letter',  title: 'From Future You Who Figured It Out',
+          desc: 'Imagine yourself having reached your financial goal, writing a note back to present you. What did you stop being afraid of? What small, unglamorous habit made the most difference? Listen for 5 minutes.' },
+        { header: 'Change Your Life',   title: 'The Decision That Starts Everything',
+          desc: 'Recall the moment you decided this financial goal was real and worth pursuing. Feel that decision solidify. Spend 4 minutes letting it feel committed and clear — because real financial change begins at the level of identity.' }
+      ]
+    };
+
+    /* ── Affirmation pools: 7 per category, 5 picked randomly ── */
+    const AFFIRMATION_POOLS = {
+      general: [
+        'I am making consistent, meaningful progress every single day, even when it is hard to see.',
+        'I trust my ability to figure out what I need and adjust as I go.',
+        'I deserve the kind of life I am working toward, and I am ready to receive it.',
+        'Every step I take — no matter how small — is moving me in the right direction.',
+        'I stay focused on what I can control today, and I let go of what I cannot.',
+        'I am the kind of person who follows through, even when it is not easy.',
+        'My goal is not out of reach. I am already closer than I was yesterday.'
+      ],
+      career: [
+        'I have real skills, genuine value, and something specific to contribute to the right team.',
+        'I am building a career that reflects who I actually am, not who I think I should be.',
+        'I handle professional setbacks with the same steadiness I bring to my wins.',
+        'Every application, conversation, and attempt teaches me something I needed to learn.',
+        'The right opportunity is looking for someone with exactly what I bring.',
+        'I am allowed to want more from my career, and I am fully capable of going after it.',
+        'I am becoming more confident in my professional voice with every passing week.'
+      ],
+      relationship: [
+        'I am worthy of a relationship that is loving, honest, and genuinely good for both people.',
+        'I bring real warmth, depth, and care to the people in my life.',
+        'I am learning to love and trust myself in the same way I hope to be loved.',
+        'I am open to genuine connection, and I do not need to rush it into the right shape.',
+        'The love I am looking for is also, in its own way, looking for me.',
+        'I can hold my standards and my openness at the same time — they are not opposites.',
+        'I release old relationship patterns that no longer reflect who I am becoming.'
+      ],
+      health: [
+        'My body is capable of far more than I have given it credit for.',
+        'I am building sustainable habits, not chasing a version of perfection that does not exist.',
+        'Every time I show up for my health — even briefly, even imperfectly — it counts.',
+        'I take care of my body because I respect it, not because I am at war with it.',
+        'I am becoming stronger and more consistent with each week that passes.',
+        'I release the need to be perfect and choose to be present and persistent instead.',
+        'My health journey is mine alone — I measure it by how I feel, not how I compare.'
+      ],
+      money: [
+        'I am building a healthier, more honest relationship with money — one decision at a time.',
+        'Financial stability is a learnable skill, and I am actively developing it.',
+        'I deserve to be compensated fairly for my work, and I am not afraid to ask for it.',
+        'Money moves more freely in my life when I approach it with clarity rather than fear.',
+        'I make thoughtful financial decisions aligned with the life I am building.',
+        'I am releasing the belief that financial success is for other kinds of people.',
+        'Every responsible money choice I make today is an investment in my future freedom.'
+      ]
+    };
+
+    /* ── 7-day practice plan (shared across all categories) ── */
+    const WEEK_PLAN = [
+      { emoji: '🎯', focus: 'Write your goal by hand. Read it out loud.' },
+      { emoji: '🌅', focus: 'Morning visualization. 5 minutes.' },
+      { emoji: '📋', focus: 'List one real action you can take this week.' },
+      { emoji: '🙏', focus: 'Gratitude. Name 3 things already going right.' },
+      { emoji: '💬', focus: 'Say your affirmations aloud, not just in your head.' },
+      { emoji: '🔍', focus: 'Honest check-in: what\'s working? What needs to shift?' },
+      { emoji: '🎉', focus: 'Celebrate small wins. Rest. You showed up all week.' }
+    ];
+
+    /* ── Utilities ── */
+
+    // Pick n items at random from arr without repeating
+    function pickRandom(arr, n) {
+      return [...arr].sort(() => Math.random() - 0.5).slice(0, n);
+    }
+
+    // Strip filler phrases to get a concise subject for personalized affirmations
+    function extractSubject(text) {
+      const cleaned = text
+        .replace(/^(i want to|i would like to|i hope to|my goal is to|i am working toward|i need to)\s*/i, '')
+        .replace(/\s*in the next (6|six) months\.?$/i, '')
+        .trim();
+      return cleaned.length > 0 && cleaned.length < 70 ? cleaned : 'my goal';
+    }
+
+    // Detect which category the goal belongs to using keyword matching
+    function detectCategory(text) {
+      const t = text.toLowerCase();
+      if (/\b(job|role|interview|career|offer|salary|company|promotion|hire|hired|position|resume|cv|boss|office|workplace)\b/.test(t)) return 'career';
+      if (/\b(relationship|marriage|love|partner|dating|romantic|wife|husband|boyfriend|girlfriend|soulmate|wedding|heart|connection)\b/.test(t)) return 'relationship';
+      if (/\b(health|fitness|body|weight|exercise|workout|gym|diet|eating|sleep|energy|wellness|running|strong|lose|gain|muscle|marathon|yoga)\b/.test(t)) return 'health';
+      if (/\b(money|business|finance|financial|income|wealth|rich|invest|saving|debt|entrepreneur|startup|revenue|profit|earn|afford|budget)\b/.test(t)) return 'money';
+      return 'general';
+    }
+
+    /* ── Daily focus ── */
+    function renderDailyFocus() {
+      const focus = DAILY_FOCUSES[new Date().getDay()];
+      document.getElementById('todayFocusIcon').textContent = focus.emoji;
+      document.getElementById('todayFocusText').textContent = focus.text;
+    }
+
+    /* ── localStorage + database helpers ── */
+    function getCurrentUser() {
+      return {
+        id: localStorage.getItem(USER_ID_KEY),
+        name: localStorage.getItem(USER_NAME_KEY)
+      };
+    }
+
+    function showUserStatus() {
+      const user = getCurrentUser();
+      const status = document.getElementById('userStatus');
+      if (status) {
+        if (user.id && user.name) {
+          status.innerHTML = `Signed in as <span>${escapeHTML(user.name)}</span>`;
+          status.style.display = 'block';
+        } else {
+          status.style.display = 'none';
+        }
+      }
+      renderIPLUserBar();
+    }
+
+    function renderIPLUserBar() {
+      const bar = document.getElementById('iplUserBar');
+      if (!bar) return;
+
+      const user = getCurrentUser();
+      if (user.id && user.name) {
+        bar.innerHTML = `
+          <div class="ipl-user-copy">Playing as <span>${escapeHTML(user.name)}</span>. You can edit predictions while the contest is open.</div>
+          <button class="btn btn-outline btn-small" onclick="signOut()">Sign Out</button>
+        `;
+      } else {
+        bar.innerHTML = `
+          <div class="ipl-user-copy">No player signed in. Sign in before locking predictions.</div>
+          <button class="btn btn-small" onclick="showUsernameModal()">Sign In</button>
+        `;
+      }
+    }
+
+    function signOut() {
+      localStorage.removeItem(USER_ID_KEY);
+      localStorage.removeItem(USER_NAME_KEY);
+      localStorage.removeItem('mtgames_ipl_prediction_picks');
+      closePredictionModal();
+      showUserStatus();
+      showUsernameModal();
+    }
+
+    function loadSavedGoal() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        document.getElementById('manifInput').value = saved;
+        document.getElementById('welcomeBack').style.display = 'block';
+      }
+    }
+
+    function saveGoalLocally(goal) {
+      localStorage.setItem(STORAGE_KEY, goal);
+    }
+
+    function showUsernameModal() {
+      const modal = document.getElementById('userModal');
+      const input = document.getElementById('usernameInput');
+      const err = document.getElementById('usernameError');
+      if (err) err.textContent = '';
+      if (input) input.value = '';
+      modal.classList.add('show');
+      setTimeout(() => input && input.focus(), 50);
+    }
+
+    function hideUsernameModal() {
+      document.getElementById('userModal').classList.remove('show');
+    }
+
+    function sanitizeUsername(name) {
+      return name.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+    }
+
+    async function createUserAccount() {
+      const input = document.getElementById('usernameInput');
+      const err = document.getElementById('usernameError');
+      const btn = document.getElementById('usernameBtn');
+      const cleanName = sanitizeUsername(input.value);
+
+      if (!cleanName || cleanName.length < 3) {
+        err.textContent = 'Please enter at least 3 characters. Use letters, numbers, or underscore.';
+        input.focus();
+        return;
+      }
+
+      try {
+        err.textContent = '';
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        const response = await fetch('/api/create-ipl-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_name: cleanName })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Could not create user.');
+
+        localStorage.setItem(USER_ID_KEY, data.user.id);
+        localStorage.setItem(USER_NAME_KEY, data.user.user_name);
+        hideUsernameModal();
+        showUserStatus();
+      } catch (error) {
+        err.textContent = error.message || 'Something went wrong. Please try again.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Continue';
+      }
+    }
+
+    async function saveGoalToDatabase(goal) {
+      const user = getCurrentUser();
+      if (!user.id) {
+        showUsernameModal();
+        throw new Error('Please create a username first.');
+      }
+
+      const response = await fetch('/api/save-goal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: Number(user.id), goal })
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Could not save goal.');
+      return data.goal;
+    }
+
+    function escapeHTML(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    /* ── Accordion toggle — only header triggers this ── */
+    function toggleVizCard(headerEl) {
+      headerEl.parentElement.classList.toggle('open');
+    }
+
+    /* ── Main: generate and render the practice output ── */
+    async function createPractice() {
+      const raw = document.getElementById('manifInput').value.trim();
+      const errEl = document.getElementById('manifError');
+
+      if (!raw) {
+        errEl.classList.add('visible');
+        document.getElementById('manifInput').focus();
+        return;
+      }
+      errEl.classList.remove('visible');
+
+      // Persist goal locally and in Neon database
+      saveGoalLocally(raw);
+      document.getElementById('welcomeBack').style.display = 'block';
+
+      const saveStatus = document.getElementById('saveStatus');
+      const createBtn = document.getElementById('createPracticeBtn');
+      saveStatus.textContent = 'Saving your goal...';
+      createBtn.disabled = true;
+
+      try {
+        await saveGoalToDatabase(raw);
+        saveStatus.textContent = 'Saved to your MTGames profile.';
+      } catch (error) {
+        saveStatus.textContent = error.message || 'Could not save to database, but your goal is saved on this browser.';
+      } finally {
+        createBtn.disabled = false;
+      }
+
+      const goal     = raw.charAt(0).toUpperCase() + raw.slice(1).replace(/\.+$/, '');
+      const short    = goal.length > 90 ? goal.slice(0, 87) + '…' : goal;
+      const category = detectCategory(raw);
+      const subject  = extractSubject(raw.toLowerCase());
+
+      // Pick 4 random exercises and 5 random affirmations from category pool
+      const exercises    = pickRandom(EXERCISE_POOLS[category], 4);
+      let   affirmations = pickRandom(AFFIRMATION_POOLS[category], 5);
+
+      // For general goals, personalize the first affirmation with the extracted subject
+      if (category === 'general') {
+        affirmations[0] = `I am making consistent, meaningful progress toward ${subject} every single day, even when it is hard to see.`;
+      }
+
+      const html = `
+        <div class="output-goal-banner">
+          Your intention: <span>"${short}"</span>
+        </div>
+
+        <div class="output-section">
+          <div class="output-section-title">Visualization Exercises</div>
+          <div class="viz-cards">
+            ${exercises.map(ex => `
+              <div class="viz-card">
+                <div class="viz-card-header" onclick="toggleVizCard(this)">
+                  <div class="viz-card-header-text">${ex.header}</div>
+                  <div class="viz-card-arrow">▾</div>
+                </div>
+                <div class="viz-card-body">
+                  <div class="viz-card-subtitle">${ex.title}</div>
+                  <div class="viz-card-desc">${ex.desc}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="output-section">
+          <div class="output-section-title">Daily Affirmations</div>
+          ${affirmations.map((a, i) => `
+            <div class="output-item">
+              <div class="output-bullet">${i + 1}</div>
+              <div class="output-item-text">${a}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="output-section">
+          <div class="output-section-title">Your 7-Day Practice Plan</div>
+          <div class="day-grid">
+            ${WEEK_PLAN.map((d, i) => `
+              <div class="day-card">
+                <div class="day-label">Day ${i + 1}</div>
+                <div class="day-emoji">${d.emoji}</div>
+                <div class="day-focus-text">${d.focus}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      const out = document.getElementById('manifOutput');
+      out.innerHTML = html;
+      out.classList.add('visible');
+      out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    /* ── Clear goal/output but keep the username account ── */
+    function clearManif() {
+      localStorage.removeItem(STORAGE_KEY);
+      document.getElementById('manifInput').value = '';
+      document.getElementById('manifError').classList.remove('visible');
+      document.getElementById('welcomeBack').style.display = 'none';
+      document.getElementById('saveStatus').textContent = '';
+      const out = document.getElementById('manifOutput');
+      out.classList.remove('visible');
+      out.innerHTML = '';
+      document.getElementById('manifInput').focus();
+    }
+
+    document.getElementById('usernameInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') createUserAccount();
+    });
+
+
+    /* ════════════════════════════════════════
+       IPL PREDICTION ARENA
+    ════════════════════════════════════════ */
+    const IPL_PICKS_KEY = 'mtgames_ipl_prediction_picks';
+
+    let IPL_MATCHES = [];
+    let selectedIPLMatchId = null;
+    let selectedIPLQuestions = [];
+
+    function scrollToGames() {
+      document.getElementById('gamesArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function getTeamShortName(teamName) {
+      const clean = String(teamName || '').trim();
+      const known = {
+        'hyderabad': 'SRH',
+        'sunrisers hyderabad': 'SRH',
+        'kolkata': 'KKR',
+        'kolkata knight riders': 'KKR',
+        'chennai': 'CSK',
+        'chennai super kings': 'CSK',
+        'mumbai': 'MI',
+        'mumbai indians': 'MI',
+        'bangalore': 'RCB',
+        'royal challengers bengaluru': 'RCB',
+        'delhi': 'DC',
+        'delhi capitals': 'DC',
+        'rajasthan': 'RR',
+        'rajasthan royals': 'RR',
+        'punjab': 'PBKS',
+        'punjab kings': 'PBKS',
+        'gujarat': 'GT',
+        'gujarat titans': 'GT',
+        'lucknow': 'LSG',
+        'lucknow super giants': 'LSG'
+      };
+
+      const key = clean.toLowerCase();
+      if (known[key]) return known[key];
+
+      return clean
+        .split(/\s+/)
+        .map(word => word[0])
+        .join('')
+        .slice(0, 4)
+        .toUpperCase();
+    }
+
+    function formatMatchDate(value) {
+      if (!value) return 'Date TBA';
+
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+
+      return date.toLocaleString([], {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+    }
+
+    function normalizeMatchStatus(status) {
+      return String(status || 'open').trim().toLowerCase();
+    }
+
+    function canSubmitPredictions(match) {
+      return normalizeMatchStatus(match && match.status) === 'open';
+    }
+
+    function getStatusMessage(status) {
+      const normalized = normalizeMatchStatus(status);
+      if (normalized === 'open') return 'Open for predictions';
+      if (normalized === 'locked') return 'Predictions locked';
+      if (normalized === 'closed') return 'Contest closed';
+      return normalized;
+    }
+
+    async function loadIPLMatches() {
+      const list = document.getElementById('matchList');
+      if (!list) return;
+
+      list.innerHTML = `<div class="match-meta">Loading match games...</div>`;
+
+      try {
+        const response = await fetch('/api/get-ipl-matches');
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Could not load IPL matches.');
+        }
+
+        IPL_MATCHES = data.matches || [];
+        renderIPLMatches();
+      } catch (error) {
+        list.innerHTML = `
+          <div class="match-card">
+            <div class="match-meta">Could not load matches from the database. Please check /api/get-ipl-matches after Vercel deploys.</div>
+          </div>
+        `;
+        console.error(error);
+      }
+    }
+
+    function renderIPLMatches() {
+      const list = document.getElementById('matchList');
+      if (!list) return;
+
+      if (!IPL_MATCHES.length) {
+        list.innerHTML = `
+          <div class="match-card">
+            <div class="match-meta">No open match games found yet. Add a match in Neon to show it here.</div>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = IPL_MATCHES.map(match => {
+        const team1Short = getTeamShortName(match.team_1);
+        const team2Short = getTeamShortName(match.team_2);
+        const status = normalizeMatchStatus(match.status);
+        const statusMessage = getStatusMessage(status);
+        const isOpen = status === 'open';
+        const matchCardClass = isOpen ? 'match-card' : 'match-card match-disabled';
+        const actionText = isOpen ? 'Click to enter or edit predictions' : 'You can view this contest, but predictions cannot be changed';
+
+        return `
+          <div class="${matchCardClass}" onclick="openPredictionModal(${match.id})">
+            <div class="match-top">
+              <div class="match-date">${escapeHTML(formatMatchDate(match.match_date))}</div>
+              <div class="status-badge status-${escapeHTML(status)}">${escapeHTML(statusMessage)}</div>
+            </div>
+            <div class="teams">
+              <div class="team">
+                <div class="team-logo">${escapeHTML(team1Short)}</div>
+                <div class="team-name">${escapeHTML(match.team_1)}</div>
+              </div>
+              <div class="versus">VS</div>
+              <div class="team">
+                <div class="team-logo">${escapeHTML(team2Short)}</div>
+                <div class="team-name">${escapeHTML(match.team_2)}</div>
+              </div>
+            </div>
+            <div class="match-meta">${escapeHTML(match.match_title || 'IPL Match Day')} • 5 prediction questions • 25 point total entry</div>
+            <div class="match-meta">${escapeHTML(actionText)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadIPLLeaderboard() {
+      const board = document.getElementById('leaderboard');
+      if (!board) return;
+
+      board.innerHTML = `<div class="match-meta">Loading leaderboard...</div>`;
+
+      try {
+        const response = await fetch('/api/get-ipl-leaderboard');
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Could not load leaderboard.');
+        }
+
+        renderIPLLeaderboard(data.leaderboard || []);
+      } catch (error) {
+        board.innerHTML = `
+          <div class="leaderboard-row">
+            <div class="rank">!</div>
+            <div>
+              <div class="player-name">Leaderboard unavailable</div>
+              <div class="player-meta">Check /api/get-ipl-leaderboard after Vercel deploys.</div>
+            </div>
+            <div class="score">0 pts</div>
+          </div>
+        `;
+        console.error(error);
+      }
+    }
+
+    function renderIPLLeaderboard(players) {
+      const board = document.getElementById('leaderboard');
+      if (!board) return;
+
+      if (!players.length) {
+        board.innerHTML = `
+          <div class="leaderboard-row">
+            <div class="rank">1</div>
+            <div>
+              <div class="player-name">No scores yet</div>
+              <div class="player-meta">Leaderboard will update after predictions are scored.</div>
+            </div>
+            <div class="score">0 pts</div>
+          </div>
+        `;
+        return;
+      }
+
+      board.innerHTML = players.slice(0, 10).map((player, index) => {
+        const netPoints = Number(player.total_net_points || 0);
+        const correctAnswers = Number(player.total_correct_answers || 0);
+        const pointsLabel = `${netPoints > 0 ? '+' : ''}${netPoints.toFixed(1).replace(/\.0$/, '')} pts`;
+
+        return `
+          <div class="leaderboard-row">
+            <div class="rank">${index + 1}</div>
+            <div>
+              <div class="player-name">${escapeHTML(player.user_name)}</div>
+              <div class="player-meta">${correctAnswers} correct picks</div>
+            </div>
+            <div class="score">${escapeHTML(pointsLabel)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function groupQuestions(rows) {
+      const grouped = {};
+
+      rows.forEach(row => {
+        if (!grouped[row.question_id]) {
+          grouped[row.question_id] = {
+            id: row.question_id,
+            text: row.question_text,
+            entry_fee: row.entry_fee,
+            reward_pool: row.reward_pool,
+            options: []
+          };
+        }
+
+        grouped[row.question_id].options.push({
+          id: row.option_id,
+          text: row.option_text,
+          order: row.option_order
+        });
+      });
+
+      return Object.values(grouped);
+    }
+
+    async function openPredictionModal(matchId) {
+      const user = getCurrentUser();
+      if (!user.id) {
+        showUsernameModal();
+        return;
+      }
+
+      selectedIPLMatchId = matchId;
+      selectedIPLQuestions = [];
+
+      const match = IPL_MATCHES.find(m => Number(m.id) === Number(matchId));
+      if (!match) return;
+
+      document.getElementById('predictionTitle').textContent = `${match.team_1} vs ${match.team_2}`;
+      document.getElementById('predictionSubtitle').textContent = `${formatMatchDate(match.match_date)} • Loading questions...`;
+      document.getElementById('predictionError').textContent = '';
+      document.getElementById('predictionSuccess').textContent = '';
+      document.getElementById('questionsContainer').innerHTML = `<div class="match-meta">Loading questions from database...</div>`;
+      document.getElementById('predictionModal').classList.add('show');
+
+      try {
+        const response = await fetch(`/api/get-ipl-questions?match_id=${encodeURIComponent(matchId)}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Could not load questions.');
+        }
+
+        selectedIPLQuestions = groupQuestions(data.questions || []);
+        renderPredictionQuestions(match);
+      } catch (error) {
+        document.getElementById('questionsContainer').innerHTML = '';
+        document.getElementById('predictionError').textContent = error.message || 'Could not load questions.';
+        console.error(error);
+      }
+    }
+
+    function renderPredictionQuestions(match) {
+      const status = normalizeMatchStatus(match.status);
+      const isOpen = canSubmitPredictions(match);
+      const statusMessage = getStatusMessage(status);
+      const submitButton = document.getElementById('submitPredictionBtn');
+      const helperText = document.getElementById('predictionHelperText');
+
+      document.getElementById('predictionSubtitle').textContent = `${formatMatchDate(match.match_date)} • ${selectedIPLQuestions.length} questions • ${selectedIPLQuestions.length * 5} points total entry • ${statusMessage}`;
+
+      if (submitButton) {
+        submitButton.disabled = !isOpen;
+        submitButton.textContent = isOpen ? 'Lock My Predictions' : status === 'locked' ? 'Predictions Locked' : 'Contest Closed';
+      }
+
+      if (helperText) {
+        helperText.textContent = isOpen
+          ? 'Your picks will be saved to the database. You can edit them while the contest is open.'
+          : status === 'locked'
+            ? 'This contest is locked. You can view questions, but you can no longer submit or edit predictions.'
+            : 'This contest is closed. Results and scoring are controlled by the final answers.';
+      }
+
+      if (!selectedIPLQuestions.length) {
+        document.getElementById('questionsContainer').innerHTML = `<div class="match-meta">No questions found for this match yet.</div>`;
+        return;
+      }
+
+      document.getElementById('questionsContainer').innerHTML = selectedIPLQuestions.map((q, qIndex) => `
+        <div class="question-card">
+          <div class="question-top">
+            <div class="question-text">${qIndex + 1}. ${escapeHTML(q.text)}</div>
+            <div class="entry-fee">${escapeHTML(q.entry_fee || 5)} pts</div>
+          </div>
+          <div class="options">
+            ${q.options.map(option => `
+              <label class="option ${isOpen ? '' : 'option-disabled'}">
+                <input type="radio" name="question_${q.id}" value="${option.id}" ${isOpen ? '' : 'disabled'} />
+                <span>${escapeHTML(option.text)}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function closePredictionModal() {
+      document.getElementById('predictionModal').classList.remove('show');
+    }
+
+    async function submitPredictions() {
+      const match = IPL_MATCHES.find(m => Number(m.id) === Number(selectedIPLMatchId));
+      if (!match) return;
+
+      if (!canSubmitPredictions(match)) {
+        document.getElementById('predictionError').textContent = 'Predictions are locked for this match. You can no longer submit or edit picks.';
+        document.getElementById('predictionSuccess').textContent = '';
+        return;
+      }
+
+      const user = getCurrentUser();
+      if (!user.id) {
+        showUsernameModal();
+        return;
+      }
+
+      const picks = [];
+      for (const q of selectedIPLQuestions) {
+        const selected = document.querySelector(`input[name="question_${q.id}"]:checked`);
+        if (!selected) {
+          document.getElementById('predictionError').textContent = 'Please answer all questions before locking your predictions.';
+          document.getElementById('predictionSuccess').textContent = '';
+          return;
+        }
+        picks.push({
+          question_id: Number(q.id),
+          selected_option_id: Number(selected.value)
+        });
+      }
+
+      const submitButton = document.getElementById('submitPredictionBtn');
+      document.getElementById('predictionError').textContent = '';
+      document.getElementById('predictionSuccess').textContent = 'Saving your predictions...';
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Saving...';
+      }
+
+      try {
+        const response = await fetch('/api/submit-ipl-predictions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: Number(user.id),
+            match_id: Number(selectedIPLMatchId),
+            picks
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Could not save predictions.');
+        }
+
+        const existing = JSON.parse(localStorage.getItem(IPL_PICKS_KEY) || '{}');
+        existing[selectedIPLMatchId] = {
+          match_id: selectedIPLMatchId,
+          user_id: user.id,
+          picks,
+          submitted_at: new Date().toISOString()
+        };
+        localStorage.setItem(IPL_PICKS_KEY, JSON.stringify(existing));
+
+        document.getElementById('predictionError').textContent = '';
+        document.getElementById('predictionSuccess').textContent = `Predictions saved to database. ${data.saved_count || picks.length} picks saved. You can edit them while the contest remains open.`;
+        loadIPLLeaderboard();
+      } catch (error) {
+        document.getElementById('predictionError').textContent = error.message || 'Could not save predictions.';
+        document.getElementById('predictionSuccess').textContent = '';
+        console.error(error);
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Lock My Predictions';
+        }
+      }
+    }
+
+    /* ════════════════════════════════════════
+       INIT
+    ════════════════════════════════════════ */
+    renderDailyFocus();
+    loadSavedGoal();
+    showUserStatus();
+    loadIPLMatches();
+    loadIPLLeaderboard();
+    if (!localStorage.getItem(USER_ID_KEY)) showUsernameModal();
+  </script>
+</body>
+</html>
