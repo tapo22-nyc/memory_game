@@ -9,8 +9,6 @@ module.exports = async function handler(req, res) {
 
   try {
     const { user_id, match_id } = req.body;
-
-    // Accept both 'predictions' and 'picks' from frontend
     const predictions = req.body.predictions || req.body.picks;
 
     if (!user_id || !match_id || !Array.isArray(predictions) || predictions.length === 0) {
@@ -19,6 +17,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
+    // 1. Save or update predictions
     for (const pick of predictions) {
       if (!pick.question_id || !pick.selected_option_id) {
         return res.status(400).json({
@@ -47,9 +46,88 @@ module.exports = async function handler(req, res) {
       `;
     }
 
+    // 2. Check if this match has correct answers entered
+    const answerCheck = await sql`
+      SELECT 
+        COUNT(*) AS total_questions,
+        COUNT(correct_option_id) AS answered_questions
+      FROM ipl_questions
+      WHERE match_id = ${Number(match_id)}
+    `;
+
+    const totalQuestions = Number(answerCheck[0].total_questions);
+    const answeredQuestions = Number(answerCheck[0].answered_questions);
+
+    if (totalQuestions > 0 && totalQuestions === answeredQuestions) {
+      // 3. Mark predictions correct/wrong
+      await sql`
+        UPDATE ipl_predictions p
+        SET is_correct = CASE 
+          WHEN p.selected_option_id = q.correct_option_id THEN TRUE
+          ELSE FALSE
+        END
+        FROM ipl_questions q
+        WHERE p.question_id = q.id
+          AND p.match_id = ${Number(match_id)}
+      `;
+
+      // 4. Award shared points among correct users
+      await sql`
+        WITH correct_counts AS (
+          SELECT 
+            question_id,
+            COUNT(*) AS winners_count
+          FROM ipl_predictions
+          WHERE match_id = ${Number(match_id)}
+            AND is_correct = TRUE
+          GROUP BY question_id
+        )
+        UPDATE ipl_predictions p
+        SET points_won = 20.0 / c.winners_count
+        FROM correct_counts c
+        WHERE p.question_id = c.question_id
+          AND p.match_id = ${Number(match_id)}
+          AND p.is_correct = TRUE
+      `;
+
+      // 5. Wrong answers get 0
+      await sql`
+        UPDATE ipl_predictions
+        SET points_won = 0
+        WHERE match_id = ${Number(match_id)}
+          AND is_correct = FALSE
+      `;
+
+      // 6. Recalculate final user scores for this match
+      await sql`
+        INSERT INTO ipl_user_match_scores
+          (user_id, match_id, total_entry_points, total_points_won, net_points, correct_answers)
+        SELECT
+          user_id,
+          match_id,
+          SUM(points_spent) AS total_entry_points,
+          SUM(points_won) AS total_points_won,
+          SUM(points_won) - SUM(points_spent) AS net_points,
+          COUNT(*) FILTER (WHERE is_correct = TRUE) AS correct_answers
+        FROM ipl_predictions
+        WHERE match_id = ${Number(match_id)}
+        GROUP BY user_id, match_id
+        ON CONFLICT (user_id, match_id)
+        DO UPDATE SET
+          total_entry_points = EXCLUDED.total_entry_points,
+          total_points_won = EXCLUDED.total_points_won,
+          net_points = EXCLUDED.net_points,
+          correct_answers = EXCLUDED.correct_answers,
+          calculated_at = CURRENT_TIMESTAMP
+      `;
+    }
+
     res.status(200).json({
       success: true,
-      message: 'Predictions saved successfully.',
+      message: totalQuestions === answeredQuestions
+        ? 'Predictions saved and scores recalculated.'
+        : 'Predictions saved. Scores will calculate after correct answers are entered.',
+      scores_calculated: totalQuestions === answeredQuestions,
       saved_count: predictions.length
     });
 
