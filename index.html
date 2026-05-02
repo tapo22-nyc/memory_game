@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MTGames</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #fff;
+      padding: 20px;
+    }
+
+    /* ── Navigation ── */
+    nav {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50px;
+      padding: 6px;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-btn {
+      padding: 8px 24px;
+      border: none;
+      border-radius: 50px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      background: transparent;
+      color: #a0aec0;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(90deg, #f72585, #7209b7);
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(247,37,133,0.4);
+    }
+
+    .nav-btn:not(.active):hover {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* ── Page sections ── */
+    .page { display: none; width: 100%; max-width: 600px; align-items: center; flex-direction: column; }
+    .page.active { display: flex; }
+
+    /* ── Shared headings ── */
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+      background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #a0aec0;
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    /* ── Memory game ── */
+    .stats {
+      display: flex;
+      gap: 32px;
+      margin-bottom: 28px;
+    }
+
+    .stat-box {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 10px 28px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #a0aec0;
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #4cc9f0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      width: 110px;
+      height: 110px;
+      cursor: pointer;
+      perspective: 600px;
+      user-select: none;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 16px;
+    }
+
+    .card.flipped .card-inner,
+    .card.matched .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.8rem;
+    }
+
+    .card-back {
+      background: linear-gradient(135deg, #7209b7, #3a0ca3);
+      border: 2px solid rgba(255,255,255,0.15);
+      box-shadow: 0 4px 20px rgba(114,9,183,0.4);
+    }
+
+    .card-back::after {
+      content: '✦';
+      font-size: 1.8rem;
+      color: rgba(255,255,255,0.25);
+    }
+
+    .card-front {
+      background: linear-gradient(135deg, #0f3460, #16213e);
+      border: 2px solid rgba(76,201,240,0.3);
+      box-shadow: 0 4px 20px rgba(76,201,240,0.2);
+      transform: rotateY(180deg);
+    }
+
+    .card.matched .card-front {
+      background: linear-gradient(135deg, #06d6a0, #1b9aaa);
+      border-color: rgba(6,214,160,0.6);
+      box-shadow: 0 4px 24px rgba(6,214,160,0.45);
+      animation: matchPulse 0.5s ease;
+    }
+
+    @keyframes matchPulse {
+      0%   { transform: rotateY(180deg) scale(1); }
+      50%  { transform: rotateY(180deg) scale(1.12); }
+      100% { transform: rotateY(180deg) scale(1); }
+    }
+
+    .card:not(.flipped):not(.matched):hover .card-inner {
+      transform: rotateY(15deg);
+      box-shadow: 0 8px 30px rgba(247,37,133,0.3);
+    }
+
+    /* ── Shared button ── */
+    .btn {
+      padding: 12px 36px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      background: linear-gradient(90deg, #f72585, #7209b7);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(247,37,133,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(247,37,133,0.55);
+    }
+
+    .btn:active { transform: translateY(0); }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid rgba(247,37,133,0.6);
+      color: #f72585;
+      box-shadow: none;
+    }
+
+    .btn-outline:hover {
+      background: rgba(247,37,133,0.1);
+      box-shadow: 0 4px 16px rgba(247,37,133,0.2);
+    }
+
+    /* ── Win overlay ── */
+    .win-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,10,30,0.82);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      flex-direction: column;
+      gap: 16px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .win-overlay.show { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .win-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 24px;
+      padding: 44px 56px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      animation: popIn 0.45s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .win-emoji { font-size: 4rem; margin-bottom: 12px; }
+
+    .win-title {
+      font-size: 2.6rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #f72585, #4cc9f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .win-stats {
+      color: #a0aec0;
+      font-size: 1rem;
+      margin-bottom: 28px;
+      line-height: 1.7;
+    }
+
+    .win-stats span { color: #4cc9f0; font-weight: 700; }
+
+    /* ── Manifestation Room ── */
+    .manif-intro {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 20px 28px;
+      margin-bottom: 24px;
+      color: #cbd5e0;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      text-align: center;
+      backdrop-filter: blur(6px);
+    }
+
+    .manif-input-wrap {
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .manif-input-wrap label {
+      display: block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #a0aec0;
+      margin-bottom: 8px;
+    }
+
+    .manif-textarea {
+      width: 100%;
+      min-height: 110px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(76,201,240,0.25);
+      border-radius: 16px;
+      padding: 16px;
+      color: #fff;
+      font-size: 1rem;
+      font-family: inherit;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .manif-textarea::placeholder { color: rgba(255,255,255,0.3); }
+
+    .manif-textarea:focus {
+      border-color: rgba(76,201,240,0.6);
+      box-shadow: 0 0 0 3px rgba(76,201,240,0.1);
+    }
+
+    .manif-error {
+      display: none;
+      color: #f72585;
+      font-size: 0.88rem;
+      margin-top: 6px;
+      padding-left: 4px;
+    }
+
+    .manif-error.visible { display: block; }
+
+    .manif-btn-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .manif-btn-row .btn { flex: 1; min-width: 140px; }
+
+    /* Output card */
+    .manif-output {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      gap: 20px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .manif-output.visible { display: flex; }
+
+    .output-section {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 24px 28px;
+      backdrop-filter: blur(6px);
+    }
+
+    .output-section-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #4cc9f0;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .output-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(76,201,240,0.2);
+    }
+
+    .output-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+      align-items: flex-start;
+    }
+
+    .output-item:last-child { margin-bottom: 0; }
+
+    .output-bullet {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7209b7, #3a0ca3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 1px;
+    }
+
+    .output-item-text {
+      color: #e2e8f0;
+      font-size: 0.95rem;
+      line-height: 1.65;
+    }
+
+    .output-item-text strong {
+      color: #fff;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    /* 7-day plan grid */
+    .day-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .day-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 10px 6px;
+      text-align: center;
+    }
+
+    .day-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #4cc9f0;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .day-focus {
+      font-size: 0.75rem;
+      color: #cbd5e0;
+      line-height: 1.4;
+    }
+
+    .day-emoji {
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    .output-goal-banner {
+      background: linear-gradient(135deg, rgba(247,37,133,0.15), rgba(114,9,183,0.15));
+      border: 1px solid rgba(247,37,133,0.25);
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-size: 0.95rem;
+      color: #e2e8f0;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .output-goal-banner span {
+      color: #f72585;
+      font-weight: 700;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 500px) {
+      .card { width: 72px; height: 72px; }
+      .card-face { font-size: 1.8rem; }
+      .grid { gap: 10px; }
+      h1 { font-size: 1.8rem; }
+      .stats { gap: 16px; }
+      .stat-box { padding: 8px 18px; }
+      .win-card { padding: 32px 24px; }
+      .day-grid { grid-template-columns: repeat(4, 1fr); }
+      .output-section { padding: 18px 16px; }
+      nav { gap: 4px; }
+      .nav-btn { padding: 8px 14px; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <button class="nav-btn active" onclick="showPage('home')">Home</button>
+    <button class="nav-btn" onclick="showPage('manif')">Manifestation Room</button>
+  </nav>
+
+  <!-- ── PAGE: Home (Memory Game) ── -->
+  <div class="page active" id="page-home">
+    <h1>Welcome to MTGames</h1>
+    <p class="subtitle">Memory Game — Match all 4 pairs to win!</p>
+
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-label">Moves</div>
+        <div class="stat-value" id="moves">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Time</div>
+        <div class="stat-value" id="timer">0:00</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Pairs</div>
+        <div class="stat-value" id="pairs">0/4</div>
+      </div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <button class="btn" onclick="initGame()">Restart</button>
+  </div>
+
+  <!-- Win overlay (outside page sections so it overlays everything) -->
+  <div class="win-overlay" id="winOverlay">
+    <div class="win-card">
+      <div class="win-emoji">🎉</div>
+      <div class="win-title">You Win!</div>
+      <div class="win-stats" id="winStats"></div>
+      <button class="btn" onclick="initGame()">Play Again</button>
+    </div>
+  </div>
+
+  <!-- ── PAGE: Manifestation Room ── -->
+  <div class="page" id="page-manif">
+    <h1>Manifestation Room</h1>
+    <p class="subtitle">Turn your goals into a daily practice</p>
+
+    <div class="manif-intro">
+      Write down one thing you want to bring into your life over the next 6 months.
+      Be honest and specific — the clearer your intention, the more focused your practice will be.
+    </div>
+
+    <div class="manif-input-wrap">
+      <label for="manifInput">My goal for the next 6 months</label>
+      <textarea
+        id="manifInput"
+        class="manif-textarea"
+        placeholder="e.g. I want to land a new job in UX design that feels meaningful and pays me well."
+      ></textarea>
+      <div class="manif-error" id="manifError">
+        Please write your goal above before creating your practice. ✏️
+      </div>
+    </div>
+
+    <div class="manif-btn-row">
+      <button class="btn" onclick="createPractice()">Create My Daily Practice</button>
+      <button class="btn btn-outline" onclick="clearManif()">Start Over</button>
+    </div>
+
+    <div class="manif-output" id="manifOutput"></div>
+  </div>
+
+  <script>
+    /* ════════════════════════════════════════
+       NAVIGATION
+    ════════════════════════════════════════ */
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('page-' + id).classList.add('active');
+      const btns = document.querySelectorAll('.nav-btn');
+      btns[id === 'home' ? 0 : 1].classList.add('active');
+    }
+
+    /* ════════════════════════════════════════
+       MEMORY GAME
+    ════════════════════════════════════════ */
+    const EMOJIS = ['🐶','🐱','🦊','🐸','🦋','🌸','🍕','🍦'];
+    const TOTAL_PAIRS = 4;
+
+    let flipped = [], matched = 0, moves = 0, seconds = 0, timerID = null, locked = false;
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function fmt(s) {
+      return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+      stopTimer();
+      seconds = 0;
+      document.getElementById('timer').textContent = fmt(0);
+      timerID = setInterval(() => {
+        seconds++;
+        document.getElementById('timer').textContent = fmt(seconds);
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(timerID);
+      timerID = null;
+    }
+
+    function initGame() {
+      document.getElementById('winOverlay').classList.remove('show');
+      stopTimer();
+      flipped = []; matched = 0; moves = 0; locked = false;
+      document.getElementById('moves').textContent = '0';
+      document.getElementById('timer').textContent = '0:00';
+      document.getElementById('pairs').textContent = `0/${TOTAL_PAIRS}`;
+
+      const pool = shuffle([...EMOJIS]).slice(0, TOTAL_PAIRS);
+      const cards = shuffle([...pool, ...pool]);
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+
+      cards.forEach((emoji, i) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.emoji = emoji;
+        card.dataset.index = i;
+        card.innerHTML = `
+          <div class="card-inner">
+            <div class="card-face card-back"></div>
+            <div class="card-face card-front">${emoji}</div>
+          </div>`;
+        card.addEventListener('click', onCardClick);
+        grid.appendChild(card);
+      });
+    }
+
+    function onCardClick(e) {
+      const card = e.currentTarget;
+      if (locked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+
+      if (!timerID && moves === 0 && flipped.length === 0) startTimer();
+
+      card.classList.add('flipped');
+      flipped.push(card);
+
+      if (flipped.length === 2) {
+        locked = true;
+        moves++;
+        document.getElementById('moves').textContent = moves;
+        checkMatch();
+      }
+    }
+
+    function checkMatch() {
+      const [a, b] = flipped;
+      if (a.dataset.emoji === b.dataset.emoji) {
+        setTimeout(() => {
+          a.classList.add('matched');
+          b.classList.add('matched');
+          a.classList.remove('flipped');
+          b.classList.remove('flipped');
+          flipped = [];
+          locked = false;
+          matched++;
+          document.getElementById('pairs').textContent = `${matched}/${TOTAL_PAIRS}`;
+          if (matched === TOTAL_PAIRS) showWin();
+        }, 300);
+      } else {
+        setTimeout(() => {
+          a.classList.remove('flipped');
+          b.classList.remove('flipped');
+          flipped = [];
+          locked = false;
+        }, 900);
+      }
+    }
+
+    function showWin() {
+      stopTimer();
+      document.getElementById('winStats').innerHTML =
+        `Completed in <span>${fmt(seconds)}</span> with <span>${moves}</span> moves.`;
+      document.getElementById('winOverlay').classList.add('show');
+    }
+
+    initGame();
+
+    /* ════════════════════════════════════════
+       MANIFESTATION ROOM
+    ════════════════════════════════════════ */
+
+    function createPractice() {
+      const raw = document.getElementById('manifInput').value.trim();
+      const errEl = document.getElementById('manifError');
+
+      if (!raw) {
+        errEl.classList.add('visible');
+        document.getElementById('manifInput').focus();
+        return;
+      }
+      errEl.classList.remove('visible');
+
+      const goal = raw.charAt(0).toUpperCase() + raw.slice(1).replace(/\.+$/, '');
+      const shortGoal = goal.length > 80 ? goal.slice(0, 77) + '…' : goal;
+
+      const visualizations = buildVisualizations(goal);
+      const affirmations   = buildAffirmations(goal);
+      const weekPlan       = buildWeekPlan();
+
+      const html = `
+        <div class="output-goal-banner">
+          Your intention: <span>"${shortGoal}"</span>
+        </div>
+
+        <div class="output-section">
+          <div class="output-section-title">Visualization Exercises</div>
+          ${visualizations.map((v, i) => `
+            <div class="output-item">
+              <div class="output-bullet">${i + 1}</div>
+              <div class="output-item-text">
+                <strong>${v.title}</strong>
+                ${v.desc}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="output-section">
+          <div class="output-section-title">Daily Affirmations</div>
+          ${affirmations.map((a, i) => `
+            <div class="output-item">
+              <div class="output-bullet">${i + 1}</div>
+              <div class="output-item-text">${a}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="output-section">
+          <div class="output-section-title">Your 7-Day Practice Plan</div>
+          <div class="day-grid">
+            ${weekPlan.map((d, i) => `
+              <div class="day-card">
+                <div class="day-label">Day ${i + 1}</div>
+                <div class="day-emoji">${d.emoji}</div>
+                <div class="day-focus">${d.focus}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      const out = document.getElementById('manifOutput');
+      out.innerHTML = html;
+      out.classList.add('visible');
+      out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function clearManif() {
+      document.getElementById('manifInput').value = '';
+      document.getElementById('manifError').classList.remove('visible');
+      const out = document.getElementById('manifOutput');
+      out.classList.remove('visible');
+      out.innerHTML = '';
+      document.getElementById('manifInput').focus();
+    }
+
+    /* ── Content generators ── */
+
+    function buildVisualizations(goal) {
+      return [
+        {
+          title: 'Morning Success Scene (5 minutes)',
+          desc: `Right after waking up, close your eyes and picture yourself having already achieved your goal. Notice the details: where you are, how you feel, who is around you. Let yourself sit in that feeling for a full 5 minutes before reaching for your phone.`
+        },
+        {
+          title: 'The Emotional Check-In',
+          desc: `Once a day — ideally midday — pause and ask: "What would I feel if this were already real?" Reconnect with that feeling for 60 seconds. This keeps your goal emotionally alive and not just an item on a to-do list.`
+        },
+        {
+          title: 'The Obstacle Walkthrough',
+          desc: `Three times this week, visualize a realistic challenge on the path to your goal. Then picture yourself handling it calmly and finding a way through. This builds genuine confidence rather than wishful thinking.`
+        },
+        {
+          title: 'The End-of-Day Replay',
+          desc: `Before sleep, mentally replay one small action you took today that moved you closer to your goal — even a tiny one. If you had a hard day, identify what you learned. Close with a single sentence of gratitude for where you are now.`
+        }
+      ];
+    }
+
+    function buildAffirmations(goal) {
+      const lower = goal.toLowerCase();
+
+      // Pick a subject phrase from the goal for personalization
+      const subject = extractSubject(lower);
+
+      return [
+        `I am making consistent, meaningful progress toward ${subject} every single day.`,
+        `I trust my ability to figure out what I need to learn and adjust as I go.`,
+        `I deserve the kind of life I am working toward, and I am ready to receive it.`,
+        `Every step I take — no matter how small — is moving me in the right direction.`,
+        `I stay focused on what I can control today, and I let go of what I cannot.`
+      ];
+    }
+
+    function extractSubject(goalText) {
+      // Strip common filler phrases to get a concise subject
+      const cleaned = goalText
+        .replace(/^(i want to|i would like to|i hope to|my goal is to|i am working toward|i need to)\s*/i, '')
+        .replace(/in the next (6|six) months\.?/i, '')
+        .trim();
+      return cleaned.length > 0 && cleaned.length < 70 ? cleaned : 'my goal';
+    }
+
+    function buildWeekPlan() {
+      return [
+        { emoji: '🎯', focus: 'Write your goal by hand. Read it out loud.' },
+        { emoji: '🌅', focus: 'Morning visualization. 5 minutes.' },
+        { emoji: '📋', focus: 'List one real action you can take this week.' },
+        { emoji: '🙏', focus: 'Gratitude focus. Name 3 things going right.' },
+        { emoji: '💬', focus: 'Say your affirmations aloud, not just in your head.' },
+        { emoji: '🔍', focus: 'Honest check-in: what is working? what needs to shift?' },
+        { emoji: '🎉', focus: 'Celebrate small wins. Rest. You showed up all week.' }
+      ];
+    }
+  </script>
+</body>
+</html>
