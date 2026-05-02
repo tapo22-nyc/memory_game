@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MTGames</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #fff;
+      padding: 20px;
+    }
+
+    /* ── Navigation ── */
+    nav {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50px;
+      padding: 6px;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-btn {
+      padding: 8px 24px;
+      border: none;
+      border-radius: 50px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      background: transparent;
+      color: #a0aec0;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(90deg, #f72585, #7209b7);
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(247,37,133,0.4);
+    }
+
+    .nav-btn:not(.active):hover {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* ── Page sections ── */
+    .page { display: none; width: 100%; max-width: 720px; align-items: center; flex-direction: column; }
+    .page.active { display: flex; }
+
+    /* ── Shared headings ── */
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+      background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #a0aec0;
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    /* ── Memory game ── */
+    .stats {
+      display: flex;
+      gap: 32px;
+      margin-bottom: 28px;
+    }
+
+    .stat-box {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 10px 28px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #a0aec0;
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #4cc9f0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      width: 110px;
+      height: 110px;
+      cursor: pointer;
+      perspective: 600px;
+      user-select: none;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 16px;
+    }
+
+    .card.flipped .card-inner,
+    .card.matched .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.8rem;
+    }
+
+    .card-back {
+      background: linear-gradient(135deg, #7209b7, #3a0ca3);
+      border: 2px solid rgba(255,255,255,0.15);
+      box-shadow: 0 4px 20px rgba(114,9,183,0.4);
+    }
+
+    .card-back::after {
+      content: '✦';
+      font-size: 1.8rem;
+      color: rgba(255,255,255,0.25);
+    }
+
+    .card-front {
+      background: linear-gradient(135deg, #0f3460, #16213e);
+      border: 2px solid rgba(76,201,240,0.3);
+      box-shadow: 0 4px 20px rgba(76,201,240,0.2);
+      transform: rotateY(180deg);
+    }
+
+    .card.matched .card-front {
+      background: linear-gradient(135deg, #06d6a0, #1b9aaa);
+      border-color: rgba(6,214,160,0.6);
+      box-shadow: 0 4px 24px rgba(6,214,160,0.45);
+      animation: matchPulse 0.5s ease;
+    }
+
+    @keyframes matchPulse {
+      0%   { transform: rotateY(180deg) scale(1); }
+      50%  { transform: rotateY(180deg) scale(1.12); }
+      100% { transform: rotateY(180deg) scale(1); }
+    }
+
+    .card:not(.flipped):not(.matched):hover .card-inner {
+      transform: rotateY(15deg);
+      box-shadow: 0 8px 30px rgba(247,37,133,0.3);
+    }
+
+    /* ── Shared button ── */
+    .btn {
+      padding: 12px 36px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      background: linear-gradient(90deg, #f72585, #7209b7);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(247,37,133,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(247,37,133,0.55);
+    }
+
+    .btn:active { transform: translateY(0); }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid rgba(247,37,133,0.6);
+      color: #f72585;
+      box-shadow: none;
+    }
+
+    .btn-outline:hover {
+      background: rgba(247,37,133,0.1);
+      box-shadow: 0 4px 16px rgba(247,37,133,0.2);
+    }
+
+    /* ── Win overlay ── */
+    .win-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,10,30,0.82);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      flex-direction: column;
+      gap: 16px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .win-overlay.show { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .win-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 24px;
+      padding: 44px 56px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      animation: popIn 0.45s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .win-emoji { font-size: 4rem; margin-bottom: 12px; }
+
+    .win-title {
+      font-size: 2.6rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #f72585, #4cc9f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .win-stats {
+      color: #a0aec0;
+      font-size: 1rem;
+      margin-bottom: 28px;
+      line-height: 1.7;
+    }
+
+    .win-stats span { color: #4cc9f0; font-weight: 700; }
+
+    /* ── Manifestation Room ── */
+    .manif-intro {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 20px 28px;
+      margin-bottom: 18px;
+      color: #cbd5e0;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      text-align: center;
+      backdrop-filter: blur(6px);
+    }
+
+    .saved-note,
+    .daily-reminder {
+      width: 100%;
+      border-radius: 16px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      backdrop-filter: blur(6px);
+    }
+
+    .saved-note {
+      display: none;
+      background: rgba(6,214,160,0.09);
+      border: 1px solid rgba(6,214,160,0.22);
+      color: #d7fff4;
+    }
+
+    .saved-note.visible { display: block; }
+
+    .daily-reminder {
+      background: linear-gradient(135deg, rgba(76,201,240,0.12), rgba(114,9,183,0.12));
+      border: 1px solid rgba(76,201,240,0.22);
+      color: #e2e8f0;
+    }
+
+    .daily-reminder strong {
+      color: #4cc9f0;
+      display: block;
+      margin-bottom: 4px;
+      letter-spacing: 0.4px;
+    }
+
+    .manif-input-wrap {
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .manif-input-wrap label {
+      display: block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #a0aec0;
+      margin-bottom: 8px;
+    }
+
+    .manif-textarea {
+      width: 100%;
+      min-height: 110px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(76,201,240,0.25);
+      border-radius: 16px;
+      padding: 16px;
+      color: #fff;
+      font-size: 1rem;
+      font-family: inherit;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .manif-textarea::placeholder { color: rgba(255,255,255,0.3); }
+
+    .manif-textarea:focus {
+      border-color: rgba(76,201,240,0.6);
+      box-shadow: 0 0 0 3px rgba(76,201,240,0.1);
+    }
+
+    .manif-error {
+      display: none;
+      color: #f72585;
+      font-size: 0.88rem;
+      margin-top: 6px;
+      padding-left: 4px;
+    }
+
+    .manif-error.visible { display: block; }
+
+    .manif-btn-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .manif-btn-row .btn { flex: 1; min-width: 140px; }
+
+    .manif-output {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      gap: 20px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .manif-output.visible { display: flex; }
+
+    .output-section {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 24px 28px;
+      backdrop-filter: blur(6px);
+    }
+
+    .output-section-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #4cc9f0;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .output-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(76,201,240,0.2);
+    }
+
+    .output-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+      align-items: flex-start;
+    }
+
+    .output-item:last-child { margin-bottom: 0; }
+
+    .output-bullet {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7209b7, #3a0ca3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 1px;
+    }
+
+    .output-item-text {
+      color: #e2e8f0;
+      font-size: 0.95rem;
+      line-height: 1.65;
+    }
+
+    .output-item-text strong {
+      color: #fff;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .mystery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .mystery-card {
+      background: linear-gradient(135deg, rgba(247,37,133,0.11), rgba(76,201,240,0.08));
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      padding: 18px;
+      cursor: pointer;
+      min-height: 112px;
+      transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    }
+
+    .mystery-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(247,37,133,0.35);
+      box-shadow: 0 10px 28px rgba(247,37,133,0.16);
+      background: linear-gradient(135deg, rgba(247,37,133,0.16), rgba(76,201,240,0.11));
+    }
+
+    .mystery-card.open {
+      border-color: rgba(76,201,240,0.45);
+      box-shadow: 0 10px 30px rgba(76,201,240,0.12);
+    }
+
+    .mystery-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .mystery-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    .mystery-symbol {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      color: #4cc9f0;
+      font-weight: 800;
+    }
+
+    .mystery-hint {
+      color: #a0aec0;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .mystery-body {
+      display: none;
+      color: #e2e8f0;
+      font-size: 0.93rem;
+      line-height: 1.65;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .mystery-card.open .mystery-body { display: block; }
+
+    .day-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .day-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 10px 6px;
+      text-align: center;
+    }
+
+    .day-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #4cc9f0;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .day-focus {
+      font-size: 0.75rem;
+      color: #cbd5e0;
+      line-height: 1.4;
+    }
+
+    .day-emoji {
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    .output-goal-banner {
+      background: linear-gradient(135deg, rgba(247,37,133,0.15), rgba(114,9,183,0.15));
+      border: 1px solid rgba(247,37,133,0.25);
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-size: 0.95rem;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+
+    .output-goal-banner span {
+      color: #f72585;
+      font-weight: 700;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 500px) {
+      .page { max-width: 100%; }
+      .card { width: 72px; height: 72px; }
+      .card-face { font-size: 1.8rem; }
+      .grid { gap: 10px; }
+      h1 { font-size: 1.8rem; }
+      .stats { gap: 16px; }
+      .stat-box { padding: 8px 18px; }
+      .win-card { padding: 32px 24px; }
+      .day-grid { grid-template-columns: repeat(4, 1fr); }
+      .mystery-grid { grid-template-columns: 1fr; }
+      .output-section { padding: 18px 16px; }
+      nav { gap: 4px; }
+      .nav-btn { padding: 8px 14px; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <button class="nav-btn" onclick="showPage('home')">Home</button>
+    <button class="nav-btn active" onclick="showPage('manif')">Manifestation Room</button>
+  </nav>
+
+  <!-- ── PAGE: Home (Memory Game) ── -->
+  <div class="page" id="page-home">
+    <h1>Welcome to MTGames</h1>
+    <p class="subtitle">Memory Game — Match all 4 pairs to win!</p>
+
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-label">Moves</div>
+        <div class="stat-value" id="moves">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Time</div>
+        <div class="stat-value" id="timer">0:00</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Pairs</div>
+        <div class="stat-value" id="pairs">0/4</div>
+      </div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <button class="btn" onclick="initGame()">Restart</button>
+  </div>
+
+  <!-- Win overlay (outside page sections so it overlays everything) -->
+  <div class="win-overlay" id="winOverlay">
+    <div class="win-card">
+      <div class="win-emoji">🎉</div>
+      <div class="win-title">You Win!</div>
+      <div class="win-stats" id="winStats"></div>
+      <button class="btn" onclick="initGame()">Play Again</button>
+    </div>
+  </div>
+
+  <!-- ── PAGE: Manifestation Room ── -->
+  <div class="page active" id="page-manif">
+    <h1>Manifestation Room</h1>
+    <p class="subtitle">Turn your goals into a daily practice</p>
+
+    <div class="manif-intro">
+      Write down one thing you want to bring into your life over the next 6 months.
+      Be honest and specific. The clearer your intention, the more focused your practice will be.
+    </div>
+
+    <div class="saved-note" id="savedNote">Welcome back. Your saved intention is ready.</div>
+
+    <div class="daily-reminder" id="dailyReminder">
+      <strong>Today's Practice</strong>
+      <span id="dailyReminderText">Take 5 quiet minutes to remember the future you are building.</span>
+    </div>
+
+    <div class="manif-input-wrap">
+      <label for="manifInput">My goal for the next 6 months</label>
+      <textarea
+        id="manifInput"
+        class="manif-textarea"
+        placeholder="e.g. I want to land a new job that feels meaningful and pays me well."
+      ></textarea>
+      <div class="manif-error" id="manifError">
+        Please write your goal above before creating your practice. ✏️
+      </div>
+    </div>
+
+    <div class="manif-btn-row">
+      <button class="btn" onclick="createPractice()">Create My Daily Practice</button>
+      <button class="btn btn-outline" onclick="clearManif()">Start Over</button>
+    </div>
+
+    <div class="manif-output" id="manifOutput"></div>
+  </div>
+
+  <script>
+    /* ════════════════════════════════════════
+       NAVIGATION
+    ════════════════════════════════════════ */
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('page-' + id).classList.add('active');
+      const btns = document.querySelectorAll('.nav-btn');
+      btns[id === 'home' ? 0 : 1].classList.add('active');
+    }
+
+    /* ════════════════════════════════════════
+       MEMORY GAME
+    ════════════════════════════════════════ */
+    const EMOJIS = ['🐶','🐱','🦊','🐸','🦋','🌸','🍕','🍦'];
+    const TOTAL_PAIRS = 4;
+
+    let flipped = [], matched = 0, moves = 0, seconds = 0, timerID = null, locked = false;
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function fmt(s) {
+      return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+      stopTimer();
+      seconds = 0;
+      document.getElementById('timer').textContent = fmt(0);
+      timerID = setInterval(() => {
+        seconds++;
+        document.getElementById('timer').textContent = fmt(seconds);
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(timerID);
+      timerID = null;
+    }
+
+    function initGame() {
+      document.getElementById('winOverlay').classList.remove('show');
+      stopTimer();
+      flipped = []; matched = 0; moves = 0; locked = false;
+      document.getElementById('moves').textContent = '0';
+      document.getElementById('timer').textContent = '0:00';
+      document.getElementById('pairs').textContent = `0/${TOTAL_PAIRS}`;
+
+      const pool = shuffle([...EMOJIS]).slice(0, TOTAL_PAIRS);
+      const cards = shuffle([...pool, ...pool]);
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+
+      cards.forEach((emoji, i) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.emoji = emoji;
+        card.dataset.index = i;
+        card.innerHTML = `
+          <div class="card-inner">
+            <div class="card-face card-back"></div>
+            <div class="card-face card-front">${emoji}</div>
+          </div>`;
+        card.addEventListener('click', onCardClick);
+        grid.appendChild(card);
+      });
+    }
+
+    function onCardClick(e) {
+      const card = e.currentTarget;
+      if (locked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+
+      if (!timerID && moves === 0 && flipped.length === 0) startTimer();
+
+      card.classList.add('flipped');
+      flipped.push(card);
+
+      if (flipped.length === 2) {
+        locked = true;
+        moves++;
+        document.getElementById('moves').textContent = moves;
+        checkMatch();
+      }
+    }
+
+    function checkMatch() {
+      const [a, b] = flipped;
+      if (a.dataset.emoji === b.dataset.emoji) {
+        setTimeout(() => {
+          a.classList.add('matched');
+          b.classList.add('matched');
+          a.classList.remove('flipped');
+          b.classList.remove('flipped');
+          flipped = [];
+          locked = false;
+          matched++;
+          document.getElementById('pairs').textContent = `${matched}/${TOTAL_PAIRS}`;
+          if (matched === TOTAL_PAIRS) showWin();
+        }, 300);
+      } else {
+        setTimeout(() => {
+          a.classList.remove('flipped');
+          b.classList.remove('flipped');
+          flipped = [];
+          locked = false;
+        }, 900);
+      }
+    }
+
+    function showWin() {
+      stopTimer();
+      document.getElementById('winStats').innerHTML =
+        `Completed in <span>${fmt(seconds)}</span> with <span>${moves}</span> moves.`;
+      document.getElementById('winOverlay').classList.add('show');
+    }
+
+    initGame();
+
+    /* ════════════════════════════════════════
+       MANIFESTATION ROOM
+    ════════════════════════════════════════ */
+    const STORAGE_KEY = 'mtgames_manifestation_goal';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSavedGoal();
+      updateDailyReminder();
+    });
+
+    function createPractice() {
+      const inputEl = document.getElementById('manifInput');
+      const raw = inputEl.value.trim();
+      const errEl = document.getElementById('manifError');
+
+      if (!raw) {
+        errEl.classList.add('visible');
+        inputEl.focus();
+        return;
+      }
+      errEl.classList.remove('visible');
+      localStorage.setItem(STORAGE_KEY, raw);
+
+      const goal = raw.charAt(0).toUpperCase() + raw.slice(1).replace(/\.+$/, '');
+      const shortGoal = goal.length > 95 ? goal.slice(0, 92) + '…' : goal;
+      const category = detectGoalCategory(goal);
+
+      const visualizations = pickRandom(buildVisualizationPool(category, goal), 4);
+      const affirmations = buildAffirmations(goal, category);
+      const weekPlan = buildWeekPlan(category);
+
+      const html = `
+        <div class="output-goal-banner">
+          Your intention: <span>"${escapeHTML(shortGoal)}"</span>
+        </div>
+
+        <div class="output-section">
+          <div class="output-section-title">Choose A Door</div>
+          <div class="mystery-grid">
+            ${visualizations.map((v, i) => `
+              <div class="mystery-card" onclick="toggleMysteryCard(this)">
+                <div class="mystery-topline">
+                  <div class="mystery-title">${escapeHTML(v.title)}</div>
+                  <div class="mystery-symbol">+</div>
+                </div>
+                <div class="mystery-hint">Tap to reveal today's visualization.</div>
+                <div class="mystery-body">${escapeHTML(v.desc)}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="output-section">
+          <div class="output-section-title">Daily Affirmations</div>
+          ${affirmations.map((a, i) => `
+            <div class="output-item">
+              <div class="output-bullet">${i + 1}</div>
+              <div class="output-item-text">${escapeHTML(a)}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="output-section">
+          <div class="output-section-title">Your 7-Day Practice Plan</div>
+          <div class="day-grid">
+            ${weekPlan.map((d, i) => `
+              <div class="day-card">
+                <div class="day-label">Day ${i + 1}</div>
+                <div class="day-emoji">${d.emoji}</div>
+                <div class="day-focus">${escapeHTML(d.focus)}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      const out = document.getElementById('manifOutput');
+      out.innerHTML = html;
+      out.classList.add('visible');
+      document.getElementById('savedNote').classList.add('visible');
+      updateDailyReminder();
+      out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function clearManif() {
+      document.getElementById('manifInput').value = '';
+      document.getElementById('manifError').classList.remove('visible');
+      document.getElementById('savedNote').classList.remove('visible');
+      localStorage.removeItem(STORAGE_KEY);
+      const out = document.getElementById('manifOutput');
+      out.classList.remove('visible');
+      out.innerHTML = '';
+      updateDailyReminder();
+      document.getElementById('manifInput').focus();
+    }
+
+    function loadSavedGoal() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      document.getElementById('manifInput').value = saved;
+      document.getElementById('savedNote').classList.add('visible');
+    }
+
+    function updateDailyReminder() {
+      const goal = document.getElementById('manifInput').value.trim();
+      const category = detectGoalCategory(goal);
+      const reminders = buildDailyReminders(category);
+      const dayIndex = new Date().getDay();
+      document.getElementById('dailyReminderText').textContent = reminders[dayIndex];
+    }
+
+    function toggleMysteryCard(card) {
+      const symbol = card.querySelector('.mystery-symbol');
+      card.classList.toggle('open');
+      symbol.textContent = card.classList.contains('open') ? '−' : '+';
+    }
+
+    /* ── Personalization helpers ── */
+    function detectGoalCategory(goal) {
+      const text = (goal || '').toLowerCase();
+      const categories = [
+        { name: 'career', words: ['job', 'role', 'interview', 'career', 'offer', 'salary', 'company', 'promotion', 'resume', 'work'] },
+        { name: 'relationship', words: ['relationship', 'marriage', 'love', 'partner', 'wife', 'husband', 'family', 'friend', 'dating'] },
+        { name: 'health', words: ['health', 'fitness', 'body', 'weight', 'gym', 'workout', 'diet', 'energy', 'strength', 'skin'] },
+        { name: 'money', words: ['money', 'business', 'finance', 'income', 'wealth', 'revenue', 'startup', 'profit', 'savings'] }
+      ];
+      const found = categories.find(cat => cat.words.some(word => text.includes(word)));
+      return found ? found.name : 'general';
+    }
+
+    function extractSubject(goalText) {
+      const cleaned = goalText
+        .replace(/^(i want to|i would like to|i hope to|my goal is to|i am working toward|i need to|i want|i will)\s*/i, '')
+        .replace(/in the next (6|six) months\.?/i, '')
+        .trim();
+      return cleaned.length > 0 && cleaned.length < 80 ? cleaned : 'my goal';
+    }
+
+    function pickRandom(items, count) {
+      return shuffle([...items]).slice(0, count);
+    }
+
+    function escapeHTML(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    /* ── Visualization exercise pool with slight randomness ── */
+    function buildVisualizationPool(category, goal) {
+      const subject = extractSubject(goal.toLowerCase());
+
+      const categoryLine = {
+        career: `Picture the moment your career path feels lighter: the message, the conversation, the meeting, or the first ordinary workday after ${subject} becomes real.`,
+        relationship: `Picture a calm, honest moment where connection feels easier and warmer. Notice the words, gestures, and softness that make ${subject} feel possible.`,
+        health: `Picture your body moving through an ordinary day with more strength, ease, and trust. Notice the small choices that quietly support ${subject}.`,
+        money: `Picture yourself making one clear financial or business decision with calm confidence. Notice how discipline, timing, and courage support ${subject}.`,
+        general: `Picture one ordinary scene where ${subject} has quietly become part of your life. Let the scene feel simple, believable, and close.`
+      }[category];
+
+      return [
+        {
+          title: randomTitle(['Change Your Life', 'The First Door', 'The Quiet Shift']),
+          desc: `${categoryLine} Stay with the scene for 5 minutes. Focus less on forcing the outcome and more on becoming the kind of person who can hold it.`
+        },
+        {
+          title: randomTitle(['The Future Scene', 'Six Months From Now', 'The Life Already Waiting']),
+          desc: `Close your eyes and move six months ahead. You wake up on a normal morning after making progress toward ${subject}. What is the first thing you see? What feels different in your chest? Name three tiny details and let them become vivid.`
+        },
+        {
+          title: randomTitle(['The Hidden Block', 'The Door You Avoid', 'The Fear Underneath']),
+          desc: `Imagine one realistic obstacle between you and ${subject}. Instead of fighting it, sit across from it like a messenger. Ask: what are you trying to teach me? Then imagine yourself taking one calm action through it.`
+        },
+        {
+          title: randomTitle(['The Night Ritual', 'Before Sleep', 'The Last Thought']),
+          desc: `Before sleep, replay one small action you took today. If the day felt imperfect, find the lesson. Then say: I am allowed to begin again tomorrow. Let your mind close the day with direction, not pressure.`
+        },
+        {
+          title: randomTitle(['The Ordinary Proof', 'Small Evidence', 'The Tiny Win']),
+          desc: `Look for one small sign today that you are already becoming aligned with ${subject}. It can be a thought, a choice, a conversation, or a small act of discipline. Write it down so your brain starts collecting proof.`
+        },
+        {
+          title: randomTitle(['The Confident Version', 'Meet Your Future Self', 'The Person Who Did It']),
+          desc: `Imagine meeting the version of yourself who handled the next six months well. Ask them: what did you stop wasting energy on? What did you practice daily? What did you finally believe about yourself?`
+        },
+        {
+          title: randomTitle(['The One Brave Move', 'The Next Step', 'The Small Door']),
+          desc: `Visualize yourself taking one brave but realistic step toward ${subject} in the next 24 hours. See yourself doing it calmly. Keep it small enough that your body believes it can happen.`
+        },
+        {
+          title: randomTitle(['The Receiving Practice', 'Let It Arrive', 'The Open Hand']),
+          desc: `Imagine receiving help, opportunity, love, clarity, or momentum without pushing it away. Notice if your body resists. Breathe into that resistance and quietly practice allowing good things to reach you.`
+        }
+      ];
+    }
+
+    function randomTitle(options) {
+      return options[Math.floor(Math.random() * options.length)];
+    }
+
+    function buildAffirmations(goal, category) {
+      const subject = extractSubject(goal.toLowerCase());
+      const base = {
+        career: [
+          `I am becoming ready for the right opportunity, and I show that readiness through action.`,
+          `I can speak about my value with clarity, calmness, and confidence.`,
+          `Every application, conversation, and interview teaches me something useful.`,
+          `The right role can find me while I keep improving what I can control.`,
+          `I am building a career path that respects my effort, skills, and growth.`
+        ],
+        relationship: [
+          `I create space for honest connection, patience, and emotional safety.`,
+          `I can love deeply without losing myself.`,
+          `I listen with softness and speak with courage.`,
+          `The relationships meant for me grow through care, trust, and consistency.`,
+          `I am worthy of steady, warm, respectful love.`
+        ],
+        health: [
+          `I care for my body through small choices that I can repeat.`,
+          `My strength grows through patience, consistency, and self-respect.`,
+          `I listen to my body and support it instead of punishing it.`,
+          `Every healthy action is evidence that I am changing.`,
+          `I am allowed to become stronger one ordinary day at a time.`
+        ],
+        money: [
+          `I can make calm, wise decisions with money and opportunity.`,
+          `I am building stability through focus, learning, and consistent action.`,
+          `I can receive more without becoming careless or afraid.`,
+          `Every smart choice strengthens my financial future.`,
+          `I am capable of creating value and being rewarded for it.`
+        ],
+        general: [
+          `I am making consistent, meaningful progress toward ${subject} every single day.`,
+          `I trust my ability to learn, adjust, and keep going.`,
+          `I deserve the kind of life I am working toward, and I am ready to receive it.`,
+          `Every step I take, no matter how small, is moving me in the right direction.`,
+          `I stay focused on what I can control today, and I release what I cannot.`
+        ]
+      };
+      return base[category] || base.general;
+    }
+
+    function buildDailyReminders(category) {
+      const reminders = {
+        career: [
+          'Today: Spend 5 minutes seeing yourself answer one difficult question with calm confidence.',
+          'Today: Take one tiny career action before you overthink it.',
+          'Today: Imagine opening the message that moves your career forward. Feel grounded, not desperate.',
+          'Today: Practice explaining your value in one simple sentence.',
+          'Today: Notice one proof that you are becoming more prepared.',
+          'Today: Visualize one interview, meeting, or workday going smoother than expected.',
+          'Today: Rest without guilt. Preparation also needs recovery.'
+        ],
+        relationship: [
+          'Today: Imagine one honest conversation happening with warmth instead of fear.',
+          'Today: Practice one small act of patience.',
+          'Today: Visualize feeling safe, seen, and emotionally steady.',
+          'Today: Send or say one kind thing without needing a perfect response.',
+          'Today: Notice where love already exists in small forms.',
+          'Today: Picture yourself listening fully before reacting.',
+          'Today: Let softness be a strength.'
+        ],
+        health: [
+          'Today: Visualize your body thanking you for one repeatable healthy choice.',
+          'Today: Move, stretch, walk, or breathe for five intentional minutes.',
+          'Today: Picture the first ordinary morning where your body feels stronger.',
+          'Today: Choose one thing that supports your energy.',
+          'Today: Notice a small sign of strength or recovery.',
+          'Today: Imagine consistency feeling peaceful, not punishing.',
+          'Today: Rest as part of the plan.'
+        ],
+        money: [
+          'Today: Imagine making one clear money decision without panic.',
+          'Today: Take one tiny step toward more financial clarity.',
+          'Today: Picture yourself receiving opportunity with calm responsibility.',
+          'Today: Review one number, one plan, or one idea with honesty.',
+          'Today: Notice where you already create value.',
+          'Today: Visualize discipline feeling freeing, not restrictive.',
+          'Today: Let patience protect your future.'
+        ],
+        general: [
+          'Today: Spend 5 minutes visualizing the first ordinary morning after your goal becomes real.',
+          'Today: Take one small action that makes your future self trust you more.',
+          'Today: Notice one sign that you are already moving closer.',
+          'Today: Visualize yourself handling one obstacle calmly.',
+          'Today: Say your affirmations slowly, like you are teaching your mind a new route.',
+          'Today: Write one sentence about what is working.',
+          'Today: Rest, reset, and return with gentleness.'
+        ]
+      };
+      return reminders[category] || reminders.general;
+    }
+
+    function buildWeekPlan(category) {
+      const universal = [
+        { emoji: '🎯', focus: 'Write your goal by hand. Read it out loud.' },
+        { emoji: '🌅', focus: 'Morning visualization. 5 minutes.' },
+        { emoji: '📋', focus: 'Take one small real-world action.' },
+        { emoji: '🙏', focus: 'Name 3 things already going right.' },
+        { emoji: '💬', focus: 'Say your affirmations aloud.' },
+        { emoji: '🔍', focus: 'Check what is working and what needs to shift.' },
+        { emoji: '🎉', focus: 'Celebrate one tiny win. Rest.' }
+      ];
+
+      if (category === 'career') universal[2].focus = 'Send, revise, practice, or reach out once today.';
+      if (category === 'relationship') universal[2].focus = 'Make one honest or kind relationship move.';
+      if (category === 'health') universal[2].focus = 'Choose one repeatable health action today.';
+      if (category === 'money') universal[2].focus = 'Track, save, pitch, plan, or review one money move.';
+      return universal;
+    }
+  </script>
+</body>
+</html>
