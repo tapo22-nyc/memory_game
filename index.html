@@ -1437,7 +1437,7 @@
         btn.disabled = true;
         btn.textContent = 'Saving...';
 
-        const response = await fetch('/api/create-user', {
+        const response = await fetch('/api/create-ipl-user', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ user_name: cleanName })
