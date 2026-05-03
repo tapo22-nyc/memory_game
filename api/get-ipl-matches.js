@@ -17,7 +17,14 @@ const matches = await sql`
   FROM ipl_matches m
   LEFT JOIN ipl_match_windows w
     ON m.id = w.match_id
-  ORDER BY m.match_date ASC
+  ORDER BY
+    CASE
+      WHEN LOWER(m.status) = 'open' THEN 1
+      WHEN LOWER(m.status) = 'locked' THEN 2
+      WHEN LOWER(m.status) = 'closed' THEN 3
+      ELSE 4
+    END,
+    m.match_date ASC
 `;
     res.status(200).json({ matches });
   } catch (error) {
