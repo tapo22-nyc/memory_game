@@ -1723,8 +1723,8 @@
 
     function getStatusMessage(status) {
       const normalized = normalizeMatchStatus(status);
-      if (normalized === 'open') return 'Open for predictions';
-      if (normalized === 'locked') return 'Predictions locked';
+      if (normalized === 'open') return 'Open';
+      if (normalized === 'locked') return 'Locked';
       if (normalized === 'closed') return 'Contest closed';
       return normalized;
     }
