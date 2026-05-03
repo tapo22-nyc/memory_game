@@ -1783,7 +1783,7 @@
 
     function getContestTimeMessage(match) {
       if (normalizeMatchStatus(match.status) !== 'open') {
-        return 'Predictions cannot be changed for this contest';
+        return '';
       }
 
       if (!match.contest_lock_time) {
@@ -1857,7 +1857,7 @@
               </div>
             </div>
             <div class="match-meta">${escapeHTML(match.match_title || 'IPL Match Day')} • 5 prediction questions • 25 point total entry</div>
-            <div class="match-meta contest-timer">${escapeHTML(actionText)}</div>
+            ${actionText ? `<div class="match-meta contest-timer">${escapeHTML(actionText)}</div>` : ''}
           </div>
         `;
       }).join('');
