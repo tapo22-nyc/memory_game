@@ -33,7 +33,7 @@ module.exports = async function handler(req, res) {
             ${Number(match_id)},
             ${Number(pick.question_id)},
             ${Number(pick.selected_option_id)},
-            5
+            0
           )
         ON CONFLICT (user_id, question_id)
         DO UPDATE SET
