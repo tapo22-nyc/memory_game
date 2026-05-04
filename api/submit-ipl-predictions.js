@@ -69,11 +69,20 @@ module.exports = async function handler(req, res) {
       `;
 
       await sql`
-        UPDATE ipl_predictions
-        SET points_won = 20
-        WHERE match_id = ${Number(match_id)}
-          AND is_correct = TRUE
-      `;
+UPDATE ipl_predictions p
+SET points_won = CASE
+  WHEN q.id = (
+    SELECT MAX(id)
+    FROM ipl_questions
+    WHERE match_id = ${Number(match_id)}
+  ) THEN 20
+  ELSE 50
+END
+FROM ipl_questions q
+WHERE p.question_id = q.id
+  AND p.match_id = ${Number(match_id)}
+  AND p.is_correct = TRUE
+  `;
 
       await sql`
         UPDATE ipl_predictions
