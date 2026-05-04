@@ -16,23 +16,32 @@ module.exports = async function handler(req, res) {
       vice_captain_player_id
     } = req.body;
 
+    const cleanPlayerIds = Array.isArray(player_ids)
+      ? player_ids.map(Number)
+      : [];
+
+    const captainId = Number(captain_player_id);
+    const viceCaptainId = Number(vice_captain_player_id);
+
     if (!user_id || !fantasy_match_id || !Array.isArray(player_ids)) {
-      return res.status(400).json({ error: 'user_id, fantasy_match_id, and player_ids are required.' });
+      return res.status(400).json({
+        error: 'user_id, fantasy_match_id, and player_ids are required.'
+      });
     }
 
-    if (player_ids.length !== 11) {
+    if (cleanPlayerIds.length !== 11) {
       return res.status(400).json({ error: 'You must select exactly 11 players.' });
     }
 
-    if (!player_ids.includes(captain_player_id)) {
+    if (!cleanPlayerIds.includes(captainId)) {
       return res.status(400).json({ error: 'Captain must be one of your selected players.' });
     }
 
-    if (!player_ids.includes(vice_captain_player_id)) {
+    if (!cleanPlayerIds.includes(viceCaptainId)) {
       return res.status(400).json({ error: 'Vice-captain must be one of your selected players.' });
     }
 
-    if (captain_player_id === vice_captain_player_id) {
+    if (captainId === viceCaptainId) {
       return res.status(400).json({ error: 'Captain and vice-captain cannot be the same player.' });
     }
 
@@ -53,18 +62,33 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Team selection is locked for this match.' });
     }
 
-const players = await sql`
-  SELECT
-    pm.id,
-    pm.player_cost_coins
-  FROM fantasy_match_players fmp
-  JOIN ipl_player_master pm
-    ON pm.id = fmp.player_id
-  WHERE fmp.fantasy_match_id = ${Number(fantasy_match_id)}
-    AND pm.id = ANY(${player_ids.map(Number)})
-`;
+    const players = await sql`
+      SELECT
+        pm.id,
+        pm.player_cost_coins,
+        pm.team_code
+      FROM fantasy_match_players fmp
+      JOIN ipl_player_master pm
+        ON pm.id = fmp.player_id
+      WHERE fmp.fantasy_match_id = ${Number(fantasy_match_id)}
+        AND pm.id = ANY(${cleanPlayerIds})
+    `;
+
     if (players.length !== 11) {
-      return res.status(400).json({ error: 'Some selected players are invalid for this match.' });
+      return res.status(400).json({
+        error: 'Some selected players are invalid for this match.'
+      });
+    }
+
+    const teamCounts = players.reduce((acc, player) => {
+      acc[player.team_code] = (acc[player.team_code] || 0) + 1;
+      return acc;
+    }, {});
+
+    if (Object.values(teamCounts).some(count => count > 7)) {
+      return res.status(400).json({
+        error: 'You can select a maximum of 7 players from one team.'
+      });
     }
 
     const totalCoinsUsed = players.reduce(
@@ -82,7 +106,7 @@ const players = await sql`
       INSERT INTO fantasy_user_teams
         (user_id, fantasy_match_id, captain_player_id, vice_captain_player_id, total_coins_used)
       VALUES
-        (${Number(user_id)}, ${Number(fantasy_match_id)}, ${Number(captain_player_id)}, ${Number(vice_captain_player_id)}, ${totalCoinsUsed})
+        (${Number(user_id)}, ${Number(fantasy_match_id)}, ${captainId}, ${viceCaptainId}, ${totalCoinsUsed})
       ON CONFLICT (user_id, fantasy_match_id)
       DO UPDATE SET
         captain_player_id = EXCLUDED.captain_player_id,
