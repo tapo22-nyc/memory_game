@@ -53,13 +53,16 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Team selection is locked for this match.' });
     }
 
-    const players = await sql`
-      SELECT id, player_cost_coins
-      FROM fantasy_players
-      WHERE fantasy_match_id = ${Number(fantasy_match_id)}
-      AND id = ANY(${player_ids.map(Number)})
-    `;
-
+const players = await sql`
+  SELECT
+    pm.id,
+    pm.player_cost_coins
+  FROM fantasy_match_players fmp
+  JOIN ipl_player_master pm
+    ON pm.id = fmp.player_id
+  WHERE fmp.fantasy_match_id = ${Number(fantasy_match_id)}
+    AND pm.id = ANY(${player_ids.map(Number)})
+`;
     if (players.length !== 11) {
       return res.status(400).json({ error: 'Some selected players are invalid for this match.' });
     }
