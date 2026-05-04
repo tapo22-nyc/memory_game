@@ -803,7 +803,7 @@
             </div>
           </div>
 
-          <div class="team-player-section">
+          <div class="team-player-section" style="margin-top: 16px;">
             <div class="team-player-title">
               <span>Your Player Points</span>
             </div>
@@ -811,6 +811,22 @@
               ${playerRows}
             </div>
           </div>
+
+      <div class="team-player-section" style="margin-top: 16px;">
+        <div class="team-player-title">
+          <span>Calculation Rules</span>
+        </div>
+        <div class="rules-list">
+        <p><strong>Runs:</strong> 1 point per run</p>
+        <p><strong>Wickets:</strong> 25 points per wicket</p>
+        <p><strong>Catches:</strong> 8 points per catch</p>
+        <p><strong>Stumpings:</strong> 12 points per stumping</p>
+        <p><strong>Runouts:</strong> 12 points per runout</p>
+        <p><strong>Captain:</strong> 2x points</p>
+        <p><strong>Vice-Captain:</strong> 1.5x points</p>
+        </div>
+      </div>
+          
         `;
       } catch (error) {
         document.getElementById('playerList').innerHTML = '';
