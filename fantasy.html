@@ -527,6 +527,13 @@
       document.querySelector('.budget-box').style.display = 'grid';
       document.querySelector('.captain-section-title').style.display = 'block';
       document.querySelector('.captain-section').style.display = 'grid';
+      
+      document.querySelector('.modal-actions').innerHTML = `
+        <button class="btn" onclick="submitFantasyTeam()">Save Team</button>
+        <button class="btn btn-secondary" onclick="closeTeamModal()">Cancel</button>
+        <button class="btn btn-secondary" onclick="closeTeamModal()">Close</button>
+      `;
+
       document.querySelector('.modal-actions').style.display = 'flex';
 
       updateBudgetUI();
@@ -549,6 +556,10 @@
           document.querySelector('.captain-section-title').style.display = 'none';
           document.querySelector('.captain-section').style.display = 'none';
           document.querySelector('.modal-actions').style.display = 'flex';
+
+          document.querySelector('.modal-actions').innerHTML = `
+  <button class="btn btn-secondary" onclick="closeTeamModal()">Close</button>
+`;
 
           document.getElementById('teamTitle').textContent = currentMatchData.match_title || 'Fantasy Result';
           document.getElementById('teamSubtitle').textContent = `${currentMatchData.team_1} vs ${currentMatchData.team_2} · Final Result`;
