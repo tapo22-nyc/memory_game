@@ -50,7 +50,7 @@ module.exports = async function handler(req, res) {
     }
 
     if (String(match.status).toLowerCase() !== 'open') {
-      return res.status(400).json({ error: 'This fantasy contest is not open.' });
+      return res.status(400).json({ error: 'Team selection is locked for this match.' });
     }
 
     const players = await sql`
