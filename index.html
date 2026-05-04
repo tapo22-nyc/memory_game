@@ -1904,7 +1904,9 @@
       }
 
       const openMatches = IPL_MATCHES.filter(match => normalizeMatchStatus(match.status) === 'open');
-      const closedMatches = IPL_MATCHES.filter(match => normalizeMatchStatus(match.status) !== 'open');
+      const closedMatches = IPL_MATCHES
+  .filter(match => normalizeMatchStatus(match.status) !== 'open')
+  .sort((a, b) => new Date(b.match_date) - new Date(a.match_date));
 
       function buildMatchCard(match) {
         const team1Short = getTeamShortName(match.team_1);
