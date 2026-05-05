@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IPL Fantasy Arena</title>
+
+  <style>
+    /* ─── Base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #07111f;
+      color: white;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .back-link {
+      color: #facc15;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .wip-banner {
+      background: #facc15;
+      color: #111827;
+      padding: 14px 18px;
+      border-radius: 14px;
+      font-weight: bold;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .hero-card {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 22px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+    }
+
+    .hero-card h1 { margin: 0 0 10px; font-size: 34px; }
+    .hero-card p  { color: #cbd5e1; line-height: 1.6; }
+
+    .match-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .match-card {
+      background: #111827;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #2563eb;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .match-title { font-size: 22px; font-weight: bold; margin-bottom: 8px; }
+    .match-meta  { color: #94a3b8; font-size: 14px; margin-bottom: 16px; }
+
+    .btn {
+      width: 100%;
+      border: none;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #facc15;
+      color: #111827;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn:hover { background: #fde047; }
+
+    .btn-secondary {
+      background: transparent;
+      color: #facc15;
+      border: 1px solid rgba(250,204,21,0.5);
+    }
+    .btn-secondary:hover { background: rgba(250,204,21,0.1); }
+
+    .info-section {
+      margin-top: 28px;
+      background: #0f172a;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      padding: 22px;
+    }
+    .info-section h2 { margin-top: 0; }
+    .rules-list { color: #cbd5e1; line-height: 1.8; }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .hero-btn { width: auto; min-width: 190px; }
+
+    .hero-panel {
+      margin-top: 18px;
+      background: #0f172a;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .hero-panel h3 { margin-top: 0; color: #facc15; }
+
+    .fantasy-leaderboard-row {
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .fantasy-leaderboard-row:last-child { border-bottom: none; }
+    .fantasy-rank {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 950; color: #facc15;
+    }
+    .fantasy-player-name { font-weight: 900; }
+    .fantasy-player-meta { color: #94a3b8; font-size: 12px; margin-top: 2px; }
+    .fantasy-score { color: #22c55e; font-weight: 950; }
+
+
+    /* ─── FANTASY MODAL ─────────────────────────────────────── */
+    .team-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.75);
+      align-items: center;
+      justify-content: center;
+    }
+    .team-modal.show { display: flex; }
+
+    /* Full-height inner card, mobile-first */
+    .modal-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      height: 100%;
+      max-height: 100dvh;
+      background: #0f172a;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    @media (min-width: 520px) {
+      .modal-wrapper {
+        max-height: 95dvh;
+        border-radius: 20px;
+        box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+      }
+    }
+
+    /* ── Header ── */
+    .modal-header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+      padding: 14px 16px 18px;
+      flex-shrink: 0;
+    }
+    .modal-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .modal-back-btn {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: white;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-back-btn:hover { background: rgba(255,255,255,0.25); }
+
+    .modal-header-title {
+      text-align: center;
+      flex: 1;
+      margin: 0 8px;
+    }
+    .modal-header-title h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.3px;
+    }
+    .modal-header-title .header-subtitle {
+      font-size: 12px;
+      color: rgba(255,255,255,0.75);
+      margin-top: 2px;
+    }
+
+    .modal-close-btn {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: white;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+    }
+    .modal-close-btn:hover { background: rgba(255,255,255,0.25); }
+
+    .modal-header-timer {
+      text-align: center;
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+      background: rgba(0,0,0,0.2);
+      border-radius: 8px;
+      padding: 6px 10px;
+      display: inline-block;
+    }
+    .modal-header-timer .timer-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+    .modal-header-timer .timer-value {
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+    .modal-header-timer-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    /* ── Sticky Summary Bar ── */
+    .summary-bar {
+      background: #1e293b;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 10px 12px;
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .summary-bar::-webkit-scrollbar { display: none; }
+
+    .summary-stat {
+      flex: 1;
+      min-width: 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 6px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+    }
+    .summary-stat:last-child { border-right: none; }
+    .summary-stat-val {
+      font-size: 15px;
+      font-weight: 700;
+      color: #facc15;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .summary-stat-val.warn { color: #f97316; }
+    .summary-stat-val.over { color: #fb7185; }
+    .summary-stat-val.good { color: #4ade80; }
+    .summary-stat-label {
+      font-size: 10px;
+      color: #94a3b8;
+      margin-top: 2px;
+      white-space: nowrap;
+    }
+
+    /* ── Scrollable Body ── */
+    .modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 14px 8px;
+      scroll-behavior: smooth;
+    }
+    .modal-body::-webkit-scrollbar { width: 4px; }
+    .modal-body::-webkit-scrollbar-track { background: transparent; }
+    .modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+
+    /* ── Team Cards ── */
+    .team-cards { display: flex; flex-direction: column; gap: 14px; }
+
+    .team-card {
+      background: #111827;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .team-card.has-selection { border-color: rgba(37,99,235,0.5); }
+
+    .team-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .team-card-header:hover { background: rgba(255,255,255,0.04); }
+
+    .team-badge {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+      color: white;
+    }
+
+    .team-card-info { flex: 1; min-width: 0; }
+    .team-card-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: white;
+    }
+    .team-card-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .team-card-count {
+      font-size: 13px;
+      font-weight: 700;
+      color: #60a5fa;
+      white-space: nowrap;
+      margin-right: 8px;
+    }
+    .team-card-count.at-limit { color: #f97316; }
+    .team-card-toggle {
+      color: #94a3b8;
+      font-size: 18px;
+      transition: transform 0.25s;
+      line-height: 1;
+    }
+    .team-card.expanded .team-card-toggle { transform: rotate(180deg); }
+
+    /* ── Player List (inside team card) ── */
+    .player-list-wrap {
+      display: none;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .team-card.expanded .player-list-wrap { display: block; }
+
+    .player-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px 6px;
+      background: rgba(255,255,255,0.03);
+    }
+    .player-list-header-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .player-list-header-credits {
+      font-size: 11px;
+      color: #64748b;
+      text-align: right;
+    }
+
+    .player-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background 0.12s;
+    }
+    .player-row:last-child { border-bottom: none; }
+    .player-row:hover { background: rgba(255,255,255,0.03); }
+    .player-row.is-selected { background: rgba(37,99,235,0.12); }
+
+    .player-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+      color: white;
+      border: 2px solid rgba(255,255,255,0.15);
+    }
+    .player-row.is-selected .player-avatar {
+      border-color: #60a5fa;
+    }
+
+    .player-info { flex: 1; min-width: 0; }
+    .player-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .player-tags {
+      display: flex;
+      gap: 5px;
+      margin-top: 3px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .tag-overseas {
+      background: rgba(234,179,8,0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(234,179,8,0.3);
+    }
+    .tag-indian {
+      background: rgba(34,197,94,0.1);
+      color: #4ade80;
+      border: 1px solid rgba(34,197,94,0.25);
+    }
+
+    .player-credits {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .player-credit-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: #facc15;
+    }
+    .player-credit-label {
+      font-size: 10px;
+      color: #64748b;
+      margin-top: 1px;
+    }
+
+    .player-action-btn {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.12s, background 0.12s;
+      line-height: 1;
+    }
+    .player-action-btn:active { transform: scale(0.9); }
+    .player-action-btn.add-btn {
+      background: #2563eb;
+      color: white;
+    }
+    .player-action-btn.add-btn:hover { background: #3b82f6; }
+    .player-action-btn.remove-btn {
+      background: rgba(239,68,68,0.15);
+      color: #f87171;
+      border: 1.5px solid rgba(239,68,68,0.4);
+    }
+    .player-action-btn.remove-btn:hover { background: rgba(239,68,68,0.25); }
+    .player-action-btn:disabled {
+      background: rgba(255,255,255,0.06);
+      color: #4b5563;
+      cursor: not-allowed;
+    }
+
+    /* ── Captain Selection (Step 2) ── */
+    .captain-step {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .captain-step-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #facc15;
+      margin-bottom: 4px;
+    }
+    .captain-step-sub {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 12px;
+    }
+    .captain-player-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .captain-player-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #111827;
+      border: 1.5px solid rgba(255,255,255,0.08);
+      transition: border-color 0.15s;
+    }
+    .captain-player-row:hover { border-color: rgba(255,255,255,0.2); }
+    .captain-player-row.is-captain { border-color: #facc15; background: rgba(250,204,21,0.08); }
+    .captain-player-row.is-vice   { border-color: #60a5fa; background: rgba(96,165,250,0.08); }
+    .captain-player-name { flex: 1; font-weight: 600; font-size: 14px; }
+    .captain-player-team { font-size: 12px; color: #94a3b8; }
+    .captain-badges {
+      display: flex;
+      gap: 6px;
+    }
+    .captain-badge-btn {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1.5px solid;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .captain-badge-btn.c-btn {
+      border-color: rgba(250,204,21,0.5);
+      color: #facc15;
+      background: transparent;
+    }
+    .captain-badge-btn.c-btn.active {
+      background: #facc15;
+      color: #111827;
+      border-color: #facc15;
+    }
+    .captain-badge-btn.vc-btn {
+      border-color: rgba(96,165,250,0.5);
+      color: #60a5fa;
+      background: transparent;
+    }
+    .captain-badge-btn.vc-btn.active {
+      background: #60a5fa;
+      color: #0f172a;
+      border-color: #60a5fa;
+    }
+
+    /* ── Footer ── */
+    .modal-footer {
+      flex-shrink: 0;
+      background: #0f172a;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 10px 14px 14px;
+    }
+    .footer-msg {
+      font-size: 12px;
+      font-weight: 600;
+      min-height: 18px;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .footer-msg.error { color: #fb7185; }
+    .footer-msg.success { color: #4ade80; }
+    .footer-msg.info { color: #facc15; }
+
+    .footer-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .footer-btn {
+      flex: 1;
+      padding: 13px 10px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .footer-btn:active { transform: scale(0.97); }
+    .footer-btn.primary {
+      background: #2563eb;
+      color: white;
+    }
+    .footer-btn.primary:hover { background: #3b82f6; }
+    .footer-btn.primary:disabled { background: #1e293b; color: #4b5563; cursor: not-allowed; }
+    .footer-btn.outline {
+      background: transparent;
+      color: #60a5fa;
+      border: 1.5px solid rgba(96,165,250,0.4);
+    }
+    .footer-btn.outline:hover { background: rgba(96,165,250,0.08); }
+
+    /* ── Preview Panel (slides up over body) ── */
+    .preview-panel {
+      position: absolute;
+      inset: 0;
+      background: #0f172a;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+    .preview-panel.open { transform: translateY(0); }
+
+    .preview-header {
+      background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .preview-header h3 { margin: 0; font-size: 16px; }
+    .preview-close-btn {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: white;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .preview-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+    .preview-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .preview-stat {
+      background: #111827;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .preview-stat-val {
+      font-size: 20px;
+      font-weight: 700;
+      color: #facc15;
+    }
+    .preview-stat-label {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 3px;
+    }
+
+    .preview-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #60a5fa;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 16px 0 8px;
+    }
+
+    .preview-player-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: #111827;
+      margin-bottom: 6px;
+    }
+    .preview-player-row.p-captain  { border-left: 3px solid #facc15; }
+    .preview-player-row.p-vice     { border-left: 3px solid #60a5fa; }
+
+    .preview-captain-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .preview-captain-badge.c  { background: #facc15; color: #111827; }
+    .preview-captain-badge.vc { background: #60a5fa; color: #0f172a; }
+
+    /* ── Results view ── */
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .result-stat {
+      background: #111827;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .result-stat-val {
+      font-size: 22px;
+      font-weight: 700;
+      color: #facc15;
+    }
+    .result-stat-label {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    .result-player-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #111827;
+      margin-bottom: 6px;
+    }
+    .result-player-pts {
+      font-size: 15px;
+      font-weight: 700;
+      color: #4ade80;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="top-bar">
+      <h2>IPL Fantasy Arena</h2>
+      <a href="index.html" class="back-link">← Back to Home</a>
+    </div>
+
+    <div class="wip-banner">
+      Work in Progress Version: Fantasy League mode is being tested.
+    </div>
+
+    <section class="hero-card">
+      <h1>Build Your Fantasy XI</h1>
+      <p>
+        Pick players from the match, choose your captain and vice-captain, and climb the leaderboard
+        as real match performance gets updated after each innings.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn hero-btn" onclick="openFantasyLeaderboard()">Fantasy Leaderboard</button>
+        <button class="btn btn-secondary hero-btn" onclick="toggleScoringRules()">Scoring</button>
+      </div>
+
+      <div class="hero-panel" id="scoringPanel" style="display: none;">
+        <h3>Scoring Rules</h3>
+        <div class="rules-list">
+          <p><strong>Runs:</strong> 1 point per run</p>
+          <p><strong>Wickets:</strong> 25 points per wicket</p>
+          <p><strong>Catches:</strong> 8 points per catch</p>
+          <p><strong>Stumpings:</strong> 12 points per stumping</p>
+          <p><strong>Runouts:</strong> 12 points per runout</p>
+          <p><strong>Captain:</strong> 2x points</p>
+          <p><strong>Vice-Captain:</strong> 1.5x points</p>
+        </div>
+      </div>
+
+      <div class="hero-panel" id="fantasyLeaderboardPanel" style="display: none;">
+        <h3>Fantasy Leaderboard</h3>
+        <div id="fantasyLeaderboardHome">Loading leaderboard...</div>
+      </div>
+    </section>
+
+    <section class="match-grid">
+
+      <div class="match-card">
+        <div class="status">Open Soon</div>
+        <div class="match-title">DC vs CSK</div>
+        <div class="match-meta">Match 49 · 120 coins · Select 11 players</div>
+        <button class="btn" onclick="openFantasyTeam(1)">Create Team</button>
+      </div>
+
+      <div class="match-card">
+        <div class="status">Open Soon</div>
+        <div class="match-title">SRH vs PBKS</div>
+        <div class="match-meta">Match 50 · 120 coins · Select 11 players</div>
+        <button class="btn" onclick="openFantasyTeam(2)">Create Team</button>
+      </div>
+
+      <div class="match-card">
+        <div class="status">Closed</div>
+        <div class="match-title">MI vs LSG</div>
+        <div class="match-meta">Fantasy Test · 120 coins · Select 11 players</div>
+        <button class="btn" onclick="openFantasyTeam(3)">View Results</button>
+      </div>
+
+    </section>
+
+    <section class="info-section">
+      <h2>How this fantasy game will work</h2>
+      <div class="rules-list">
+        <p>1. Select 11 players from both teams.</p>
+        <p>2. You get 120 coins for each match.</p>
+        <p>3. Player cost equals their auction price in Cr. Example: 18 Cr = 18 coins.</p>
+        <p>4. Choose 1 captain and 1 vice-captain.</p>
+        <p>5. Captain gets 2x points. Vice-captain gets 1.5x points.</p>
+        <p>6. Scores will be updated manually after the 1st innings and after the match ends.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ─── FANTASY MODAL ──────────────────────────────────────────── -->
+  <div class="team-modal" id="teamModal">
+    <div class="modal-wrapper" id="modalWrapper">
+
+      <!-- Header -->
+      <div class="modal-header" id="modalHeader">
+        <div class="modal-header-top">
+          <button class="modal-back-btn" id="modalBackBtn" onclick="handleBackBtn()">&#8592;</button>
+          <div class="modal-header-title">
+            <h3 id="modalTitle">Create Your Fantasy XI</h3>
+            <div class="header-subtitle" id="modalSubtitle">Loading match...</div>
+          </div>
+          <button class="modal-close-btn" onclick="closeTeamModal()">&#x2715;</button>
+        </div>
+        <div class="modal-header-timer-wrap" id="timerWrap" style="display:none;">
+          <div class="modal-header-timer">
+            <div class="timer-label">Time Left</div>
+            <div class="timer-value" id="timerValue">--:--:--</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sticky Summary Bar -->
+      <div class="summary-bar" id="summaryBar">
+        <div class="summary-stat">
+          <div class="summary-stat-val" id="statPlayers">0/11</div>
+          <div class="summary-stat-label">Players</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-stat-val" id="statOverseas">0/4</div>
+          <div class="summary-stat-label">Overseas</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-stat-val" id="statTeam1">0/7</div>
+          <div class="summary-stat-label" id="statTeam1Label">Team 1</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-stat-val" id="statTeam2">0/7</div>
+          <div class="summary-stat-label" id="statTeam2Label">Team 2</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-stat-val" id="statCredits">120</div>
+          <div class="summary-stat-label">Credits Left</div>
+        </div>
+      </div>
+
+      <!-- Scrollable Body -->
+      <div class="modal-body" id="modalBody">
+        <div id="modalContent">
+          <div style="text-align:center;padding:48px 16px;color:#94a3b8;">Loading players...</div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer" id="modalFooter">
+        <div class="footer-msg" id="footerMsg"></div>
+        <div class="footer-actions" id="footerActions">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Team Preview Panel (slides up) -->
+      <div class="preview-panel" id="previewPanel">
+        <div class="preview-header">
+          <h3>Team Preview</h3>
+          <button class="preview-close-btn" onclick="closePreview()">&#x2715;</button>
+        </div>
+        <div class="preview-body" id="previewBody">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* ─────────────────────────────────────────────────────────────
+       State
+    ───────────────────────────────────────────────────────────── */
+    let selectedPlayers     = [];
+    let currentFantasyMatchId = null;
+    let currentMatchData    = null;
+    let allPlayers          = [];
+    let budget              = 120;
+    let modalStep           = 1;      // 1 = player select, 2 = captain select
+    let expandedTeams       = new Set();
+    let captainId           = null;
+    let viceCaptainId       = null;
+    let countdownInterval   = null;
+
+    const MAX_PLAYERS        = 11;
+    const MAX_OVERSEAS       = 4;
+    const MAX_PER_TEAM       = 7;
+
+    /* ─────────────────────────────────────────────────────────────
+       Team metadata
+    ───────────────────────────────────────────────────────────── */
+    const TEAM_FULL = {
+      DC:   'Delhi Capitals',
+      CSK:  'Chennai Super Kings',
+      SRH:  'Sunrisers Hyderabad',
+      PBKS: 'Punjab Kings',
+      MI:   'Mumbai Indians',
+      RCB:  'Royal Challengers Bengaluru',
+      KKR:  'Kolkata Knight Riders',
+      RR:   'Rajasthan Royals',
+      GT:   'Gujarat Titans',
+      LSG:  'Lucknow Super Giants',
+    };
+
+    const TEAM_COLOR = {
+      DC:   '#004C8A', CSK:  '#F9A825', SRH:  '#E65100',
+      PBKS: '#B71C1C', MI:   '#005DA0', RCB:  '#B71C1C',
+      KKR:  '#4A148C', RR:   '#AD1457', GT:   '#1A237E', LSG: '#0288D1',
+    };
+
+    /* ─────────────────────────────────────────────────────────────
+       Helpers
+    ───────────────────────────────────────────────────────────── */
+    function getCurrentUserId() {
+      return localStorage.getItem('mtgames_user_id');
+    }
+
+    function escapeHTML(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+
+    function teamFullName(code) {
+      return TEAM_FULL[code] || code || 'Unknown';
+    }
+
+    function teamColor(code) {
+      return TEAM_COLOR[code] || '#374151';
+    }
+
+    function playerInitials(name) {
+      return String(name || '?').split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+    }
+
+    function isOverseas(player) {
+      const tag = String(player.role || player.player_tag || '').toLowerCase();
+      return tag === 'foreign' || tag === 'overseas';
+    }
+
+    function playerCost(player) {
+      return Number(player.player_cost_coins || player.auction_price_cr || 0);
+    }
+
+    function formatCost(val) {
+      const n = Number(val);
+      return n % 1 === 0 ? String(n) : n.toFixed(2);
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       Derived state
+    ───────────────────────────────────────────────────────────── */
+    function getTeamCounts() {
+      const counts = {};
+      for (const pid of selectedPlayers) {
+        const p = allPlayers.find(x => Number(x.id) === pid);
+        if (p) {
+          const t = p.team_name || 'Other';
+          counts[t] = (counts[t] || 0) + 1;
+        }
+      }
+      return counts;
+    }
+
+    function getOverseasCount() {
+      return selectedPlayers.filter(pid => {
+        const p = allPlayers.find(x => Number(x.id) === pid);
+        return p && isOverseas(p);
+      }).length;
+    }
+
+    function getTotalCoinsUsed() {
+      return selectedPlayers.reduce((sum, pid) => {
+        const p = allPlayers.find(x => Number(x.id) === pid);
+        return sum + (p ? playerCost(p) : 0);
+      }, 0);
+    }
+
+    function getTeams() {
+      const seen = new Set();
+      return allPlayers
+        .map(p => p.team_name || 'Other')
+        .filter(t => { if (seen.has(t)) return false; seen.add(t); return true; });
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       Summary bar update
+    ───────────────────────────────────────────────────────────── */
+    function updateSummaryBar() {
+      const teams       = getTeams();
+      const teamCounts  = getTeamCounts();
+      const overseasCnt = getOverseasCount();
+      const totalUsed   = getTotalCoinsUsed();
+      const creditsLeft = budget - totalUsed;
+      const t1          = teams[0] || '';
+      const t2          = teams[1] || '';
+      const t1Count     = teamCounts[t1] || 0;
+      const t2Count     = teamCounts[t2] || 0;
+
+      // Players
+      const pEl = document.getElementById('statPlayers');
+      pEl.textContent = `${selectedPlayers.length}/${MAX_PLAYERS}`;
+      pEl.className = 'summary-stat-val' + (selectedPlayers.length === MAX_PLAYERS ? ' good' : '');
+
+      // Overseas
+      const oEl = document.getElementById('statOverseas');
+      oEl.textContent = `${overseasCnt}/${MAX_OVERSEAS}`;
+      oEl.className = 'summary-stat-val' + (overseasCnt === MAX_OVERSEAS ? ' warn' : '');
+
+      // Team 1
+      const t1El = document.getElementById('statTeam1');
+      t1El.textContent = `${t1Count}/${MAX_PER_TEAM}`;
+      t1El.className = 'summary-stat-val' + (t1Count === MAX_PER_TEAM ? ' warn' : '');
+      document.getElementById('statTeam1Label').textContent = t1 || 'Team 1';
+
+      // Team 2
+      const t2El = document.getElementById('statTeam2');
+      t2El.textContent = `${t2Count}/${MAX_PER_TEAM}`;
+      t2El.className = 'summary-stat-val' + (t2Count === MAX_PER_TEAM ? ' warn' : '');
+      document.getElementById('statTeam2Label').textContent = t2 || 'Team 2';
+
+      // Credits
+      const cEl = document.getElementById('statCredits');
+      cEl.textContent = formatCost(creditsLeft);
+      cEl.className = 'summary-stat-val' + (creditsLeft < 0 ? ' over' : creditsLeft < 5 ? ' warn' : '');
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       Footer rendering
+    ───────────────────────────────────────────────────────────── */
+    function renderFooter() {
+      const fa = document.getElementById('footerActions');
+      if (modalStep === 1) {
+        fa.innerHTML = `
+          <button class="footer-btn outline" onclick="openPreview()">Team Preview</button>
+          <button class="footer-btn primary" id="nextBtn" onclick="goToStep2()">
+            Next &rarr;
+          </button>
+        `;
+        document.getElementById('nextBtn').disabled = selectedPlayers.length < MAX_PLAYERS;
+      } else {
+        fa.innerHTML = `
+          <button class="footer-btn outline" onclick="goToStep1()">&#8592; Back</button>
+          <button class="footer-btn primary" onclick="submitFantasyTeam()">Save Team</button>
+        `;
+      }
+    }
+
+    function handleBackBtn() {
+      if (modalStep === 2) {
+        goToStep1();
+      } else {
+        closeTeamModal();
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       Step 1: Player Selection
+    ───────────────────────────────────────────────────────────── */
+    function goToStep1() {
+      modalStep = 1;
+      document.getElementById('modalBackBtn').style.visibility = 'visible';
+      renderTeamSections();
+      renderFooter();
+      setFooterMsg('');
+    }
+
+    function renderTeamSections() {
+      const teams = getTeams();
+      const teamCounts = getTeamCounts();
+
+      const html = `<div class="team-cards">${teams.map(team => {
+        const players = allPlayers.filter(p => p.team_name === team);
+        const selCount = teamCounts[team] || 0;
+        const isExpanded = expandedTeams.has(team);
+        const atLimit = selCount >= MAX_PER_TEAM;
+        const color = teamColor(team);
+        const fullName = teamFullName(team);
+
+        return `
+          <div class="team-card ${isExpanded ? 'expanded' : ''} ${selCount > 0 ? 'has-selection' : ''}" id="tc-${team}">
+            <div class="team-card-header" onclick="toggleTeam('${escapeHTML(team)}')">
+              <div class="team-badge" style="background:${color};">${escapeHTML(team)}</div>
+              <div class="team-card-info">
+                <div class="team-card-name">${escapeHTML(fullName)}</div>
+                <div class="team-card-sub">${players.length} players available</div>
+              </div>
+              <div class="team-card-count ${atLimit ? 'at-limit' : ''}">${selCount}/${MAX_PER_TEAM}</div>
+              <div class="team-card-toggle">&#8964;</div>
+            </div>
+            <div class="player-list-wrap">
+              <div class="player-list-header">
+                <div class="player-list-header-label">Player</div>
+                <div class="player-list-header-credits">Credits</div>
+              </div>
+              ${players.map(p => renderPlayerRow(p)).join('')}
+            </div>
+          </div>
+        `;
+      }).join('')}</div>`;
+
+      document.getElementById('modalContent').innerHTML = html;
+    }
+
+    function renderPlayerRow(player) {
+      const pid       = Number(player.id);
+      const isSelected = selectedPlayers.includes(pid);
+      const overseas  = isOverseas(player);
+      const cost      = playerCost(player);
+      const initials  = playerInitials(player.player_name);
+      const color     = teamColor(player.team_name);
+      const canAdd    = !isSelected && canSelectPlayer(player);
+
+      const tagHtml = overseas
+        ? `<span class="tag tag-overseas">Overseas</span>`
+        : `<span class="tag tag-indian">Indian</span>`;
+
+      const btnHtml = isSelected
+        ? `<button class="player-action-btn remove-btn" onclick="togglePlayer(${pid})" title="Remove">&#x2715;</button>`
+        : `<button class="player-action-btn add-btn" onclick="togglePlayer(${pid})" title="Add" ${canAdd ? '' : 'disabled'}>&#43;</button>`;
+
+      return `
+        <div class="player-row ${isSelected ? 'is-selected' : ''}" id="pr-${pid}">
+          <div class="player-avatar" style="background:${color};">${escapeHTML(initials)}</div>
+          <div class="player-info">
+            <div class="player-name">${escapeHTML(player.player_name)}</div>
+            <div class="player-tags">${tagHtml}</div>
+          </div>
+          <div class="player-credits">
+            <div class="player-credit-val">${formatCost(cost)}</div>
+            <div class="player-credit-label">Credits</div>
+          </div>
+          ${btnHtml}
+        </div>
+      `;
+    }
+
+    /* Can the player be added? Returns true if no rules are broken */
+    function canSelectPlayer(player) {
+      if (selectedPlayers.length >= MAX_PLAYERS) return false;
+
+      const overseasCnt = getOverseasCount();
+      if (isOverseas(player) && overseasCnt >= MAX_OVERSEAS) return false;
+
+      const teamCounts = getTeamCounts();
+      const teamCount  = teamCounts[player.team_name] || 0;
+      if (teamCount >= MAX_PER_TEAM) return false;
+
+      const cost      = playerCost(player);
+      const totalUsed = getTotalCoinsUsed();
+      if (totalUsed + cost > budget) return false;
+
+      return true;
+    }
+
+    function toggleTeam(team) {
+      if (expandedTeams.has(team)) {
+        expandedTeams.delete(team);
+      } else {
+        expandedTeams.add(team);
+      }
+      renderTeamSections();
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       Player toggle with live validation
+    ───────────────────────────────────────────────────────────── */
+    function togglePlayer(playerId) {
+      setFooterMsg('');
+      const pid = Number(playerId);
+      const player = allPlayers.find(p => Number(p.id) === pid);
+      if (!player) return;
+
+      if (selectedPlayers.includes(pid)) {
+        // Deselect
+        selectedPlayers = selectedPlayers.filter(id => id !== pid);
+        // Clear captain/VC if deselected
+        if (captainId === pid)     captainId = null;
+        if (viceCaptainId === pid) viceCaptainId = null;
+      } else {
+        // Validate before adding
+        if (selectedPlayers.length >= MAX_PLAYERS) {
+          setFooterMsg('You can only select 11 players.', 'error'); return;
+        }
+        const overseasCnt = getOverseasCount();
+        if (isOverseas(player) && overseasCnt >= MAX_OVERSEAS) {
+          setFooterMsg(`Maximum ${MAX_OVERSEAS} overseas players allowed.`, 'error'); return;
+        }
+        const teamCounts = getTeamCounts();
+        const teamCount  = teamCounts[player.team_name] || 0;
+        if (teamCount >= MAX_PER_TEAM) {
+          setFooterMsg(`Maximum ${MAX_PER_TEAM} players from one team allowed.`, 'error'); return;
+        }
+        const cost      = playerCost(player);
+        const totalUsed = getTotalCoinsUsed();
+        if (totalUsed + cost > budget) {
+          setFooterMsg('Not enough credits left to pick this player.', 'error'); return;
+        }
+
+        selectedPlayers.push(pid);
+
+        if (selectedPlayers.length === MAX_PLAYERS) {
+          setFooterMsg('Great! You have selected 11 players. Tap Next to choose your captain.', 'info');
+        }
+      }
+
+      updateSummaryBar();
+      renderTeamSections();
+      renderFooter();
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       Step 2: Captain / Vice-Captain
+    ───────────────────────────────────────────────────────────── */
+    function goToStep2() {
+      if (selectedPlayers.length !== MAX_PLAYERS) {
+        setFooterMsg('Please select exactly 11 players first.', 'error');
+        return;
+      }
+      modalStep = 2;
+      setFooterMsg('');
+      renderCaptainStep();
+      renderFooter();
+      document.getElementById('modalBody').scrollTop = 0;
+    }
+
+    function renderCaptainStep() {
+      const rows = selectedPlayers.map(pid => {
+        const p = allPlayers.find(x => Number(x.id) === pid);
+        if (!p) return '';
+        const isCap  = captainId     === pid;
+        const isVice = viceCaptainId === pid;
+        const color  = teamColor(p.team_name);
+
+        return `
+          <div class="captain-player-row ${isCap ? 'is-captain' : isVice ? 'is-vice' : ''}">
+            <div class="player-avatar" style="background:${color};width:34px;height:34px;font-size:11px;">
+              ${escapeHTML(playerInitials(p.player_name))}
+            </div>
+            <div class="player-info">
+              <div class="player-name" style="font-size:13px;">${escapeHTML(p.player_name)}</div>
+              <div class="player-credit-label">${escapeHTML(teamFullName(p.team_name))}</div>
+            </div>
+            <div class="captain-badges">
+              <button class="captain-badge-btn c-btn ${isCap ? 'active' : ''}" onclick="setCaptain(${pid})">C</button>
+              <button class="captain-badge-btn vc-btn ${isVice ? 'active' : ''}" onclick="setViceCaptain(${pid})">VC</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('modalContent').innerHTML = `
+        <div class="captain-step">
+          <div>
+            <div class="captain-step-title">Choose Captain &amp; Vice-Captain</div>
+            <div class="captain-step-sub">
+              Captain earns 2x points &nbsp;·&nbsp; Vice-Captain earns 1.5x points
+            </div>
+          </div>
+          <div class="captain-player-grid">${rows}</div>
+        </div>
+      `;
+    }
+
+    function setCaptain(pid) {
+      if (viceCaptainId === pid) viceCaptainId = null;
+      captainId = (captainId === pid) ? null : pid;
+      renderCaptainStep();
+    }
+
+    function setViceCaptain(pid) {
+      if (captainId === pid) captainId = null;
+      viceCaptainId = (viceCaptainId === pid) ? null : pid;
+      renderCaptainStep();
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       Team Preview
+    ───────────────────────────────────────────────────────────── */
+    function openPreview() {
+      const teamCounts  = getTeamCounts();
+      const overseasCnt = getOverseasCount();
+      const totalUsed   = getTotalCoinsUsed();
+      const creditsLeft = budget - totalUsed;
+      const teams       = getTeams();
+
+      const statsHtml = `
+        <div class="preview-stats">
+          <div class="preview-stat">
+            <div class="preview-stat-val">${selectedPlayers.length}/${MAX_PLAYERS}</div>
+            <div class="preview-stat-label">Players Selected</div>
+          </div>
+          <div class="preview-stat">
+            <div class="preview-stat-val">${overseasCnt}/${MAX_OVERSEAS}</div>
+            <div class="preview-stat-label">Overseas Players</div>
+          </div>
+          ${teams.map(t => `
+            <div class="preview-stat">
+              <div class="preview-stat-val">${teamCounts[t] || 0}/${MAX_PER_TEAM}</div>
+              <div class="preview-stat-label">${escapeHTML(t)} Players</div>
+            </div>
+          `).join('')}
+          <div class="preview-stat">
+            <div class="preview-stat-val" style="color:${creditsLeft < 0 ? '#fb7185' : '#facc15'}">${formatCost(creditsLeft)}</div>
+            <div class="preview-stat-label">Credits Left</div>
+          </div>
+        </div>
+      `;
+
+      const playerRows = selectedPlayers.map(pid => {
+        const p = allPlayers.find(x => Number(x.id) === pid);
+        if (!p) return '';
+        const isCap  = captainId     === pid;
+        const isVice = viceCaptainId === pid;
+        const color  = teamColor(p.team_name);
+        const badge  = isCap
+          ? `<span class="preview-captain-badge c">C</span>`
+          : isVice
+          ? `<span class="preview-captain-badge vc">VC</span>`
+          : '';
+
+        return `
+          <div class="preview-player-row ${isCap ? 'p-captain' : isVice ? 'p-vice' : ''}">
+            <div class="player-avatar" style="background:${color};width:32px;height:32px;font-size:11px;">
+              ${escapeHTML(playerInitials(p.player_name))}
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600;">${escapeHTML(p.player_name)}</div>
+              <div style="font-size:11px;color:#94a3b8;">${escapeHTML(p.team_name)} · ${isOverseas(p) ? 'Overseas' : 'Indian'}</div>
+            </div>
+            ${badge}
+          </div>
+        `;
+      }).join('') || '<div style="color:#94a3b8;font-size:13px;">No players selected yet.</div>';
+
+      const captainNote = (captainId || viceCaptainId)
+        ? `<div style="margin-top:8px;font-size:12px;color:#94a3b8;">C = Captain (2x) &nbsp;·&nbsp; VC = Vice-Captain (1.5x)</div>`
+        : `<div style="margin-top:8px;font-size:12px;color:#facc15;">Select your captain and vice-captain in the next step.</div>`;
+
+      document.getElementById('previewBody').innerHTML = `
+        ${statsHtml}
+        <div class="preview-section-title">Your 11 Players</div>
+        ${playerRows}
+        ${captainNote}
+      `;
+
+      document.getElementById('previewPanel').classList.add('open');
+    }
+
+    function closePreview() {
+      document.getElementById('previewPanel').classList.remove('open');
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       Footer message
+    ───────────────────────────────────────────────────────────── */
+    function setFooterMsg(msg, type) {
+      const el = document.getElementById('footerMsg');
+      el.textContent = msg || '';
+      el.className = 'footer-msg' + (type ? ` ${type}` : '');
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       Open / Close modal
+    ───────────────────────────────────────────────────────────── */
+    async function openFantasyTeam(fantasyMatchId) {
+      const userId = getCurrentUserId();
+      if (!userId) {
+        alert('Please sign in from the main IPL Arena page first.');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Reset state
+      currentFantasyMatchId = fantasyMatchId;
+      selectedPlayers  = [];
+      allPlayers       = [];
+      currentMatchData = null;
+      budget           = 120;
+      modalStep        = 1;
+      expandedTeams    = new Set();
+      captainId        = null;
+      viceCaptainId    = null;
+      if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+
+      document.getElementById('teamModal').classList.add('show');
+      document.getElementById('modalTitle').textContent   = 'Create Your Fantasy XI';
+      document.getElementById('modalSubtitle').textContent = 'Loading match...';
+      document.getElementById('timerWrap').style.display  = 'none';
+      document.getElementById('modalContent').innerHTML   = '<div style="text-align:center;padding:48px 16px;color:#94a3b8;">Loading players...</div>';
+      document.getElementById('previewPanel').classList.remove('open');
+      setFooterMsg('');
+      updateSummaryBar();
+      renderFooter();
+
+      try {
+        const res  = await fetch(`/api/get-fantasy-match?fantasy_match_id=${encodeURIComponent(fantasyMatchId)}`);
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || 'Could not load fantasy match.');
+
+        currentMatchData = data.match;
+        allPlayers       = data.players || [];
+        budget           = Number(currentMatchData.budget_coins || 120);
+
+        // Closed match → show results
+        if (String(currentMatchData.status).toLowerCase() === 'closed') {
+          document.getElementById('summaryBar').style.display = 'none';
+          document.getElementById('modalTitle').textContent   = currentMatchData.match_title || 'Fantasy Result';
+          document.getElementById('modalSubtitle').textContent = `${currentMatchData.team_1} vs ${currentMatchData.team_2} · Final Result`;
+          document.getElementById('footerActions').innerHTML = `
+            <button class="footer-btn outline" style="flex:none;min-width:120px;" onclick="closeTeamModal()">Close</button>
+          `;
+          await loadFantasyResults(fantasyMatchId);
+          return;
+        }
+
+        document.getElementById('summaryBar').style.display = '';
+        document.getElementById('modalTitle').textContent    = currentMatchData.match_title || 'Create Your Fantasy XI';
+        document.getElementById('modalSubtitle').textContent = `${currentMatchData.team_1} vs ${currentMatchData.team_2} · Budget ${budget} coins`;
+
+        // Countdown timer
+        if (currentMatchData.match_start_time) {
+          startCountdown(new Date(currentMatchData.match_start_time));
+        }
+
+        // Load saved team
+        await loadSavedFantasyTeam(fantasyMatchId);
+
+        updateSummaryBar();
+        renderTeamSections();
+        renderFooter();
+
+      } catch (err) {
+        document.getElementById('modalContent').innerHTML = `<div style="text-align:center;padding:48px 16px;color:#fb7185;">${escapeHTML(err.message || 'Could not load players.')}</div>`;
+      }
+    }
+
+    function closeTeamModal() {
+      document.getElementById('teamModal').classList.remove('show');
+      if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+      selectedPlayers  = [];
+      currentFantasyMatchId = null;
+      currentMatchData = null;
+      allPlayers       = [];
+      budget           = 120;
+      captainId        = null;
+      viceCaptainId    = null;
+      expandedTeams    = new Set();
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       Countdown
+    ───────────────────────────────────────────────────────────── */
+    function startCountdown(targetDate) {
+      const wrap  = document.getElementById('timerWrap');
+      const valEl = document.getElementById('timerValue');
+
+      function tick() {
+        const diff = targetDate - Date.now();
+        if (diff <= 0) {
+          clearInterval(countdownInterval);
+          valEl.textContent = 'Contest Closed';
+          return;
+        }
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        valEl.textContent = `${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+      }
+
+      wrap.style.display = '';
+      tick();
+      countdownInterval = setInterval(tick, 1000);
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       Load saved team
+    ───────────────────────────────────────────────────────────── */
+    async function loadSavedFantasyTeam(fantasyMatchId) {
+      const userId = getCurrentUserId();
+      if (!userId) return;
+
+      try {
+        const res  = await fetch(`/api/get-user-team?user_id=${encodeURIComponent(userId)}&fantasy_match_id=${encodeURIComponent(fantasyMatchId)}`);
+        const data = await res.json();
+        if (!res.ok || !data.team) return;
+
+        selectedPlayers = (data.players || []).map(p => Number(p.id));
+        captainId       = Number(data.team.captain_player_id) || null;
+        viceCaptainId   = Number(data.team.vice_captain_player_id) || null;
+
+        setFooterMsg('Your saved team has been loaded. Edit it while the contest is open.', 'success');
+      } catch (err) {
+        console.error('Saved team load failed:', err);
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       Submit team
+    ───────────────────────────────────────────────────────────── */
+    async function submitFantasyTeam() {
+      const userId    = getCurrentUserId();
+      const totalUsed = getTotalCoinsUsed();
+
+      setFooterMsg('');
+
+      if (!userId) {
+        setFooterMsg('Please sign in from the main IPL Arena page first.', 'error'); return;
+      }
+      if (selectedPlayers.length !== MAX_PLAYERS) {
+        setFooterMsg('Please select exactly 11 players.', 'error'); return;
+      }
+      if (totalUsed > budget) {
+        setFooterMsg(`Budget exceeded. Used ${formatCost(totalUsed)} of ${budget} coins.`, 'error'); return;
+      }
+      if (!captainId) {
+        setFooterMsg('Please choose a captain (tap C next to a player).', 'error'); return;
+      }
+      if (!viceCaptainId) {
+        setFooterMsg('Please choose a vice-captain (tap VC next to a player).', 'error'); return;
+      }
+      if (captainId === viceCaptainId) {
+        setFooterMsg('Captain and vice-captain cannot be the same player.', 'error'); return;
+      }
+
+      setFooterMsg('Saving your team...', 'info');
+
+      try {
+        const res = await fetch('/api/submit-fantasy-team', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({
+            user_id:              Number(userId),
+            fantasy_match_id:     Number(currentFantasyMatchId),
+            player_ids:           selectedPlayers,
+            captain_player_id:    captainId,
+            vice_captain_player_id: viceCaptainId,
+          }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Could not save fantasy team.');
+
+        setFooterMsg(
+          `Team saved! Used: ${formatCost(Number(data.total_coins_used))} coins · Left: ${formatCost(Number(data.coins_remaining))} coins.`,
+          'success'
+        );
+      } catch (err) {
+        setFooterMsg(err.message || 'Could not save team.', 'error');
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       Fantasy Results (closed match)
+    ───────────────────────────────────────────────────────────── */
+    async function loadFantasyResults(fantasyMatchId) {
+      const userId = getCurrentUserId();
+
+      try {
+        const res  = await fetch(`/api/get-fantasy-results?user_id=${encodeURIComponent(userId)}&fantasy_match_id=${encodeURIComponent(fantasyMatchId)}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Could not load fantasy results.');
+
+        if (!data.score) {
+          document.getElementById('modalContent').innerHTML = `
+            <div style="text-align:center;padding:48px 16px;color:#94a3b8;">
+              No result found. You may not have submitted a team for this match.
+            </div>
+          `;
+          return;
+        }
+
+        const playerRows = (data.players || []).map(player => {
+          const pts   = Number(player.fantasy_points || 0);
+          const color = teamColor(player.team_name || player.team_code || '');
+          return `
+            <div class="result-player-row">
+              <div class="player-avatar" style="background:${color};width:34px;height:34px;font-size:11px;">
+                ${escapeHTML(playerInitials(player.player_name))}
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;">${escapeHTML(player.player_name)}</div>
+                <div style="font-size:11px;color:#94a3b8;">${escapeHTML(player.team_name || '')}</div>
+              </div>
+              <div class="result-player-pts">${formatCost(pts)} pts</div>
+            </div>
+          `;
+        }).join('');
+
+        document.getElementById('modalContent').innerHTML = `
+          <div class="result-stats">
+            <div class="result-stat">
+              <div class="result-stat-val">${formatCost(Number(data.score.total_points || 0))}</div>
+              <div class="result-stat-label">Total Points</div>
+            </div>
+            <div class="result-stat">
+              <div class="result-stat-val">${formatCost(Number(data.score.base_points || 0))}</div>
+              <div class="result-stat-label">Base Points</div>
+            </div>
+            <div class="result-stat">
+              <div class="result-stat-val">+${formatCost(Number(data.score.captain_bonus || 0))}</div>
+              <div class="result-stat-label">Captain Bonus</div>
+            </div>
+            <div class="result-stat">
+              <div class="result-stat-val">+${formatCost(Number(data.score.vice_captain_bonus || 0))}</div>
+              <div class="result-stat-label">VC Bonus</div>
+            </div>
+          </div>
+          <div class="preview-section-title">Player Points</div>
+          ${playerRows}
+          <div style="margin-top:20px;padding:16px;background:#111827;border-radius:12px;">
+            <div class="preview-section-title" style="margin-top:0;">Scoring Rules</div>
+            <div class="rules-list" style="font-size:13px;">
+              <p>Runs: 1 pt · Wickets: 25 pts · Catches: 8 pts · Stumpings: 12 pts · Runouts: 12 pts</p>
+              <p>Captain: 2x · Vice-Captain: 1.5x</p>
+            </div>
+          </div>
+        `;
+
+      } catch (err) {
+        document.getElementById('modalContent').innerHTML = `
+          <div style="text-align:center;padding:48px 16px;color:#fb7185;">
+            ${escapeHTML(err.message || 'Could not load results.')}
+          </div>
+        `;
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       Leaderboard + Scoring (existing page features)
+    ───────────────────────────────────────────────────────────── */
+    function toggleScoringRules() {
+      const scoring     = document.getElementById('scoringPanel');
+      const leaderboard = document.getElementById('fantasyLeaderboardPanel');
+      if (!scoring || !leaderboard) return;
+      leaderboard.style.display = 'none';
+      scoring.style.display = scoring.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function openFantasyLeaderboard() {
+      const scoring     = document.getElementById('scoringPanel');
+      const leaderboard = document.getElementById('fantasyLeaderboardPanel');
+      const board       = document.getElementById('fantasyLeaderboardHome');
+      if (!scoring || !leaderboard || !board) return;
+
+      scoring.style.display = 'none';
+      leaderboard.style.display = leaderboard.style.display === 'none' ? 'block' : 'none';
+      if (leaderboard.style.display === 'none') return;
+
+      board.innerHTML = 'Loading leaderboard...';
+
+      try {
+        const res  = await fetch('/api/get-fantasy-leaderboard');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Could not load fantasy leaderboard.');
+
+        const players = data.leaderboard || [];
+        if (!players.length) {
+          board.innerHTML = `<div class="match-meta">No fantasy scores yet.</div>`;
+          return;
+        }
+
+        board.innerHTML = players.slice(0, 10).map((player, i) => {
+          const tp  = formatCost(Number(player.total_points || 0));
+          const mp  = Number(player.matches_played || 0);
+          const bp  = formatCost(Number(player.base_points || 0));
+          const cb  = formatCost(Number(player.captain_bonus || 0));
+          const vcb = formatCost(Number(player.vice_captain_bonus || 0));
+
+          return `
+            <div class="fantasy-leaderboard-row">
+              <div class="fantasy-rank">${i + 1}</div>
+              <div>
+                <div class="fantasy-player-name">${escapeHTML(player.user_name)}</div>
+                <div class="fantasy-player-meta">${mp} match${mp === 1 ? '' : 'es'} · Base: ${bp} · C: +${cb} · VC: +${vcb}</div>
+              </div>
+              <div class="fantasy-score">${tp} pts</div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        board.innerHTML = `<div class="match-meta">Could not load leaderboard.</div>`;
+      }
+    }
+  </script>
+</body>
+</html>
