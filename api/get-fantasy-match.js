@@ -10,7 +10,7 @@ module.exports = async function handler(req, res) {
   try {
     const { fantasy_match_id } = req.query;
 
-    // No ID → return all matches for homepage cards
+    // No ID: return all matches for homepage cards
     if (!fantasy_match_id) {
       const matches = await sql`
         SELECT
@@ -19,7 +19,6 @@ module.exports = async function handler(req, res) {
           team_1,
           team_2,
           status,
-          match_start_time,
           budget_coins
         FROM fantasy_matches
         ORDER BY id ASC
@@ -28,7 +27,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ matches });
     }
 
-    // ID provided → return one match + players
+    // ID provided: return one match + players
     const matches = await sql`
       SELECT *
       FROM fantasy_matches
