@@ -959,11 +959,12 @@
     };
 
     /* ── Status config (updated button classes for new page design) ── */
+
     const STATUS_CONFIG = {
-      open:   { label: 'Open',    pillClass: 'status-open',   btnText: 'Create Team',     btnClass: 'btn-open' },
-      locked: { label: '🔴 Live', pillClass: 'status-locked', btnText: 'View Live Score', btnClass: 'btn-locked' },
-      closed: { label: 'Final',   pillClass: 'status-closed', btnText: 'View Results',    btnClass: 'btn-closed' },
-    };
+  open:   { label: 'Open',   pillClass: 'status-open',   btnText: 'Create Team',     btnClass: 'btn-open' },
+  locked: { label: 'Locked', pillClass: 'status-locked', btnText: 'View Live Score', btnClass: 'btn-locked' },
+  closed: { label: 'Closed', pillClass: 'status-closed', btnText: 'View Results',    btnClass: 'btn-closed' },
+};
 
     /* ── Helpers ── */
     function getCurrentUserId() { return localStorage.getItem('mtgames_user_id'); }
