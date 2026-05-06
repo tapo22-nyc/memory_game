@@ -1314,15 +1314,16 @@
       const bodyEl   = document.getElementById('userTeamBody');
 
       titleEl.textContent  = escapeHTML(userName) + "'s Team";
-      subEl.textContent    = 'Most recent completed match';
+      subEl.textContent    = 'Current live match';
       scoreBar.innerHTML   = '';
       bodyEl.innerHTML     = '<div class="user-team-loading">Loading team…</div>';
       modal.classList.add('show');
 
-      // find the most recent closed (or locked) match
-      const closedMatch = allMatches.find(m => String(m.status).toLowerCase() === 'closed')
-                       || allMatches.find(m => String(m.status).toLowerCase() === 'locked');
 
+// find the current locked match first, then fallback to latest closed match
+const closedMatch = allMatches.find(m => String(m.status).toLowerCase() === 'locked')
+                 || allMatches.find(m => String(m.status).toLowerCase() === 'closed');
+      
       if (!closedMatch) {
         bodyEl.innerHTML = '<div class="user-team-loading" style="color:#f87171;">No completed matches found yet.</div>';
         return;
