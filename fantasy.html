@@ -1351,10 +1351,43 @@ const closedMatch = allMatches.find(m => String(m.status).toLowerCase() === 'loc
         }
 
         const players = data.players || [];
+        
         if (!players.length) {
-          bodyEl.innerHTML = '<div class="user-team-loading">This user did not submit a team for this match.</div>';
-          return;
-        }
+  const teamRes = await fetch(`/api/get-user-team?user_id=${encodeURIComponent(userId)}&fantasy_match_id=${encodeURIComponent(closedMatch.id)}`);
+  const teamData = await teamRes.json();
+
+  if (!teamRes.ok || !teamData.team || !teamData.players || !teamData.players.length) {
+    bodyEl.innerHTML = '<div class="user-team-loading">This user did not submit a team for this match.</div>';
+    return;
+  }
+
+  bodyEl.innerHTML = teamData.players.map(player => {
+    const code = player.team_code || player.team_name || '';
+    const color = teamColor(code);
+    const initials = playerInitials(player.player_name);
+    const isCap = Number(player.id) === Number(teamData.team.captain_player_id);
+    const isVice = Number(player.id) === Number(teamData.team.vice_captain_player_id);
+
+    const badge = isCap
+      ? `<span class="result-captain-badge c">C</span>`
+      : isVice
+        ? `<span class="result-captain-badge vc">VC</span>`
+        : '';
+
+    return `
+      <div class="result-player-row ${isCap ? 'is-captain' : isVice ? 'is-vice' : ''}">
+        <div class="player-avatar" style="background:${color};width:36px;height:36px;font-size:12px;border:2px solid rgba(255,255,255,0.15);">${escapeHTML(initials)}</div>
+        <div class="result-player-info">
+          <div class="result-player-name">${escapeHTML(player.player_name)}</div>
+          <div class="result-player-meta">${escapeHTML(teamFullName(code))}</div>
+        </div>
+        ${badge}
+        <div class="result-pts pending">-- pts</div>
+      </div>`;
+  }).join('');
+
+  return;
+}
 
         bodyEl.innerHTML = players.map(player => {
           const code     = player.team_code || '';
