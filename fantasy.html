@@ -1388,7 +1388,7 @@
           <div class="summary-stat-label" id="statTeam2Label">Team 2</div>
         </div>
         <div class="summary-stat">
-          <div class="summary-stat-val" id="statCredits">120</div>
+          <div class="summary-stat-val" id="statCredits">75</div>
           <div class="summary-stat-label">Budget Left</div>
         </div>
       </div>
@@ -1433,7 +1433,7 @@
     let allMatches           = [];   // stored on page load for user-team viewer
     let activeLeaderboardTab = 'overall';
     let selectedMatchLeaderboardId = null;
-    let budget               = 120;
+    let budget               = 75;
     let modalStep            = 1;
     let expandedTeams        = new Set();
     let activePlayerTypeByTeam = {};
@@ -2328,7 +2328,7 @@ const updateNote = currentMatchData?.score_update_note || '';
       if (!userId) { alert('Please sign in from the main IPL Arena page first.'); window.location.href='index.html'; return; }
 
       currentFantasyMatchId=fantasyMatchId; selectedPlayers=[]; allPlayers=[]; currentMatchData=null;
-      budget=120; modalStep=1; expandedTeams=new Set(); activePlayerTypeByTeam = {}; captainId=null; viceCaptainId=null;
+      budget=75; modalStep=1; expandedTeams=new Set(); activePlayerTypeByTeam = {}; captainId=null; viceCaptainId=null;
       if(countdownInterval){clearInterval(countdownInterval);countdownInterval=null;}
 
       document.getElementById('teamModal').classList.add('show');
@@ -2379,7 +2379,7 @@ const updateNote = currentMatchData?.score_update_note || '';
       document.getElementById('teamModal').classList.remove('show');
       if(countdownInterval){clearInterval(countdownInterval);countdownInterval=null;}
       selectedPlayers=[]; currentFantasyMatchId=null; currentMatchData=null;
-      allPlayers=[]; budget=120; captainId=null; viceCaptainId=null; expandedTeams=new Set(); activePlayerTypeByTeam = {};
+      allPlayers=[]; budget=75; captainId=null; viceCaptainId=null; expandedTeams=new Set(); activePlayerTypeByTeam = {};
     }
 
     /* ── Countdown ── */
