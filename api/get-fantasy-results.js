@@ -24,6 +24,13 @@ module.exports = async function handler(req, res) {
         pm.player_name,
         pm.team_code,
         pm.player_tag,
+        fpms.runs,
+        fpms.fours,
+        fpms.sixes,
+        fpms.wickets,
+        fpms.catches,
+        fpms.stumpings,
+        fpms.runouts,
         fpms.fantasy_points,
         CASE
           WHEN fut.captain_player_id = pm.id THEN 'C'
