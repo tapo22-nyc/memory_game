@@ -1921,7 +1921,7 @@
           <div class="summary-stat"><div class="summary-stat-val" id="statOverseas">0/4</div><div class="summary-stat-label">Overseas</div></div>
           <div class="summary-stat"><div class="summary-stat-val" id="statTeam1">0/7</div><div class="summary-stat-label" id="statTeam1Label">Team 1</div></div>
           <div class="summary-stat"><div class="summary-stat-val" id="statTeam2">0/7</div><div class="summary-stat-label" id="statTeam2Label">Team 2</div></div>
-          <div class="summary-stat"><div class="summary-stat-val" id="statCredits">120</div><div class="summary-stat-label">Budget Left</div></div>
+          <div class="summary-stat"><div class="summary-stat-val" id="statCredits">75</div><div class="summary-stat-label">Budget Left</div></div>
         `;
       }
       const teams=getTeams(), tc=getTeamCounts(), oc=getOverseasCount(), used=getTotalCoinsUsed(), left=budget-used;
@@ -2348,7 +2348,7 @@ const updateNote = currentMatchData?.score_update_note || '';
         if (!res.ok) throw new Error(data.error||'Could not load fantasy match.');
 
         currentMatchData=data.match; allPlayers=data.players||[];
-        budget=Number(currentMatchData.budget_coins||120);
+        budget=Number(currentMatchData.budget_coins||75);
         const status=String(currentMatchData.status||'open').toLowerCase();
         const isLive=status==='locked';
 
