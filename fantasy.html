@@ -1550,20 +1550,27 @@
           return;
         }
 
-        const openMatches = allMatches
-          .filter(match => String(match.status || 'open').toLowerCase() !== 'closed')
-          .sort((a, b) => {
-            const STATUS_ORDER = { locked: 0, open: 1 };
-            const sa = String(a.status || 'open').toLowerCase();
-            const sb = String(b.status || 'open').toLowerCase();
-            const statusDiff = (STATUS_ORDER[sa] ?? 1) - (STATUS_ORDER[sb] ?? 1);
-            return statusDiff || Number(b.id) - Number(a.id);
-          });
+      const openMatches = allMatches
+        .filter(match => String(match.status || 'open').toLowerCase() !== 'closed')
+        .sort((a, b) => {
+          const STATUS_ORDER = { locked: 0, open: 1 };
+      
+          const sa = String(a.status || 'open').toLowerCase();
+          const sb = String(b.status || 'open').toLowerCase();
+      
+          const statusDiff =
+            (STATUS_ORDER[sa] ?? 1) -
+            (STATUS_ORDER[sb] ?? 1);
+      
+          // ascending order of match id
+          return statusDiff || Number(a.id) - Number(b.id);
+        });
+      
+      const closedMatches = allMatches
+        .filter(match => String(match.status || 'open').toLowerCase() === 'closed')
+        .sort((a, b) => Number(a.id) - Number(b.id));
 
-        const closedMatches = allMatches
-          .filter(match => String(match.status || 'open').toLowerCase() === 'closed')
-          .sort((a, b) => Number(b.id) - Number(a.id));
-
+        
         function buildFantasyCard(match) {
           const status = String(match.status || 'open').toLowerCase();
           const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.open;
