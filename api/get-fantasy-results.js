@@ -9,7 +9,6 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'user_id and fantasy_match_id required' });
     }
 
-    // user score
     const score = await sql`
       SELECT *
       FROM fantasy_user_match_scores
@@ -17,13 +16,13 @@ module.exports = async function handler(req, res) {
         AND fantasy_match_id = ${Number(fantasy_match_id)}
     `;
 
-    // player-wise breakdown
     const players = await sql`
       SELECT
         pm.id,
         pm.player_name,
         pm.team_code,
         pm.player_tag,
+        pm.player_type,
         fpms.runs,
         fpms.fours,
         fpms.sixes,
