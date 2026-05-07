@@ -10,7 +10,6 @@ module.exports = async function handler(req, res) {
   try {
     const { fantasy_match_id } = req.query;
 
-    // No ID: return all matches for homepage cards
     if (!fantasy_match_id) {
       const matches = await sql`
         SELECT
@@ -27,7 +26,6 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ matches });
     }
 
-    // ID provided: return one match + players
     const matches = await sql`
       SELECT *
       FROM fantasy_matches
@@ -45,6 +43,7 @@ module.exports = async function handler(req, res) {
         pm.player_name,
         pm.team_code AS team_name,
         pm.player_tag AS role,
+        pm.player_type,
         pm.auction_price_cr,
         pm.player_cost_coins
       FROM fantasy_match_players fmp
