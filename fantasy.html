@@ -1751,10 +1751,14 @@
 
     /* ── Results body ── */
     function renderResultsBody(resultPlayers, isLive) {
-      const notice = isLive
-        ? `<div class="notice-banner notice-live">🔴 Live scores — updated after each innings ends</div>`
-        : `<div class="notice-banner notice-info">Match complete. These are your final fantasy points.</div>`;
+      
+const updateNote = currentMatchData?.score_update_note || '';
 
+  const notice = isLive
+    ? `<div class="notice-banner notice-live">🔴 ${escapeHTML(updateNote || 'Lets Go MNS')}</div>`
+    : `<div class="notice-banner notice-info">${escapeHTML(updateNote || 'Match complete. These are your final fantasy points.')}</div>`;
+
+      
       const rows=(resultPlayers||[]).map(player=>{
         const code=player.team_code||'', color=teamColor(code), initials=playerInitials(player.player_name);
         const pts=Number(player.fantasy_points||0), role=String(player.captain_role||'');
