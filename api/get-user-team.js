@@ -32,6 +32,7 @@ module.exports = async function handler(req, res) {
         pm.player_name,
         pm.team_code AS team_name,
         pm.player_tag AS role,
+        pm.player_type,
         pm.auction_price_cr,
         pm.player_cost_coins
       FROM fantasy_user_team_players futp
