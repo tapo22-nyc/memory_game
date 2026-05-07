@@ -1782,7 +1782,10 @@ const updateNote = currentMatchData?.score_update_note || '';
               <div class="result-player-meta">${escapeHTML(teamFullName(code))} &nbsp;${tag}</div>
             </div>
             ${badge}
+
             <div class="result-pts ${ptsClass}">${formatNum(pts)} pts</div>
+            ${buildPlayerBreakdownHTML(player)}
+
           </div>`;
       }).join('')||`<div style="color:#94a3b8;text-align:center;padding:24px;">No player data available yet.</div>`;
 
