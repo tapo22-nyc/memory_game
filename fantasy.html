@@ -1837,15 +1837,12 @@
       }
     }
 
-    function getLeaderboardMatchesForTab() {
-      return (allMatches || [])
-        .filter(match => {
-          const status = String(match.status || 'open').toLowerCase();
-          return status === 'locked' || status === 'closed';
-        })
-        .sort((a, b) => Number(b.id) - Number(a.id));
-    }
-
+  function getLeaderboardMatchesForTab() {
+    return (allMatches || [])
+      .filter(match => String(match.status || 'open').toLowerCase() === 'closed')
+      .sort((a, b) => Number(b.id) - Number(a.id))
+      .slice(0, 2);
+  }
     function renderMatchLeaderboardStrip() {
       const strip = document.getElementById('matchLeaderboardStrip');
       if (!strip) return;
