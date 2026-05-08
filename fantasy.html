@@ -1717,8 +1717,8 @@
       
       const closedMatches = allMatches
         .filter(match => String(match.status || 'open').toLowerCase() === 'closed')
-        .sort((a, b) => Number(a.id) - Number(b.id));
-
+        .sort((a, b) => Number(b.id) - Number(a.id))
+        .slice(0, 2);
         
         function buildFantasyCard(match) {
           const status = String(match.status || 'open').toLowerCase();
