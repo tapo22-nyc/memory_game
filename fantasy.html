@@ -2433,18 +2433,18 @@ function renderLeaderboardUpdateNote() {
       }
 
       const battingRows = [
-        ...(runs     > 0 ? [statRow(`Runs (${runs}) × +1`, runsPoints)]           : []),
-        ...(fours    > 0 ? [statRow(`Fours (${fours}) boundary bonus × +4`, foursPoints)] : []),
-        ...(sixes    > 0 ? [statRow(`Sixes (${sixes}) bonus × +6`, sixesPoints)]  : []),
+        ...(runs     > 0 ? [statRow(`Runs (${runs}) × 1`, runsPoints)]           : []),
+        ...(fours    > 0 ? [statRow(`Fours (${fours}) × 4`, foursPoints)] : []),
+        ...(sixes    > 0 ? [statRow(`Sixes (${sixes}) × 6`, sixesPoints)]  : []),
       ];
       const bowlingRows = [
-        ...(wickets > 0 ? [statRow(`Wickets (${wickets}) × +25`, wicketPoints)]   : []),
-        ...(maidens > 0 ? [statRow(`Maiden overs (${maidens}) × +12`, maidenPoints)] : []),
+        ...(wickets > 0 ? [statRow(`Wickets (${wickets}) × 25`, wicketPoints)]   : []),
+        ...(maidens > 0 ? [statRow(`Maiden overs (${maidens}) × 12`, maidenPoints)] : []),
       ];
       const fieldingRows = [
-        ...(catches   > 0 ? [statRow(`Catches (${catches}) × +8`, catchesPoints)]     : []),
-        ...(stumpings > 0 ? [statRow(`Stumpings (${stumpings}) × +12`, stumpingPoints)] : []),
-        ...(runouts   > 0 ? [statRow(`Run outs (${runouts}) × +12`, runoutPoints)]     : []),
+        ...(catches   > 0 ? [statRow(`Catches (${catches}) × 8`, catchesPoints)]     : []),
+        ...(stumpings > 0 ? [statRow(`Stumpings (${stumpings}) × 12`, stumpingPoints)] : []),
+        ...(runouts   > 0 ? [statRow(`Run outs (${runouts}) × 12`, runoutPoints)]     : []),
       ];
 
       return `
