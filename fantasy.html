@@ -1984,7 +1984,7 @@
               <div class="result-player-info">
                 <div class="result-player-name">${escapeHTML(player.player_name)}</div>
                 <div class="result-player-meta">${escapeHTML(teamFullName(code))} &nbsp;${tag}</div>
-                <div class="result-expand-hint"><span class="hint-pill">Tap row</span></div>
+          
               </div>
               ${badge}
               <div class="result-pts-wrap">
@@ -2532,7 +2532,6 @@ const updateNote = currentMatchData?.score_update_note || '';
             <div class="result-player-info">
               <div class="result-player-name">${escapeHTML(player.player_name)}</div>
               <div class="result-player-meta">${escapeHTML(teamFullName(code))} &nbsp;${tag}</div>
-              ${hasBreakdown ? '<div class="result-expand-hint"><span class="hint-pill">Tap row</span></div>' : ''}
             </div>
             ${badge}
             ${didNotPlay ? '<span class="dnp-badge">DNP</span>' : ''}
