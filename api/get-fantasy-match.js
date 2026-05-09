@@ -10,23 +10,22 @@ module.exports = async function handler(req, res) {
   try {
     const { fantasy_match_id } = req.query;
 
-    if (!fantasy_match_id) {
-      const matches = await sql`
-        SELECT
-          id,
-          match_title,
-          team_1,
-          team_2,
-          status,
-          budget_coins,
-          score_update_note
-        FROM fantasy_matches
-        ORDER BY id ASC
-      `;
+if (!fantasy_match_id) {
+  const matches = await sql`
+    SELECT
+      id,
+      match_title,
+      team_1,
+      team_2,
+      status,
+      budget_coins,
+      score_update_note
+    FROM fantasy_matches
+    ORDER BY id ASC
+  `;
 
-      return res.status(200).json({ matches });
-    }
-
+  return res.status(200).json({ matches });
+}
     const matches = await sql`
       SELECT *
       FROM fantasy_matches
