@@ -1810,10 +1810,10 @@
         const rank   = i + 1;
         const rc     = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
         const mp     = Number(p.matches_played || 0);
-        const base   = formatNum(Number(p.base_points || 0));
-        const cb     = formatNum(Number(p.captain_bonus || 0));
-        const vcb    = formatNum(Number(p.vice_captain_bonus || 0));
-        const total  = formatNum(Number(p.total_points || 0));
+        const base   = Math.round(Number(p.base_points || 0));
+        const cb     = Math.round(Number(p.captain_bonus || 0));
+        const vcb    = Math.round(Number(p.vice_captain_bonus || 0));
+        const total  = Math.round(Number(p.total_points || 0));
         const uid    = p.user_id || '';
         const uname  = escapeHTML(p.user_name);
         const safeName = uname.replace(/'/g, "\\'");
