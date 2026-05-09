@@ -1856,7 +1856,7 @@ function getLeaderboardMatchesForTab() {
   return (allMatches || [])
     .filter(match => {
       const status = String(match.status || 'open').toLowerCase();
-      return status === 'locked' || status === 'closed';
+      return (status === 'locked' || status === 'closed') && Number(match.id) >= 4;
     })
     .sort((a, b) => {
       const STATUS_ORDER = {
