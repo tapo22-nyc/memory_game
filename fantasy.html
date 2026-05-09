@@ -1229,9 +1229,10 @@
         <button class="lb-refresh-btn" onclick="refreshActiveLeaderboard()">↻ Refresh</button>
       </div>
 
-      <div class="lb-match-strip" id="matchLeaderboardStrip"></div>
-      <div id="matchLeaderboardNote"></div>
+<div class="lb-match-strip" id="matchLeaderboardStrip"></div>
+<div id="leaderboardUpdateNote"></div>
 
+      
       <div class="lb-panel">
         <div class="lb-head-row">
           <div class="lb-head-cell">#</div>
@@ -1876,26 +1877,32 @@ function getLeaderboardMatchesForTab() {
 }
 
     
-    function renderMatchLeaderboardNote() {
-      const noteEl = document.getElementById('matchLeaderboardNote');
-      if (!noteEl) return;
+function renderLeaderboardUpdateNote() {
+  const noteEl = document.getElementById('leaderboardUpdateNote');
+  if (!noteEl) return;
 
-      if (activeLeaderboardTab !== 'match' || !selectedMatchLeaderboardId) {
-        noteEl.innerHTML = '';
-        return;
-      }
+  let note = '';
 
-      const selectedMatch = (allMatches || []).find(
-        m => Number(m.id) === Number(selectedMatchLeaderboardId)
-      );
+  if (activeLeaderboardTab === 'match' && selectedMatchLeaderboardId) {
+    const selectedMatch = (allMatches || []).find(
+      m => Number(m.id) === Number(selectedMatchLeaderboardId)
+    );
 
-      const note = selectedMatch?.score_update_note || '';
+    note = selectedMatch?.score_update_note || '';
+  } else {
+    const latestMatch = (allMatches || [])
+      .filter(m => ['locked', 'closed'].includes(String(m.status || '').toLowerCase()))
+      .sort((a, b) => Number(b.id) - Number(a.id))[0];
 
-      noteEl.innerHTML = note
-        ? `<div class="lb-update-note">📌 ${escapeHTML(note)}</div>`
-        : '';
-    }
+    note = latestMatch?.score_update_note || '';
+  }
 
+  noteEl.innerHTML = note
+    ? `<div class="lb-update-note">📌 ${escapeHTML(note)}</div>`
+    : '';
+}
+
+    
     function renderMatchLeaderboardStrip() {
       const strip = document.getElementById('matchLeaderboardStrip');
       if (!strip) return;
@@ -1904,7 +1911,7 @@ function getLeaderboardMatchesForTab() {
       if (!leaderboardMatches.length) {
         selectedMatchLeaderboardId = null;
         strip.innerHTML = '<div class="lb-empty" style="padding:12px 4px;text-align:left;">No locked or completed matches yet.</div>';
-        renderMatchLeaderboardNote();
+        renderLeaderboardUpdateNote();
         return;
       }
 
@@ -1919,7 +1926,7 @@ function getLeaderboardMatchesForTab() {
         return `<button class="lb-match-chip ${isActive ? 'active' : ''}" title="${escapeHTML(title)}" onclick="selectMatchLeaderboard(${Number(match.id)})">${escapeHTML(label)}</button>`;
       }).join('');
 
-      renderMatchLeaderboardNote();
+      renderLeaderboardUpdateNote();
     }
 
     async function loadMatchLeaderboard(matchId) {
@@ -1945,7 +1952,7 @@ function getLeaderboardMatchesForTab() {
     function selectMatchLeaderboard(matchId) {
       selectedMatchLeaderboardId = Number(matchId);
       renderMatchLeaderboardStrip();
-      renderMatchLeaderboardNote();
+      renderLeaderboardUpdateNote();
       loadMatchLeaderboard(selectedMatchLeaderboardId);
     }
 
@@ -1961,7 +1968,7 @@ function getLeaderboardMatchesForTab() {
       if (strip) strip.classList.toggle('show', tab === 'match');
 
       if (tab === 'overall') {
-        renderMatchLeaderboardNote();
+        renderLeaderboardUpdateNote();
         await loadBottomLeaderboard();
       } else {
         await loadMatchCards();
@@ -1976,7 +1983,7 @@ function getLeaderboardMatchesForTab() {
         renderMatchLeaderboardStrip();
         await loadMatchLeaderboard(selectedMatchLeaderboardId);
       } else {
-        renderMatchLeaderboardNote();
+        renderLeaderboardUpdateNote();
         await loadBottomLeaderboard();
       }
     }
