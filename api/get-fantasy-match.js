@@ -19,8 +19,7 @@ module.exports = async function handler(req, res) {
           team_1,
           team_2,
           status,
-          budget_coins,
-          score_update_note
+          budget_coins
         FROM fantasy_matches
         ORDER BY id ASC
 
