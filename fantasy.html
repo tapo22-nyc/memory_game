@@ -2459,17 +2459,35 @@ function renderLeaderboardUpdateNote() {
         </div>`;
     }
 
-    function togglePlayerBreakdown(el) {
-      const row = (el.classList && el.classList.contains('result-player-row'))
-        ? el
-        : el.closest('.result-player-row');
-      if (!row) return;
-      const breakdown = row.querySelector('.player-breakdown');
-      if (!breakdown) return;
-      const isOpen = breakdown.classList.toggle('show');
-      row.classList.toggle('breakdown-open', isOpen);
-    }
+function togglePlayerBreakdown(el) {
+  const row = (el.classList && el.classList.contains('result-player-row'))
+    ? el
+    : el.closest('.result-player-row');
 
+  if (!row) return;
+
+  const breakdown = row.querySelector('.player-breakdown');
+  if (!breakdown) return;
+
+  const isOpen = breakdown.classList.toggle('show');
+  row.classList.toggle('breakdown-open', isOpen);
+
+  const playerName = row.querySelector('.result-player-name')?.textContent?.trim() || null;
+  const playerTeam = row.querySelector('.result-player-meta')?.textContent?.trim() || null;
+  const playerPts = row.querySelector('.result-pts')?.textContent?.trim() || null;
+
+  trackClick(isOpen ? 'player_points_breakdown_open' : 'player_points_breakdown_close', {
+    fantasy_match_id: currentFantasyMatchId || selectedMatchLeaderboardId || null,
+    player_name: playerName,
+    player_team: playerTeam,
+    player_points: playerPts,
+    
+modal_type: document.getElementById('userTeamModal')?.classList.contains('show')
+  ? 'leaderboard_user_team_modal'
+  : 'own_team_modal'
+}).catch(err => console.error('Player breakdown tracking failed:', err));
+
+}
     /* ── Results body ── */
     function renderResultsBody(resultPlayers, isLive) {
       
