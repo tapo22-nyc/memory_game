@@ -1837,12 +1837,31 @@
       }
     }
 
-  function getLeaderboardMatchesForTab() {
-    return (allMatches || [])
-      .filter(match => String(match.status || 'open').toLowerCase() === 'closed')
-      .sort((a, b) => Number(b.id) - Number(a.id))
-      .slice(0, 2);
-  }
+function getLeaderboardMatchesForTab() {
+  return (allMatches || [])
+    .filter(match => {
+      const status = String(match.status || 'open').toLowerCase();
+      return status === 'closed' || status === 'locked';
+    })
+    .sort((a, b) => {
+      const STATUS_ORDER = {
+        locked: 0,
+        closed: 1
+      };
+
+      const sa = String(a.status || 'open').toLowerCase();
+      const sb = String(b.status || 'open').toLowerCase();
+
+      const statusDiff =
+        (STATUS_ORDER[sa] ?? 99) -
+        (STATUS_ORDER[sb] ?? 99);
+
+      return statusDiff || Number(b.id) - Number(a.id);
+    })
+    .slice(0, 2);
+}
+    
+    
     function renderMatchLeaderboardStrip() {
       const strip = document.getElementById('matchLeaderboardStrip');
       if (!strip) return;
