@@ -2,6 +2,8 @@ const { neon } = require('@neondatabase/serverless');
 
 const sql = neon(process.env.DATABASE_URL);
 
+const OVERALL_LEADERBOARD_START_MATCH_ID = 4;
+
 module.exports = async function handler(req, res) {
   try {
     const fantasyMatchId = req.query.fantasy_match_id;
@@ -38,6 +40,7 @@ module.exports = async function handler(req, res) {
         FROM fantasy_user_match_scores s
         JOIN ipl_users u
           ON u.id = s.user_id
+        WHERE s.fantasy_match_id >= ${OVERALL_LEADERBOARD_START_MATCH_ID}
         GROUP BY u.user_name, s.user_id
         ORDER BY SUM(s.total_points) DESC
       `;
