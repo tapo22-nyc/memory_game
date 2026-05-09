@@ -1851,13 +1851,31 @@
       }
     }
 
-  function getLeaderboardMatchesForTab() {
-    return (allMatches || [])
-      .filter(match => String(match.status || 'open').toLowerCase() === 'closed')
-      .sort((a, b) => Number(b.id) - Number(a.id))
-      .slice(0, 2);
-  }
+function getLeaderboardMatchesForTab() {
+  return (allMatches || [])
+    .filter(match => {
+      const status = String(match.status || 'open').toLowerCase();
+      return status === 'locked' || status === 'closed';
+    })
+    .sort((a, b) => {
+      const STATUS_ORDER = {
+        locked: 0,
+        closed: 1
+      };
 
+      const sa = String(a.status || 'open').toLowerCase();
+      const sb = String(b.status || 'open').toLowerCase();
+
+      const statusDiff =
+        (STATUS_ORDER[sa] ?? 99) -
+        (STATUS_ORDER[sb] ?? 99);
+
+      return statusDiff || Number(b.id) - Number(a.id);
+    })
+    .slice(0, 2);
+}
+
+    
     function renderMatchLeaderboardNote() {
       const noteEl = document.getElementById('matchLeaderboardNote');
       if (!noteEl) return;
