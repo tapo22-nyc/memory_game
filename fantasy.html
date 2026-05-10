@@ -134,6 +134,33 @@
       border-color: rgba(255,255,255,0.35);
     }
 
+    .prize-pool-banner {
+  width: fit-content;
+  max-width: 420px;
+  margin: 22px auto 0;
+  padding: 14px 26px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,209,102,0.35);
+  box-shadow: 0 0 22px rgba(255,209,102,0.12);
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.prize-title {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #ffd166;
+  margin-bottom: 4px;
+}
+
+.prize-subtitle {
+  font-size: 0.86rem;
+  color: #cbd5e0;
+  line-height: 1.5;
+}
+    
+
     /* ── Buttons ── */
     .btn-primary {
       display: inline-flex;
@@ -1396,6 +1423,14 @@
       <div class="hero-scoring-link">
         <button class="btn-scoring-rules" onclick="trackClick('scoring_rules'); openScoringModal()">📋 Scoring Rules</button>
       </div>
+
+          <div class="prize-pool-banner">
+      <div class="prize-title">🏆 $200 Prize Pool</div>
+      <div class="prize-subtitle">
+        Top 2 players on the Overall Leaderboard win $200 Amazon Gift Card !
+      </div>
+    </div>
+      
     </section>
 
     <!-- ── Live / Open / Final Matches (middle) ── -->
