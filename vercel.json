@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/lock-fantasy-match",
-      "schedule": "0 2 10 5 *"
+      "schedule": "40 1 10 5 *"
     }
   ]
 }
