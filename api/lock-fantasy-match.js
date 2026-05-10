@@ -10,24 +10,25 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const matchId = 54; // change this if needed
+    const matchId = 54; // replace if different
 
-    const result = await sql`
+    await sql`
       UPDATE fantasy_matches
-      SET 
+      SET
         status = 'locked',
-        score_update_note = 'Match locked automatically by scheduled job'
+        score_update_note = 'Locked automatically by cron job'
       WHERE id = ${matchId}
-      RETURNING id, match_title, status, score_update_note;
     `;
 
     return res.status(200).json({
-      success: true,
-      updated: result
+      success: true
     });
 
-  } catch (error) {
-    console.error('Lock cron error:', error);
-    return res.status(500).json({ error: 'Failed to lock match' });
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      error: 'Cron failed'
+    });
   }
 }
