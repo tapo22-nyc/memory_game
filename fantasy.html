@@ -2251,6 +2251,14 @@
     }
 
     function deactivateSubstituteBooster() {
+
+      const status = String(currentMatchData?.status || 'open').toLowerCase();
+
+        if (status !== 'open') {
+          setFooterMsg('Substitute Booster is locked once the match starts.', 'info');
+          return;
+        }
+      
       substituteBoosterEnabled = false;
       if (substitutePlayerId) {
         selectedPlayers = selectedPlayers.filter(id => Number(id) !== Number(substitutePlayerId));
@@ -2284,13 +2292,18 @@ function renderSubstituteBoosterCard() {
               </div>
               <div class="sub-booster-pill">100 coins</div>
             </div>
-            <div class="sub-booster-actions">
-              <button class="sub-booster-btn secondary" onclick="deactivateSubstituteBooster()">Remove Booster</button>
-              <span class="sub-booster-status">
-                Active: ${activeCount}/11 · Substitute: ${subPlayer ? escapeHTML(subPlayer.player_name) : 'Not selected yet'}
-              </span>
-            </div>
-          </div>
+                  
+      <div class="sub-booster-actions">
+        ${String(currentMatchData?.status || 'open').toLowerCase() === 'open'
+          ? `<button class="sub-booster-btn secondary" onclick="deactivateSubstituteBooster()">Remove Booster</button>`
+          : `<span class="sub-booster-pill">Locked</span>`
+        }
+        <span class="sub-booster-status">
+          Active: ${activeCount}/11 · Substitute: ${subPlayer ? escapeHTML(subPlayer.player_name) : 'Not selected yet'}
+        </span>
+      </div>
+
+</div>
         `;
       }
 
