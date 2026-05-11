@@ -3291,6 +3291,12 @@ if (modalStep===1) {
     /* ── Player toggle ── */
     function togglePlayer(playerId) {
       setFooterMsg('');
+
+      if (substitutionUsed) {
+  setFooterMsg('Substitution has already been used. Team is now locked for this match.', 'info');
+  return;
+}
+      
       const pid = Number(playerId);
       const player = allPlayers.find(p => Number(p.id) === pid);
       if (!player) return;
