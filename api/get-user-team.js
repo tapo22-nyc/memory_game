@@ -18,7 +18,7 @@ module.exports = async function handler(req, res) {
       SELECT *
       FROM fantasy_user_teams
       WHERE user_id = ${Number(user_id)}
-      AND fantasy_match_id = ${Number(fantasy_match_id)}
+        AND fantasy_match_id = ${Number(fantasy_match_id)}
       LIMIT 1
     `;
 
@@ -34,12 +34,21 @@ module.exports = async function handler(req, res) {
         pm.player_tag AS role,
         pm.player_type,
         pm.auction_price_cr,
-        pm.player_cost_coins
+        pm.player_cost_coins,
+
+        futp.player_slot,
+        futp.is_active,
+        futp.activated_at,
+        futp.deactivated_at
       FROM fantasy_user_team_players futp
       JOIN ipl_player_master pm
         ON pm.id = futp.player_id
       WHERE futp.fantasy_user_team_id = ${team[0].id}
-      ORDER BY pm.team_code, pm.player_name
+      ORDER BY
+        futp.is_active DESC,
+        futp.player_slot,
+        pm.team_code,
+        pm.player_name
     `;
 
     return res.status(200).json({
