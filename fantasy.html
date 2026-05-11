@@ -3450,7 +3450,7 @@ if (modalStep===1) {
         const status=String(currentMatchData.status||'open').toLowerCase();
         const isLive=status==='locked';
 
-        if (status==='locked'||status==='closed') {
+        if (status==='closed') {
           document.getElementById('modalHeader').className=`modal-header ${status==='locked'?'locked-header':'closed-header'}`;
           document.getElementById('modalTitle').textContent=currentMatchData.match_title||(isLive?'Live Score':'Final Result');
           document.getElementById('modalSubtitle').textContent=`${currentMatchData.team_1} vs ${currentMatchData.team_2} · ${isLive?'🔴 Live Score':'Final Result'}`;
