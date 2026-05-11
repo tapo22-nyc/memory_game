@@ -2487,13 +2487,29 @@ function renderSubstituteBoosterCard() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Could not complete substitution.');
 
-        setFooterMsg(`Substitution complete. Frozen points for swapped-out player: ${formatNum(Number(data.player_out_frozen_points || 0))}.`, 'success');
-        selectedSwapOutPlayerId = null;
-        await loadSavedFantasyTeam(currentFantasyMatchId, true);
-        updateSummaryBar();
-        renderTeamSections();
-        renderFooter();
-        await loadLiveFantasyScore(currentFantasyMatchId);
+setFooterMsg(
+  `Substitution successful. ${playerIn?.player_name || 'Your substitute'} is now active and will earn points from here onward.`,
+  'success'
+);
+
+selectedSwapOutPlayerId = null;
+
+await loadSavedFantasyTeam(currentFantasyMatchId, true);
+updateSummaryBar();
+
+const status = String(currentMatchData?.status || 'open').toLowerCase();
+
+if (status === 'locked') {
+  liveModalTab = 'substitution';
+  renderLockedSubstitutionView();
+  renderLockedMatchFooter();
+} else {
+  renderTeamSections();
+  renderFooter();
+}
+
+await loadLiveFantasyScore(currentFantasyMatchId);
+        
       } catch (err) {
         setFooterMsg(err.message || 'Could not complete substitution.', 'error');
       }
