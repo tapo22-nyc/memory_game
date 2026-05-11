@@ -2166,9 +2166,11 @@
       renderFooter();
     }
 
-    function renderSubstituteBoosterCard() {
-      if (availableCoins < 100 && !substituteBoosterEnabled) return '';
+function renderSubstituteBoosterCard() {
+  if (substitutionUsed) return '';
+  if (availableCoins < 100 && !substituteBoosterEnabled) return '';
 
+  
       const activeCount = getActivePlayerCount();
       const subPlayer = substitutePlayerId
         ? allPlayers.find(p => Number(p.id) === Number(substitutePlayerId))
@@ -2858,8 +2860,13 @@ function renderLeaderboardUpdateNote() {
       const pEl=document.getElementById('statPlayers'); pEl.textContent=`${activeCount}/${MAX_PLAYERS}`; pEl.className='summary-stat-val'+(activeCount===MAX_PLAYERS?' good':'');
       const sEl=document.getElementById('statSubstitute');
       if (sEl) {
-        sEl.textContent = substituteBoosterEnabled ? (substitutePlayerId ? '1/1' : '0/1') : '--';
-        sEl.className = 'summary-stat-val' + (substitutePlayerId ? ' good' : substituteBoosterEnabled ? ' warn' : '');
+          if (substitutionUsed) {
+            sEl.textContent = 'Used';
+            sEl.className = 'summary-stat-val good';
+          } else {
+            sEl.textContent = substituteBoosterEnabled ? (substitutePlayerId ? '1/1' : '0/1') : '--';
+            sEl.className = 'summary-stat-val' + (substitutePlayerId ? ' good' : substituteBoosterEnabled ? ' warn' : '');
+          }
       }
       const oEl=document.getElementById('statOverseas'); oEl.textContent=`${oc}/${MAX_OVERSEAS}`; oEl.className='summary-stat-val'+(oc===MAX_OVERSEAS?' warn':'');
       const t1El=document.getElementById('statTeam1'); const t1c=tc[t1]||0; t1El.textContent=`${t1c}/${MAX_PER_TEAM}`; t1El.className='summary-stat-val'+(t1c===MAX_PER_TEAM?' warn':''); document.getElementById('statTeam1Label').textContent=t1||'Team 1';
@@ -3130,10 +3137,17 @@ const updateNote = currentMatchData?.score_update_note || '';
     /* ── Footer ── */
     function renderFooter() {
       const fa=document.getElementById('footerActions');
-      if (modalStep===1) {
-        fa.innerHTML=`<button class="footer-btn outline" onclick="openPreview()">Team Preview</button><button class="footer-btn primary" id="nextBtn" onclick="goToStep2()">Next &rarr;</button>`;
-        document.getElementById('nextBtn').disabled = getActivePlayerCount() < MAX_PLAYERS || (substituteBoosterEnabled && !substitutePlayerId);
-      } else {
+if (modalStep===1) {
+  if (substitutionUsed) {
+    fa.innerHTML = `<button class="footer-btn outline" onclick="openPreview()">Team Preview</button><button class="footer-btn primary" onclick="closeTeamModal()">Done</button>`;
+    return;
+  }
+
+  fa.innerHTML=`<button class="footer-btn outline" onclick="openPreview()">Team Preview</button><button class="footer-btn primary" id="nextBtn" onclick="goToStep2()">Next &rarr;</button>`;
+  document.getElementById('nextBtn').disabled = getActivePlayerCount() < MAX_PLAYERS || (substituteBoosterEnabled && !substitutePlayerId);
+}
+  
+      else {
         fa.innerHTML=`<button class="footer-btn outline" onclick="goToStep1()">&#8592; Back</button><button class="footer-btn primary" onclick="submitFantasyTeam()">Save Team</button>`;
       }
     }
