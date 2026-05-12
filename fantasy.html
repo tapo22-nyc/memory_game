@@ -3171,83 +3171,131 @@ function renderLeaderboardUpdateNote() {
       `;
     }
 
-    function buildPlayerBreakdownHTML(player) {
-      const runs      = Number(player.runs      || 0);
-      const fours     = Number(player.fours     || 0);
-      const sixes     = Number(player.sixes     || 0);
-      const wickets   = Number(player.wickets   || 0);
-      const maidens   = Number(player.maiden_overs || player.maidens || 0);
-      const catches   = Number(player.catches   || 0);
-      const stumpings = Number(player.stumpings || 0);
-      const runouts   = Number(player.runouts   || 0);
+function buildPlayerBreakdownHTML(player) {
+  const runs      = Number(player.runs || 0);
+  const balls     = Number(player.balls_faced || 0);
+  const fours     = Number(player.fours || 0);
+  const sixes     = Number(player.sixes || 0);
+  const strikeRate = Number(player.strike_rate || 0);
 
-      const runsPoints     = runs;
-      const foursPoints    = fours * 4;
-      const sixesPoints    = sixes * 6;
-      const battingPoints  = runsPoints + foursPoints + sixesPoints;
+  const overs     = Number(player.overs_bowled || 0);
+  const economy   = Number(player.economy_rate || 0);
+  const wickets   = Number(player.wickets || 0);
+  const maidens   = Number(player.maiden_overs || player.maidens || 0);
 
-      const wicketPoints   = wickets * 25;
-      const maidenPoints   = maidens * 12;
-      const bowlingPoints  = wicketPoints + maidenPoints;
+  const catches   = Number(player.catches || 0);
+  const stumpings = Number(player.stumpings || 0);
+  const runouts   = Number(player.runouts || 0);
 
-      const catchesPoints   = catches * 8;
-      const stumpingPoints  = stumpings * 12;
-      const runoutPoints    = runouts * 12;
-      const fieldingPoints  = catchesPoints + stumpingPoints + runoutPoints;
+  const runsPoints  = runs;
+  const foursPoints = fours * 4;
+  const sixesPoints = sixes * 6;
 
-      const totalBase = battingPoints + bowlingPoints + fieldingPoints;
+  let srBonus = 0;
+  let srLabel = '';
+  if (balls >= 10 && strikeRate > 200) {
+    srBonus = 20;
+    srLabel = `Strike Rate > 200 (${strikeRate})`;
+  } else if (balls >= 10 && strikeRate >= 150 && strikeRate <= 200) {
+    srBonus = 10;
+    srLabel = `Strike Rate 150-200 (${strikeRate})`;
+  }
 
-      function statRow(label, pts) {
-        return `<div class="bd-stat-row"><span class="bd-stat-label">${label}</span><span class="bd-stat-pts">+${pts}</span></div>`;
-      }
+  const battingPoints = runsPoints + foursPoints + sixesPoints + srBonus;
 
-      function category(icon, name, rows, subtotal, cls) {
-        if (!rows.length && subtotal === 0) {
-          return `<div class="bd-category bd-${cls} bd-cat-zero">
-            <div class="bd-cat-header">
-              <span class="bd-cat-icon">${icon}</span>
-              <span class="bd-cat-name">${name}</span>
-              <span class="bd-cat-subtotal zero">0 pts</span>
-            </div>
-          </div>`;
-        }
-        return `<div class="bd-category bd-${cls}">
-          <div class="bd-cat-header">
-            <span class="bd-cat-icon">${icon}</span>
-            <span class="bd-cat-name">${name}</span>
-            <span class="bd-cat-subtotal">+${subtotal} pts</span>
-          </div>
-          ${rows.length ? `<div class="bd-cat-rows">${rows.join('')}</div>` : ''}
-        </div>`;
-      }
+  const wicketPoints = wickets * 25;
+  const maidenPoints = maidens * 15;
 
-      const battingRows = [
-        ...(runs     > 0 ? [statRow(`Runs (${runs}) × 1`, runsPoints)]           : []),
-        ...(fours    > 0 ? [statRow(`Fours (${fours}) × 4`, foursPoints)] : []),
-        ...(sixes    > 0 ? [statRow(`Sixes (${sixes}) × 6`, sixesPoints)]  : []),
-      ];
-      const bowlingRows = [
-        ...(wickets > 0 ? [statRow(`Wickets (${wickets}) × 25`, wicketPoints)]   : []),
-        ...(maidens > 0 ? [statRow(`Maiden overs (${maidens}) × 12`, maidenPoints)] : []),
-      ];
-      const fieldingRows = [
-        ...(catches   > 0 ? [statRow(`Catches (${catches}) × 8`, catchesPoints)]     : []),
-        ...(stumpings > 0 ? [statRow(`Stumpings (${stumpings}) × 12`, stumpingPoints)] : []),
-        ...(runouts   > 0 ? [statRow(`Run outs (${runouts}) × 12`, runoutPoints)]     : []),
-      ];
+  let economyPoints = 0;
+  let economyLabel = '';
+  if (overs >= 2 && economy <= 5) {
+    economyPoints = 20;
+    economyLabel = `Economy <= 5 (${economy})`;
+  } else if (overs >= 2 && economy > 5 && economy <= 7) {
+    economyPoints = 10;
+    economyLabel = `Economy 5-7 (${economy})`;
+  } else if (overs >= 2 && economy > 7 && economy <= 9) {
+    economyPoints = 5;
+    economyLabel = `Economy 7-9 (${economy})`;
+  } else if (overs >= 2 && economy > 9 && economy < 11) {
+    economyPoints = -5;
+    economyLabel = `Economy 9-11 (${economy})`;
+  } else if (overs >= 2 && economy >= 11) {
+    economyPoints = -10;
+    economyLabel = `Economy >= 11 (${economy})`;
+  }
 
-      return `
-        <div class="player-breakdown">
-          ${category('🏏', 'Batting',  battingRows,  battingPoints,  'batting')}
-          ${category('🎯', 'Bowling',  bowlingRows,  bowlingPoints,  'bowling')}
-          ${category('🤲', 'Fielding', fieldingRows, fieldingPoints, 'fielding')}
-          <div class="bd-total-row">
-            <span class="bd-total-label">Base Points</span>
-            <span class="bd-total-pts">${totalBase} pts</span>
-          </div>
-        </div>`;
+  const bowlingPoints = wicketPoints + maidenPoints + economyPoints;
+
+  const catchesPoints  = catches * 8;
+  const stumpingPoints = stumpings * 12;
+  const runoutPoints   = runouts * 12;
+  const fieldingPoints = catchesPoints + stumpingPoints + runoutPoints;
+
+  const totalBase = battingPoints + bowlingPoints + fieldingPoints;
+
+  function fmtPts(pts) {
+    if (pts > 0) return `+${pts}`;
+    return String(pts);
+  }
+
+  function statRow(label, pts) {
+    const cls = pts < 0 ? 'style="color:#fb7185;"' : '';
+    return `<div class="bd-stat-row"><span class="bd-stat-label">${label}</span><span class="bd-stat-pts" ${cls}>${fmtPts(pts)}</span></div>`;
+  }
+
+  function category(icon, name, rows, subtotal, cls) {
+    if (!rows.length && subtotal === 0) {
+      return `<div class="bd-category bd-${cls} bd-cat-zero">
+        <div class="bd-cat-header">
+          <span class="bd-cat-icon">${icon}</span>
+          <span class="bd-cat-name">${name}</span>
+          <span class="bd-cat-subtotal zero">0 pts</span>
+        </div>
+      </div>`;
     }
 
+    return `<div class="bd-category bd-${cls}">
+      <div class="bd-cat-header">
+        <span class="bd-cat-icon">${icon}</span>
+        <span class="bd-cat-name">${name}</span>
+        <span class="bd-cat-subtotal ${subtotal === 0 ? 'zero' : ''}">${fmtPts(subtotal)} pts</span>
+      </div>
+      ${rows.length ? `<div class="bd-cat-rows">${rows.join('')}</div>` : ''}
+    </div>`;
+  }
+
+  const battingRows = [
+    ...(runs > 0 ? [statRow(`Runs (${runs}) × 1`, runsPoints)] : []),
+    ...(fours > 0 ? [statRow(`Fours (${fours}) × 4`, foursPoints)] : []),
+    ...(sixes > 0 ? [statRow(`Sixes (${sixes}) × 6`, sixesPoints)] : []),
+    ...(srBonus !== 0 ? [statRow(srLabel, srBonus)] : []),
+  ];
+
+  const bowlingRows = [
+    ...(wickets > 0 ? [statRow(`Wickets (${wickets}) × 25`, wicketPoints)] : []),
+    ...(maidens > 0 ? [statRow(`Maiden overs (${maidens}) × 15`, maidenPoints)] : []),
+    ...(economyPoints !== 0 ? [statRow(economyLabel, economyPoints)] : []),
+  ];
+
+  const fieldingRows = [
+    ...(catches > 0 ? [statRow(`Catches (${catches}) × 8`, catchesPoints)] : []),
+    ...(stumpings > 0 ? [statRow(`Stumpings (${stumpings}) × 12`, stumpingPoints)] : []),
+    ...(runouts > 0 ? [statRow(`Run outs (${runouts}) × 12`, runoutPoints)] : []),
+  ];
+
+  return `
+    <div class="player-breakdown">
+      ${category('🏏', 'Batting', battingRows, battingPoints, 'batting')}
+      ${category('🎯', 'Bowling', bowlingRows, bowlingPoints, 'bowling')}
+      ${category('🤲', 'Fielding', fieldingRows, fieldingPoints, 'fielding')}
+      <div class="bd-total-row">
+        <span class="bd-total-label">Base Points</span>
+        <span class="bd-total-pts">${formatNum(totalBase)} pts</span>
+      </div>
+    </div>`;
+}
+    
 function togglePlayerBreakdown(el) {
   const row = (el.classList && el.classList.contains('result-player-row'))
     ? el
