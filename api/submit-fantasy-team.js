@@ -164,17 +164,34 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const totalCoinsUsed = activePlayers.reduce(
-      (sum, player) => sum + Number(player.player_cost_coins),
-      0
-    );
+const totalCoinsUsed = activePlayers.reduce(
+  (sum, player) => sum + Number(player.player_cost_coins),
+  0
+);
 
-    if (totalCoinsUsed > Number(match.budget_coins)) {
-      return res.status(400).json({
-        error: `Budget exceeded. You used ${totalCoinsUsed.toFixed(2)} coins out of ${Number(match.budget_coins).toFixed(2)}.`
-      });
-    }
+const totalRosterCoinsUsed = players.reduce(
+  (sum, player) => sum + Number(player.player_cost_coins),
+  0
+);
 
+// Active XI budget validation
+if (totalCoinsUsed > Number(match.budget_coins)) {
+  return res.status(400).json({
+    error: `Budget exceeded. You used ${totalCoinsUsed.toFixed(2)} coins out of ${Number(match.budget_coins).toFixed(2)}.`
+  });
+}
+
+// Substitute-inclusive budget validation
+if (
+  boosterEnabled &&
+  totalRosterCoinsUsed > Number(match.budget_coins)
+) {
+  return res.status(400).json({
+    error: `Budget exceeded including substitute. You used ${totalRosterCoinsUsed.toFixed(2)} coins out of ${Number(match.budget_coins).toFixed(2)}.`
+  });
+}
+
+    
     if (boosterEnabled) {
       const balanceRows = await sql`
         WITH earned AS (
