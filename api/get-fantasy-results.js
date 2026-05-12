@@ -23,19 +23,30 @@ module.exports = async function handler(req, res) {
         pm.team_code,
         pm.player_tag,
         pm.player_type,
+
         fpms.runs,
+        fpms.balls_faced,
         fpms.fours,
         fpms.sixes,
+        fpms.strike_rate,
+
+        fpms.overs_bowled,
+        fpms.maidens,
+        fpms.runs_conceded,
         fpms.wickets,
+        fpms.economy_rate,
+
         fpms.catches,
         fpms.stumpings,
         fpms.runouts,
         fpms.fantasy_points,
+
         CASE
           WHEN fut.captain_player_id = pm.id THEN 'C'
           WHEN fut.vice_captain_player_id = pm.id THEN 'VC'
           ELSE ''
         END AS captain_role
+
       FROM fantasy_user_teams fut
       JOIN fantasy_user_team_players futp
         ON fut.id = futp.fantasy_user_team_id
@@ -46,6 +57,7 @@ module.exports = async function handler(req, res) {
         ON pm.id = futp.player_id
       WHERE fut.user_id = ${Number(user_id)}
         AND fut.fantasy_match_id = ${Number(fantasy_match_id)}
+        AND futp.is_active = TRUE
       ORDER BY fpms.fantasy_points DESC
     `;
 
