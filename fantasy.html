@@ -3210,19 +3210,19 @@ function buildPlayerBreakdownHTML(player) {
   let economyLabel = '';
   if (overs >= 2 && economy <= 5) {
     economyPoints = 20;
-    economyLabel = `Economy <= 5 (${economy})`;
+    economyLabel = `Economy <= 5 RPO (${economy})`;
   } else if (overs >= 2 && economy > 5 && economy <= 7) {
     economyPoints = 10;
-    economyLabel = `Economy 5-7 (${economy})`;
+    economyLabel = `Economy 5-7 RPO (${economy})`;
   } else if (overs >= 2 && economy > 7 && economy <= 9) {
     economyPoints = 5;
-    economyLabel = `Economy 7-9 (${economy})`;
+    economyLabel = `Economy 7-9 RPO (${economy})`;
   } else if (overs >= 2 && economy > 9 && economy < 11) {
     economyPoints = -5;
-    economyLabel = `Economy 9-11 (${economy})`;
+    economyLabel = `Economy 9-11 RPO (${economy})`;
   } else if (overs >= 2 && economy >= 11) {
     economyPoints = -10;
-    economyLabel = `Economy >= 11 (${economy})`;
+    economyLabel = `Economy >= 11 RPO (${economy})`;
   }
 
   const bowlingPoints = wicketPoints + maidenPoints + economyPoints;
