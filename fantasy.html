@@ -3904,12 +3904,13 @@ const updateNote = currentMatchData?.score_update_note || '';
         ${renderStepIndicator(3)}
         <div class="booster-step">
           <div class="booster-step-header">
-            <div class="booster-step-title">Choose Your Boosters</div>
-            <div class="booster-step-sub" style="font-weight: 700; color: #ffffff;">
-  Points earned from matches convert into coins •  1 Point = 1 Coin • </div>
-            <div class="booster-coins-display">🪙 ${formatNum(availableCoins)} coins available</div>
-          </div>
-          <div class="booster-cards">
+     <div class="booster-step-title">Choose Your Boosters</div>
+      <div class="booster-step-sub">
+        Points earned from matches convert into coins<br>
+        <strong>1 Point = 1 Coin</strong>
+      </div>
+
+<div class="booster-cards">
             ${captainBoosterHtml}
             ${vcBoosterHtml}
             ${subBoosterHtml ? `<div>${subBoosterHtml}</div>` : ''}
