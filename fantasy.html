@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K3D0KKNXS2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-K3D0KKNXS2');
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fantasy XI Arena | MTGames</title>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: #fff;
+      padding: 28px 20px 64px;
+    }
+
+    .page-wrap { max-width: 960px; margin: 0 auto; }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #4cc9f0; }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .page-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(76,201,240,0.1);
+      border: 1px solid rgba(76,201,240,0.25);
+      color: #4cc9f0;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .hero-section { text-align: center; margin-bottom: 44px; }
+
+    .hero-title {
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      margin-bottom: 14px;
+      background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.15;
+    }
+
+    .hero-subtitle {
+      font-size: 1rem;
+      color: #a0aec0;
+      line-height: 1.75;
+      max-width: 560px;
+      margin: 0 auto 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .btn-primary,
+    .btn-ghost,
+    .btn-muted {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 50px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      padding: 12px 28px;
+      border: none;
+      background: linear-gradient(90deg, #f72585, #7209b7);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(247,37,133,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(247,37,133,0.55); }
+
+    .btn-ghost {
+      padding: 11px 26px;
+      border: 1.5px solid rgba(247,37,133,0.45);
+      background: transparent;
+      color: #f72585;
+    }
+    .btn-ghost:hover { background: rgba(247,37,133,0.1); box-shadow: 0 4px 16px rgba(247,37,133,0.2); }
+
+    .btn-muted {
+      padding: 10px 22px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.045);
+      color: #cbd5e0;
+      border-radius: 12px;
+      font-size: 0.82rem;
+    }
+    .btn-muted:hover { background: rgba(255,255,255,0.08); }
+
+    .prize-pool-banner {
+      width: fit-content;
+      max-width: 420px;
+      margin: 22px auto 0;
+      padding: 14px 26px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,209,102,0.35);
+      box-shadow: 0 0 22px rgba(255,209,102,0.12);
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .prize-title { font-size: 1.1rem; font-weight: 900; color: #ffd166; margin-bottom: 4px; }
+    .prize-subtitle { font-size: 0.86rem; color: #cbd5e0; line-height: 1.5; }
+
+    .content-section { margin-bottom: 42px; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #4cc9f0;
+      white-space: nowrap;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(76,201,240,0.25), transparent);
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .quick-card {
+      min-height: 128px;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.13);
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.18s, border-color 0.18s, background 0.18s;
+    }
+    .quick-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(76,201,240,0.35);
+      background: rgba(76,201,240,0.04);
+    }
+
+    .quick-icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .quick-title { font-size: 1rem; font-weight: 900; color: #e2e8f0; margin-bottom: 5px; }
+    .quick-copy { font-size: 0.78rem; color: #94a3b8; line-height: 1.45; }
+    .quick-cta { margin-top: 12px; font-size: 0.76rem; color: #4cc9f0; font-weight: 800; }
+
+    .match-grid { display: flex; flex-direction: column; gap: 10px; }
+
+    .match-card {
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 16px;
+      padding: 14px 16px;
+      backdrop-filter: blur(10px);
+      transition: transform 0.18s, border-color 0.18s, background 0.18s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .match-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(76,201,240,0.35);
+      background: rgba(76,201,240,0.04);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 0.65rem;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .status-open   { background: rgba(6,214,160,0.12);   color: #06d6a0; border: 1px solid rgba(6,214,160,0.22); }
+    .status-locked { background: rgba(255,209,102,0.13); color: #ffd166; border: 1px solid rgba(255,209,102,0.28); }
+    .status-closed { background: rgba(247,37,133,0.12);  color: #f72585; border: 1px solid rgba(247,37,133,0.28); }
+
+    .match-card-info { flex: 1; min-width: 0; }
+    .match-teams { font-size: 1rem; font-weight: 800; letter-spacing: 0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .match-meta { font-size: 0.75rem; color: #64748b; margin-top: 3px; }
+
+    .match-card-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-decoration: none;
+      display: inline-flex;
+      color: #fff;
+      background: linear-gradient(90deg, #f72585, #7209b7);
+      box-shadow: 0 4px 16px rgba(247,37,133,0.3);
+    }
+
+    .loading-row,
+    .empty-state {
+      padding: 36px 20px;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.9rem;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+    }
+
+    .user-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,10,30,0.86);
+      backdrop-filter: blur(8px);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .user-modal-overlay.show { display: flex; }
+
+    .user-modal-card {
+      width: 100%;
+      max-width: 430px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.55);
+      text-align: center;
+    }
+
+    .user-modal-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #f72585, #4cc9f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .user-modal-copy { color: #cbd5e0; font-size: 0.94rem; line-height: 1.6; margin-bottom: 18px; }
+
+    .username-input {
+      width: 100%;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(76,201,240,0.3);
+      border-radius: 14px;
+      padding: 14px 16px;
+      color: #fff;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      margin-bottom: 10px;
+    }
+    .username-input::placeholder { color: rgba(255,255,255,0.34); }
+    .user-modal-error { min-height: 20px; color: #f72585; font-size: 0.85rem; margin-bottom: 12px; }
+
+    @media (max-width: 700px) {
+      .quick-grid { grid-template-columns: 1fr; }
+      .page-header { align-items: flex-start; }
+      .header-actions { gap: 6px; }
+      .page-eyebrow { font-size: 0.66rem; padding: 6px 10px; letter-spacing: 1px; }
+    }
+
+    @media (max-width: 500px) {
+      body { padding: 18px 14px 52px; }
+      .hero-title { letter-spacing: 0.5px; }
+      .hero-actions { flex-direction: column; align-items: stretch; }
+      .match-card { align-items: flex-start; flex-wrap: wrap; }
+      .match-card-btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="user-modal-overlay" id="userModal">
+    <div class="user-modal-card">
+      <div class="user-modal-title">Sign in to MTGames</div>
+      <p class="user-modal-copy">Enter your existing username to continue, or create a new one. Your player identity stays linked to that username.</p>
+      <input id="usernameInput" class="username-input" type="text" maxlength="24" placeholder="e.g. tapo22" />
+      <div class="user-modal-error" id="usernameError"></div>
+      <button class="btn-primary" id="usernameBtn" onclick="createUserAccount()">Continue</button>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+    <header class="page-header">
+      <a href="index.html" class="back-link" onclick="trackClick('fantasy_back_to_home')">&#8592; MTGames</a>
+      <div class="header-actions">
+        <a href="leaderboard.html" class="page-eyebrow" onclick="trackClick('leaderboard')">🏆 Leaderboard</a>
+        <a href="earnings.html" class="page-eyebrow" onclick="trackClick('my_earnings')">💰 My Earnings</a>
+      </div>
+    </header>
+
+    <section class="hero-section">
+      <h1 class="hero-title">Fantasy XI Arena</h1>
+      <p class="hero-subtitle">Your fantasy cricket hub. Build teams, check leaderboards, track coins, and review your earnings from dedicated pages.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="create-team.html" onclick="trackClick('create_team_page')">🏏 Create / Manage Team</a>
+        <a class="btn-ghost" href="leaderboard.html" onclick="trackClick('leaderboard')">🏆 View Leaderboard</a>
+      </div>
+      <div class="prize-pool-banner">
+        <div class="prize-title">🏆 $200 Prize Pool</div>
+        <div class="prize-subtitle">Top 2 players on the Overall Leaderboard win $100 Amazon Gift Cards!</div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-header">
+        <span class="section-label">Quick Actions</span>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="quick-grid">
+        <a href="create-team.html" class="quick-card" onclick="trackClick('quick_create_team')">
+          <div>
+            <div class="quick-icon">🏏</div>
+            <div class="quick-title">Create Team</div>
+            <div class="quick-copy">Pick a match, select your XI, choose C/VC, and use boosters.</div>
+          </div>
+          <div class="quick-cta">Open Team Page →</div>
+        </a>
+
+        <a href="leaderboard.html" class="quick-card" onclick="trackClick('quick_leaderboard')">
+          <div>
+            <div class="quick-icon">🏆</div>
+            <div class="quick-title">Leaderboard</div>
+            <div class="quick-copy">See overall rankings and match-wise fantasy standings.</div>
+          </div>
+          <div class="quick-cta">View Rankings →</div>
+        </a>
+
+        <a href="earnings.html" class="quick-card" onclick="trackClick('quick_earnings')">
+          <div>
+            <div class="quick-icon">💰</div>
+            <div class="quick-title">My Earnings</div>
+            <div class="quick-copy">Track points, coins earned, booster spend, and match earnings.</div>
+          </div>
+          <div class="quick-cta">View Earnings →</div>
+        </a>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-header">
+        <span class="section-label">Available Matches</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="match-grid" id="fantasyMatchGrid">
+        <div class="loading-row">Loading matches…</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const USER_ID_KEY = 'mtgames_user_id';
+    const USER_NAME_KEY = 'mtgames_user_name';
+
+    const STATUS_CONFIG = {
+      open:   { label: 'Open',   pillClass: 'status-open',   meta: 'Team creation is open' },
+      locked: { label: 'Locked', pillClass: 'status-locked', meta: 'View team and live points from Team Page' },
+      closed: { label: 'Closed', pillClass: 'status-closed', meta: 'Results available from Team Page' }
+    };
+
+    function getCurrentUser() {
+      return { id: localStorage.getItem(USER_ID_KEY), name: localStorage.getItem(USER_NAME_KEY) };
+    }
+
+    function showUsernameModal() {
+      const modal = document.getElementById('userModal');
+      const input = document.getElementById('usernameInput');
+      const err = document.getElementById('usernameError');
+      if (err) err.textContent = '';
+      if (input) input.value = '';
+      if (modal) modal.classList.add('show');
+      setTimeout(() => input && input.focus(), 50);
+    }
+
+    function hideUsernameModal() {
+      const modal = document.getElementById('userModal');
+      if (modal) modal.classList.remove('show');
+    }
+
+    function sanitizeUsername(name) {
+      return String(name || '').trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+    }
+
+    function escapeHTML(v) {
+      return String(v || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    async function createUserAccount() {
+      const input = document.getElementById('usernameInput');
+      const err = document.getElementById('usernameError');
+      const btn = document.getElementById('usernameBtn');
+      const cleanName = sanitizeUsername(input ? input.value : '');
+
+      if (!cleanName || cleanName.length < 3) {
+        if (err) err.textContent = 'Please enter at least 3 characters. Use letters, numbers, or underscore.';
+        if (input) input.focus();
+        return;
+      }
+
+      try {
+        if (err) err.textContent = '';
+        if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+
+        const response = await fetch('/api/create-ipl-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_name: cleanName })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Could not create user.');
+
+        localStorage.setItem(USER_ID_KEY, data.user.id);
+        localStorage.setItem(USER_NAME_KEY, data.user.user_name);
+        hideUsernameModal();
+        await loadMatchCards();
+      } catch (error) {
+        if (err) err.textContent = error.message || 'Something went wrong. Please try again.';
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Continue'; }
+      }
+    }
+
+    async function trackClick(buttonName, metadata = {}) {
+      try {
+        const userId = localStorage.getItem(USER_ID_KEY);
+        const userName = localStorage.getItem(USER_NAME_KEY);
+        await fetch('/api/track-click', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: userId ? Number(userId) : null,
+            user_name: userName || null,
+            event_name: 'button_click',
+            button_name: buttonName,
+            page_name: 'fantasy.html',
+            page_url: window.location.pathname,
+            fantasy_match_id: metadata.fantasy_match_id || null,
+            ipl_match_id: metadata.ipl_match_id || null,
+            event_metadata: metadata
+          })
+        });
+      } catch (err) {
+        console.error('Click tracking failed:', err);
+      }
+    }
+
+    function renderMatchCard(match) {
+      const status = String(match.status || 'open').toLowerCase();
+      const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.open;
+      const title = match.match_title || `${match.team_1 || ''} vs ${match.team_2 || ''}`;
+      return `
+        <div class="match-card">
+          <div class="status-pill ${escapeHTML(cfg.pillClass)}">${escapeHTML(cfg.label)}</div>
+          <div class="match-card-info">
+            <div class="match-teams">${escapeHTML(match.team_1)} vs ${escapeHTML(match.team_2)}</div>
+            <div class="match-meta">${escapeHTML(cfg.meta)}</div>
+          </div>
+          <a class="match-card-btn" href="create-team.html" onclick="trackClick('match_open_team_page', { fantasy_match_id: ${Number(match.id)}, match_status: '${escapeHTML(status)}', match_title: '${escapeHTML(title)}' })">Open</a>
+        </div>`;
+    }
+
+    async function loadMatchCards() {
+      const grid = document.getElementById('fantasyMatchGrid');
+      if (!grid) return;
+      grid.innerHTML = '<div class="loading-row">Loading matches…</div>';
+
+      try {
+        const res = await fetch('/api/get-fantasy-match');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to load fantasy matches.');
+
+        const matches = data.matches || [];
+        const openAndLocked = matches
+          .filter(m => String(m.status || 'open').toLowerCase() !== 'closed')
+          .sort((a, b) => {
+            const order = { locked: 0, open: 1 };
+            const sa = String(a.status || 'open').toLowerCase();
+            const sb = String(b.status || 'open').toLowerCase();
+            return (order[sa] ?? 1) - (order[sb] ?? 1) || Number(a.id) - Number(b.id);
+          });
+
+        const recentClosed = matches
+          .filter(m => String(m.status || 'open').toLowerCase() === 'closed')
+          .sort((a, b) => Number(b.id) - Number(a.id))
+          .slice(0, 2);
+
+        const shown = [...openAndLocked, ...recentClosed];
+        grid.innerHTML = shown.length
+          ? shown.map(renderMatchCard).join('')
+          : '<div class="empty-state">No fantasy matches available yet.</div>';
+      } catch (err) {
+        console.error('Could not load matches:', err);
+        grid.innerHTML = '<div class="empty-state" style="color:#f87171;">Could not load matches. Please try again.</div>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const usernameInput = document.getElementById('usernameInput');
+      if (usernameInput) {
+        usernameInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') createUserAccount();
+        });
+      }
+
+      const user = getCurrentUser();
+      if (!user.id || !user.name) showUsernameModal();
+      loadMatchCards();
+    });
+  </script>
+</body>
+</html>
