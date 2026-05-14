@@ -201,20 +201,37 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // ── Coin balance check for all boosters at once ───────────
+    // ── Check which boosters are already paid for this match ──
     //
-    //   We fetch the balance once from the DB and validate the
-    //   combined cost of every booster the user selected.
-    //   The balance query is the same CTE used by
-    //   get-user-coin-balance.js — always trust the DB, never
-    //   the value sent by the client.
+    //   This prevents duplicate coin deductions when a user edits
+    //   their team after already purchasing a booster.
     //
-    const totalBoosterCoinCost =
-      (subBoosterOn      ? SUBSTITUTE_BOOSTER_COST : 0) +
-      (captainBoosterOn  ? CAPTAIN_BOOSTER_COST    : 0) +
-      (vcBoosterOn       ? VC_BOOSTER_COST         : 0);
+    const existingBoostersRows = await sql`
+      SELECT booster_type, status, coins_spent
+      FROM fantasy_user_boosters
+      WHERE user_id          = ${userId}
+        AND fantasy_match_id = ${fantasyMatchId}
+        AND status IN ('active', 'reserved')
+    `;
 
-    if (totalBoosterCoinCost > 0) {
+    const captainAlreadyPaid = existingBoostersRows.some(b => b.booster_type === 'captain_3x');
+    const vcAlreadyPaid      = existingBoostersRows.some(b => b.booster_type === 'vc_2x');
+    const subAlreadyPaid     = existingBoostersRows.some(b => b.booster_type === 'substitute');
+
+    // Costs for newly added boosters only
+    const newSubCost     = subBoosterOn     && !subAlreadyPaid     ? SUBSTITUTE_BOOSTER_COST : 0;
+    const newCaptainCost = captainBoosterOn && !captainAlreadyPaid ? CAPTAIN_BOOSTER_COST    : 0;
+    const newVCCost      = vcBoosterOn      && !vcAlreadyPaid      ? VC_BOOSTER_COST         : 0;
+    const totalNewBoosterCost = newSubCost + newCaptainCost + newVCCost;
+
+    // Refunds for removed boosters
+    const subRefund     = !subBoosterOn     && subAlreadyPaid     ? SUBSTITUTE_BOOSTER_COST : 0;
+    const captainRefund = !captainBoosterOn && captainAlreadyPaid ? CAPTAIN_BOOSTER_COST    : 0;
+    const vcRefund      = !vcBoosterOn      && vcAlreadyPaid      ? VC_BOOSTER_COST         : 0;
+    const totalRefund   = subRefund + captainRefund + vcRefund;
+
+    // ── Coin balance check (only for net NEW purchases) ───────
+    if (totalNewBoosterCost > 0) {
       const balanceRows = await sql`
         WITH earned AS (
           SELECT COALESCE(SUM(total_points), 0) AS total_points_earned
@@ -226,32 +243,39 @@ module.exports = async function handler(req, res) {
           FROM fantasy_user_coin_ledger
           WHERE user_id          = ${userId}
             AND transaction_type = 'debit'
+        ),
+        refunded AS (
+          SELECT COALESCE(SUM(coins), 0) AS total_coins_refunded
+          FROM fantasy_user_coin_ledger
+          WHERE user_id          = ${userId}
+            AND transaction_type = 'credit'
         )
         SELECT
-          earned.total_points_earned - spent.total_coins_spent AS available_coins
-        FROM earned, spent
+          earned.total_points_earned - spent.total_coins_spent + refunded.total_coins_refunded AS available_coins
+        FROM earned, spent, refunded
       `;
 
       const availableCoins = Number(balanceRows[0]?.available_coins || 0);
+      // Include pending refunds from boosters being removed in the same request
+      const effectiveBalance = availableCoins + totalRefund;
 
-      if (availableCoins < totalBoosterCoinCost) {
+      if (effectiveBalance < totalNewBoosterCost) {
         return res.status(400).json({
-          error: `Insufficient coins. You need ${totalBoosterCoinCost} coins for your selected boosters but only have ${availableCoins}.`
+          error: `Insufficient coins. You need ${totalNewBoosterCost} coins for your selected boosters but only have ${availableCoins}.`
         });
       }
 
-      // Granular checks so the error message names the specific booster
-      if (subBoosterOn && availableCoins < SUBSTITUTE_BOOSTER_COST) {
+      if (newSubCost > 0 && effectiveBalance < SUBSTITUTE_BOOSTER_COST) {
         return res.status(400).json({
           error: `You need ${SUBSTITUTE_BOOSTER_COST} coins to use the Substitute Booster.`
         });
       }
-      if (captainBoosterOn && availableCoins < CAPTAIN_BOOSTER_COST) {
+      if (newCaptainCost > 0 && effectiveBalance < CAPTAIN_BOOSTER_COST) {
         return res.status(400).json({
           error: `You need ${CAPTAIN_BOOSTER_COST} coins to use the 3X Captain Booster.`
         });
       }
-      if (vcBoosterOn && availableCoins < VC_BOOSTER_COST) {
+      if (newVCCost > 0 && effectiveBalance < VC_BOOSTER_COST) {
         return res.status(400).json({
           error: `You need ${VC_BOOSTER_COST} coins to use the 2X Vice-Captain Booster.`
         });
@@ -357,16 +381,17 @@ module.exports = async function handler(req, res) {
       `;
     }
 
-    // ── Coin ledger debits and booster records ────────────────
+    // ── Coin ledger debits, refunds, and booster records ─────
     //
-    //   Each purchased booster gets:
-    //     1. A row in fantasy_user_coin_ledger  (the debit)
-    //     2. A row in fantasy_user_boosters     (the booster record)
+    //   Only NEW booster selections are charged.
+    //   Previously paid boosters are skipped (idempotent).
+    //   Removed boosters trigger a credit (refund) entry.
     //
-    //   Coin debits are written AFTER all DB inserts succeed,
-    //   so a mid-flight error never loses coins silently.
+    //   Coin writes happen AFTER all DB inserts succeed so a
+    //   mid-flight error never silently loses coins.
 
-    if (subBoosterOn) {
+    // Debit for new substitute booster
+    if (newSubCost > 0) {
       await sql`
         INSERT INTO fantasy_user_coin_ledger
           (user_id, transaction_type, coins, reason, fantasy_match_id)
@@ -384,7 +409,27 @@ module.exports = async function handler(req, res) {
       `;
     }
 
-    if (captainBoosterOn) {
+    // Refund for removed substitute booster
+    if (subRefund > 0) {
+      await sql`
+        INSERT INTO fantasy_user_coin_ledger
+          (user_id, transaction_type, coins, reason, fantasy_match_id)
+        VALUES
+          (${userId}, 'credit', ${SUBSTITUTE_BOOSTER_COST},
+           'Substitute Booster removed', ${fantasyMatchId})
+      `;
+      await sql`
+        UPDATE fantasy_user_boosters
+        SET status = 'removed'
+        WHERE user_id          = ${userId}
+          AND fantasy_match_id = ${fantasyMatchId}
+          AND booster_type     = 'substitute'
+          AND status IN ('active', 'reserved')
+      `;
+    }
+
+    // Debit for new captain booster
+    if (newCaptainCost > 0) {
       await sql`
         INSERT INTO fantasy_user_coin_ledger
           (user_id, transaction_type, coins, reason, fantasy_match_id)
@@ -402,7 +447,27 @@ module.exports = async function handler(req, res) {
       `;
     }
 
-    if (vcBoosterOn) {
+    // Refund for removed captain booster
+    if (captainRefund > 0) {
+      await sql`
+        INSERT INTO fantasy_user_coin_ledger
+          (user_id, transaction_type, coins, reason, fantasy_match_id)
+        VALUES
+          (${userId}, 'credit', ${CAPTAIN_BOOSTER_COST},
+           '3X Captain Booster removed', ${fantasyMatchId})
+      `;
+      await sql`
+        UPDATE fantasy_user_boosters
+        SET status = 'removed'
+        WHERE user_id          = ${userId}
+          AND fantasy_match_id = ${fantasyMatchId}
+          AND booster_type     = 'captain_3x'
+          AND status IN ('active', 'reserved')
+      `;
+    }
+
+    // Debit for new VC booster
+    if (newVCCost > 0) {
       await sql`
         INSERT INTO fantasy_user_coin_ledger
           (user_id, transaction_type, coins, reason, fantasy_match_id)
@@ -420,6 +485,25 @@ module.exports = async function handler(req, res) {
       `;
     }
 
+    // Refund for removed VC booster
+    if (vcRefund > 0) {
+      await sql`
+        INSERT INTO fantasy_user_coin_ledger
+          (user_id, transaction_type, coins, reason, fantasy_match_id)
+        VALUES
+          (${userId}, 'credit', ${VC_BOOSTER_COST},
+           '2X Vice-Captain Booster removed', ${fantasyMatchId})
+      `;
+      await sql`
+        UPDATE fantasy_user_boosters
+        SET status = 'removed'
+        WHERE user_id          = ${userId}
+          AND fantasy_match_id = ${fantasyMatchId}
+          AND booster_type     = 'vc_2x'
+          AND status IN ('active', 'reserved')
+      `;
+    }
+
     // ── Success response ──────────────────────────────────────
     return res.status(200).json({
       success:                   true,
@@ -430,7 +514,8 @@ module.exports = async function handler(req, res) {
       substitute_booster_used:   subBoosterOn,
       captain_booster_used:      captainBoosterOn,
       vc_booster_used:           vcBoosterOn,
-      total_booster_coins_spent: totalBoosterCoinCost,
+      total_new_booster_cost:    totalNewBoosterCost,
+      total_booster_refund:      totalRefund,
       total_coins_used:          totalCoinsUsed,
       coins_remaining:           Number(match.budget_coins) - totalCoinsUsed
     });
