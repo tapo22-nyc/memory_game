@@ -31,15 +31,23 @@ module.exports = async function handler(req, res) {
         SELECT
           COALESCE(SUM(ABS(coins)), 0) AS total_coins_spent
         FROM fantasy_user_coin_ledger
-        WHERE user_id = ${userId}
+        WHERE user_id          = ${userId}
           AND transaction_type = 'debit'
+      ),
+      refunded AS (
+        SELECT
+          COALESCE(SUM(coins), 0) AS total_coins_refunded
+        FROM fantasy_user_coin_ledger
+        WHERE user_id          = ${userId}
+          AND transaction_type = 'credit'
       )
       SELECT
         earned.total_points_earned,
         earned.total_points_earned AS lifetime_coins_earned,
         spent.total_coins_spent,
-        earned.total_points_earned - spent.total_coins_spent AS available_coins
-      FROM earned, spent
+        refunded.total_coins_refunded,
+        earned.total_points_earned - spent.total_coins_spent + refunded.total_coins_refunded AS available_coins
+      FROM earned, spent, refunded
     `;
 
     return res.status(200).json({
