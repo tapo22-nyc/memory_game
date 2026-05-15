@@ -158,37 +158,72 @@
       box-shadow: 0 0 22px rgba(255,209,102,0.1);
       overflow: hidden;
     }
-    .prize-table-header {
-      display: grid;
-      grid-template-columns: 1fr 72px 22px;
-      gap: 8px;
-      align-items: center;
-      padding: 9px 16px;
-      background: rgba(255,209,102,0.08);
-      border-bottom: 1px solid rgba(255,209,102,0.18);
-    }
-    .prize-th { font-size: 0.62rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ffd166; }
-    .prize-th.right { text-align: right; }
-    .prize-row-wrap { border-bottom: 1px solid rgba(255,255,255,0.06); }
-    .prize-row-wrap:last-child { border-bottom: none; }
-    .prize-row {
-      display: grid;
-      grid-template-columns: 1fr 72px 22px;
-      gap: 8px;
-      align-items: center;
-      padding: 11px 16px;
-      cursor: pointer;
-      transition: background 0.12s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .prize-row:hover { background: rgba(255,255,255,0.04); }
-    .prize-pos { font-size: 0.83rem; font-weight: 700; color: #e2e8f0; }
-    .prize-amt { font-size: 0.95rem; font-weight: 900; color: #06d6a0; text-align: right; }
-    .prize-chevron { font-size: 1rem; color: #475569; text-align: center; transition: transform 0.2s; line-height: 1; user-select: none; }
-    .prize-row.open .prize-chevron { transform: rotate(90deg); }
-    .prize-detail { display: none; padding: 0 16px 12px 16px; font-size: 0.8rem; color: #94a3b8; line-height: 1.5; }
-    .prize-detail.open { display: block; }
+    
+.prize-table-header {
+  display: grid;
+  grid-template-columns: 70px 1fr 90px 20px;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 16px;
+  background: rgba(255,209,102,0.08);
+  border-bottom: 1px solid rgba(255,209,102,0.18);
+}
 
+.prize-th {
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #ffd166;
+}
+
+.prize-th.right {
+  text-align: right;
+}
+
+.prize-row-wrap {
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.prize-row-wrap:last-child {
+  border-bottom: none;
+}
+
+.prize-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 90px 20px;
+  gap: 10px;
+  align-items: center;
+  padding: 11px 16px;
+  cursor: pointer;
+  transition: background 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.prize-row:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.prize-rank {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.prize-contest {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.prize-amt {
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: #06d6a0;
+  text-align: right;
+}
+}
+    
     /* ── Section layout ── */
     .content-section { margin-bottom: 42px; }
 
@@ -390,61 +425,109 @@
       </div>
 
       <!-- Prize Table -->
-      <div class="prize-table">
-        <div class="prize-table-header">
-          <div class="prize-th">Position Holder</div>
-          <div class="prize-th right">Prize</div>
-          <div></div>
-        </div>
-        <div class="prize-row-wrap">
-          <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'1st',leaderboard:'Overall'})">
-            <div class="prize-pos">🥇 1st Rank — Overall Leaderboard</div>
-            <div class="prize-amt">$200</div>
-            <div class="prize-chevron">›</div>
-          </div>
-          <div class="prize-detail">Your final rank across all IPL 2026 fantasy matches.</div>
-        </div>
-        <div class="prize-row-wrap">
-          <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'2nd',leaderboard:'Overall'})">
-            <div class="prize-pos">🥈 2nd Rank — Overall Leaderboard</div>
-            <div class="prize-amt">$150</div>
-            <div class="prize-chevron">›</div>
-          </div>
-          <div class="prize-detail">Your final rank across all IPL 2026 fantasy matches.</div>
-        </div>
-        <div class="prize-row-wrap">
-          <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'1st',leaderboard:'Weekend 1'})">
-            <div class="prize-pos">🥇 1st Rank — Weekend 1 Leaderboard</div>
-            <div class="prize-amt">$100</div>
-            <div class="prize-chevron">›</div>
-          </div>
-          <div class="prize-detail">Your rank based on matches played on May 16 and May 17. You must participate in all Weekend 1 matches to qualify.</div>
-        </div>
-        <div class="prize-row-wrap">
-          <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'2nd',leaderboard:'Weekend 1'})">
-            <div class="prize-pos">🥈 2nd Rank — Weekend 1 Leaderboard</div>
-            <div class="prize-amt">$50</div>
-            <div class="prize-chevron">›</div>
-          </div>
-          <div class="prize-detail">Your rank based on matches played on May 16 and May 17. You must participate in all Weekend 1 matches to qualify.</div>
-        </div>
-        <div class="prize-row-wrap">
-          <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'1st',leaderboard:'Playoffs Week'})">
-            <div class="prize-pos">🥇 1st Rank — Playoffs Week Leaderboard</div>
-            <div class="prize-amt">$100</div>
-            <div class="prize-chevron">›</div>
-          </div>
-          <div class="prize-detail">Your rank based on matches from May 18 to May 22. You must participate in at least 4 Playoffs Week matches to qualify.</div>
-        </div>
-        <div class="prize-row-wrap">
-          <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'2nd',leaderboard:'Playoffs Week'})">
-            <div class="prize-pos">🥈 2nd Rank — Playoffs Week Leaderboard</div>
-            <div class="prize-amt">$50</div>
-            <div class="prize-chevron">›</div>
-          </div>
-          <div class="prize-detail">Your rank based on matches from May 18 to May 22. You must participate in at least 4 Playoffs Week matches to qualify.</div>
-        </div>
+      
+<!-- Prize Table -->
+  <div class="prize-table">
+  
+    <div class="prize-table-header">
+      <div class="prize-th">Rank</div>
+      <div class="prize-th">Contest</div>
+      <div class="prize-th right">Prize Pool</div>
+      <div></div>
+    </div>
+  
+    <div class="prize-row-wrap">
+      <div class="prize-row"
+        onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'1st',leaderboard:'Overall'})">
+  
+        <div class="prize-rank">🥇 1st</div>
+        <div class="prize-contest">Overall Leaderboard</div>
+        <div class="prize-amt">$200</div>
+        <div class="prize-chevron">›</div>
       </div>
+  
+      <div class="prize-detail">
+        Your final rank across all IPL 2026 fantasy matches.
+      </div>
+    </div>
+  
+    <div class="prize-row-wrap">
+      <div class="prize-row"
+        onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'2nd',leaderboard:'Overall'})">
+  
+        <div class="prize-rank">🥈 2nd</div>
+        <div class="prize-contest">Overall Leaderboard</div>
+        <div class="prize-amt">$150</div>
+        <div class="prize-chevron">›</div>
+      </div>
+  
+      <div class="prize-detail">
+        Your final rank across all IPL 2026 fantasy matches.
+      </div>
+    </div>
+  
+    <div class="prize-row-wrap">
+      <div class="prize-row"
+        onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'1st',leaderboard:'Weekend 1'})">
+  
+        <div class="prize-rank">🥇 1st</div>
+        <div class="prize-contest">Weekend 1</div>
+        <div class="prize-amt">$100</div>
+        <div class="prize-chevron">›</div>
+      </div>
+  
+      <div class="prize-detail">
+        Your rank based on matches played on May 16 and May 17.
+      </div>
+    </div>
+  
+    <div class="prize-row-wrap">
+      <div class="prize-row"
+        onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'2nd',leaderboard:'Weekend 1'})">
+  
+        <div class="prize-rank">🥈 2nd</div>
+        <div class="prize-contest">Weekend 1</div>
+        <div class="prize-amt">$50</div>
+        <div class="prize-chevron">›</div>
+      </div>
+  
+      <div class="prize-detail">
+        Your rank based on matches played on May 16 and May 17.
+      </div>
+    </div>
+  
+    <div class="prize-row-wrap">
+      <div class="prize-row"
+        onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'1st',leaderboard:'Playoffs Week'})">
+  
+        <div class="prize-rank">🥇 1st</div>
+        <div class="prize-contest">Playoffs Week</div>
+        <div class="prize-amt">$100</div>
+        <div class="prize-chevron">›</div>
+      </div>
+  
+      <div class="prize-detail">
+        Your rank based on matches from May 18 to May 22.
+      </div>
+    </div>
+  
+    <div class="prize-row-wrap">
+      <div class="prize-row"
+        onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'2nd',leaderboard:'Playoffs Week'})">
+  
+        <div class="prize-rank">🥈 2nd</div>
+        <div class="prize-contest">Playoffs Week</div>
+        <div class="prize-amt">$50</div>
+        <div class="prize-chevron">›</div>
+      </div>
+  
+      <div class="prize-detail">
+        Your rank based on matches from May 18 to May 22.
+      </div>
+    </div>
+
+</div>
+      
     </section>
 
     <!-- ── Upcoming Matches ── -->
