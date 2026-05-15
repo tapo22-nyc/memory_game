@@ -1882,61 +1882,6 @@
         </button>
       </div>
       
-      <div class="prize-table">
-        <div class="prize-table-header">
-          <div class="prize-th">Position Holder</div>
-          <div class="prize-th right">Prize</div>
-          <div></div>
-        </div>
-        <div class="prize-row-wrap">
-          <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'1st',leaderboard:'Overall'})">
-            <div class="prize-pos">🥇 1st Rank — Overall Leaderboard</div>
-            <div class="prize-amt">$200</div>
-            <div class="prize-chevron">›</div>
-          </div>
-          <div class="prize-detail">Your final rank across all IPL 2026 fantasy matches.</div>
-        </div>
-        <div class="prize-row-wrap">
-          <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'2nd',leaderboard:'Overall'})">
-            <div class="prize-pos">🥈 2nd Rank — Overall Leaderboard</div>
-            <div class="prize-amt">$150</div>
-            <div class="prize-chevron">›</div>
-          </div>
-          <div class="prize-detail">Your final rank across all IPL 2026 fantasy matches.</div>
-        </div>
-        <div class="prize-row-wrap">
-          <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'1st',leaderboard:'Weekend 1'})">
-            <div class="prize-pos">🥇 1st Rank — Weekend 1 Leaderboard</div>
-            <div class="prize-amt">$100</div>
-            <div class="prize-chevron">›</div>
-          </div>
-          <div class="prize-detail">Your rank based on matches played on May 16 and May 17. You must participate in all Weekend 1 matches to qualify.</div>
-        </div>
-        <div class="prize-row-wrap">
-          <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'2nd',leaderboard:'Weekend 1'})">
-            <div class="prize-pos">🥈 2nd Rank — Weekend 1 Leaderboard</div>
-            <div class="prize-amt">$50</div>
-            <div class="prize-chevron">›</div>
-          </div>
-          <div class="prize-detail">Your rank based on matches played on May 16 and May 17. You must participate in all Weekend 1 matches to qualify.</div>
-        </div>
-        <div class="prize-row-wrap">
-          <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'1st',leaderboard:'Playoffs Week'})">
-            <div class="prize-pos">🥇 1st Rank — Playoffs Week Leaderboard</div>
-            <div class="prize-amt">$100</div>
-            <div class="prize-chevron">›</div>
-          </div>
-          <div class="prize-detail">Your rank based on matches from May 18 to May 22. You must participate in at least 4 Playoffs Week matches to qualify.</div>
-        </div>
-        <div class="prize-row-wrap">
-          <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'2nd',leaderboard:'Playoffs Week'})">
-            <div class="prize-pos">🥈 2nd Rank — Playoffs Week Leaderboard</div>
-            <div class="prize-amt">$50</div>
-            <div class="prize-chevron">›</div>
-          </div>
-          <div class="prize-detail">Your rank based on matches from May 18 to May 22. You must participate in at least 4 Playoffs Week matches to qualify.</div>
-        </div>
-      </div>
 
       
     </section>
@@ -2323,15 +2268,6 @@
           event_metadata: metadata
         })
       }).catch(err => console.warn('Click tracking failed:', err));
-    }
-
-    function togglePrizeRow(rowEl) {
-      const wrap = rowEl.closest('.prize-row-wrap');
-      const detail = wrap ? wrap.querySelector('.prize-detail') : null;
-      if (!detail) return;
-      const isOpen = detail.classList.contains('open');
-      detail.classList.toggle('open', !isOpen);
-      rowEl.classList.toggle('open', !isOpen);
     }
 
     function escapeHTML(v) {
