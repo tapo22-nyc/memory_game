@@ -1868,24 +1868,48 @@
 
 
     <!-- ── Action Buttons / Scoring / Prize Table ── -->
-    <section class="hero-section">
-            
-      <div class="hero-scoring-link">
-        <button class="btn-scoring-rules" onclick="trackClick('leaderboard'); window.location.href='leaderboard.html'">
-          🏆 Leaderboard
-        </button>
-      </div>
-      
-      <div class="hero-scoring-link">
-        <button class="btn-scoring-rules" onclick="trackClick('scoring_rules'); openScoringModal()">
-          📋 Scoring Rules
-        </button>
-      </div>
-      
+<!-- ── Action Buttons / Scoring Rules ── -->
+<section class="hero-section">
+  <div class="hero-scoring-link">
+    <button class="btn-scoring-rules" onclick="trackClick('scoring_rules'); openScoringModal()">
+      📋 Scoring Rules
+    </button>
+  </div>
+</section>
 
-      
-    </section>
+<!-- ── Leaderboard Section ── -->
+<section class="content-section" id="leaderboardSection">
+  <div class="section-header">
+    <span class="section-label">Fantasy Leaderboard</span>
+    <div class="section-line"></div>
 
+    <div class="lb-tabs" role="tablist" aria-label="Fantasy leaderboard tabs">
+      <button class="lb-tab-btn active" id="overallLeaderboardTab" onclick="trackClick('leaderboard_overall'); switchLeaderboardTab('overall')">Overall</button>
+      <button class="lb-tab-btn" id="matchLeaderboardTab" onclick="trackClick('leaderboard_match_wise'); switchLeaderboardTab('match')">Match Wise</button>
+    </div>
+
+    <button class="lb-refresh-btn" onclick="trackClick('leaderboard_refresh', { active_tab: activeLeaderboardTab }); refreshActiveLeaderboard()">↻ Refresh</button>
+  </div>
+
+  <div class="lb-match-strip" id="matchLeaderboardStrip"></div>
+  <div id="leaderboardUpdateNote"></div>
+
+  <div class="lb-panel">
+    <div class="lb-head-row">
+      <div class="lb-head-cell">#</div>
+      <div class="lb-head-cell">Player</div>
+      <div class="lb-head-cell right">Base</div>
+      <div class="lb-head-cell right">C Bonus</div>
+      <div class="lb-head-cell right">VC Bonus</div>
+      <div class="lb-head-cell right">Total Pts</div>
+    </div>
+
+    <div id="bottomLeaderboardBody">
+      <div class="lb-empty">Loading leaderboard…</div>
+    </div>
+  </div>
+</section>
+    
     <!-- Leaderboard moved to leaderboard.html -->
 
   </div><!-- /page-wrap -->
