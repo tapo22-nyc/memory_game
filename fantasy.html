@@ -578,22 +578,11 @@
 
         const matches = data.matches || [];
 
-        const openAndLocked = matches
-          .filter(m => ['open', 'locked'].includes(String(m.status || 'open').toLowerCase()))
-          .sort((a, b) => {
-            const ORDER = { locked: 0, open: 1 };
-            const sa = String(a.status || 'open').toLowerCase();
-            const sb = String(b.status || 'open').toLowerCase();
-            return (ORDER[sa] ?? 1) - (ORDER[sb] ?? 1) || Number(a.id) - Number(b.id);
-          });
+      const shown = matches
+        .filter(m => String(m.status || 'open').toLowerCase() === 'open')
+        .sort((a, b) => Number(a.id) - Number(b.id));
 
-        const recentClosed = matches
-          .filter(m => String(m.status || 'open').toLowerCase() === 'closed')
-          .sort((a, b) => Number(b.id) - Number(a.id))
-          .slice(0, 2);
-
-        const shown = [...openAndLocked, ...recentClosed];
-
+        
         if (!shown.length) {
           grid.innerHTML = '<div class="loading-row">No fantasy matches available yet.</div>';
           return;
