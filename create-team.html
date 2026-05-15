@@ -1869,13 +1869,19 @@
 
     <!-- ── Action Buttons / Scoring / Prize Table ── -->
     <section class="hero-section">
-      <div class="hero-actions">
-        <button class="btn-primary" onclick="trackClick('leaderboard'); window.location.href='leaderboard.html'">🏆 Leaderboard</button>
-      </div>
+            
       <div class="hero-scoring-link">
-        <button class="btn-scoring-rules" onclick="trackClick('scoring_rules'); openScoringModal()">📋 Scoring Rules</button>
+        <button class="btn-scoring-rules" onclick="trackClick('leaderboard'); window.location.href='leaderboard.html'">
+          🏆 Leaderboard
+        </button>
       </div>
-
+      
+      <div class="hero-scoring-link">
+        <button class="btn-scoring-rules" onclick="trackClick('scoring_rules'); openScoringModal()">
+          📋 Scoring Rules
+        </button>
+      </div>
+      
       <div class="prize-table">
         <div class="prize-table-header">
           <div class="prize-th">Position Holder</div>
