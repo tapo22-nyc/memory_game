@@ -1879,7 +1879,7 @@
             <div class="prize-amt">$100</div>
             <div class="prize-chevron">›</div>
           </div>
-          <div class="prize-detail">Your rank based on matches played on May 16 and May 17. You must participate in all Weekend 1 matches to qualify.</div>
+          <div class="prize-detail">Based on matches played on May 16 and May 17. You must participate in all Weekend 1 matches to qualify.</div>
         </div>
         <div class="prize-row-wrap">
           <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'2nd',leaderboard:'Weekend 1'})">
@@ -1887,7 +1887,7 @@
             <div class="prize-amt">$50</div>
             <div class="prize-chevron">›</div>
           </div>
-          <div class="prize-detail">Your rank based on matches played on May 16 and May 17. You must participate in all Weekend 1 matches to qualify.</div>
+          <div class="prize-detail">Based on matches played on May 16 and May 17. You must participate in all Weekend 1 matches to qualify.</div>
         </div>
         <div class="prize-row-wrap">
           <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'1st',leaderboard:'Playoffs Week'})">
@@ -1895,7 +1895,7 @@
             <div class="prize-amt">$100</div>
             <div class="prize-chevron">›</div>
           </div>
-          <div class="prize-detail">Your rank based on matches from May 18 to May 22. You must participate in at least 4 Playoffs Week matches to qualify.</div>
+          <div class="prize-detail">Based on matches from May 18 to May 22. You must participate in at least 4 Playoffs Week matches to qualify.</div>
         </div>
         <div class="prize-row-wrap">
           <div class="prize-row" onclick="togglePrizeRow(this); trackClick('prize_row_click', {rank:'2nd',leaderboard:'Playoffs Week'})">
@@ -1903,7 +1903,7 @@
             <div class="prize-amt">$50</div>
             <div class="prize-chevron">›</div>
           </div>
-          <div class="prize-detail">Your rank based on matches from May 18 to May 22. You must participate in at least 4 Playoffs Week matches to qualify.</div>
+          <div class="prize-detail">Based on matches from May 18 to May 22. You must participate in at least 4 Playoffs Week matches to qualify.</div>
         </div>
       </div>
       
@@ -1911,24 +1911,50 @@
 
 
     <!-- ── Live / Open / Final Matches (middle) ── -->
-    <section class="content-section" id="matchesSection">
-      <div class="section-header">
-        <span class="section-label">Matches</span>
-        <div class="section-line"></div>
-      </div>
-      <div class="match-grid" id="openFantasyMatchGrid">
-        <div class="loading-row">Loading matches…</div>
-      </div>
+<section class="hero-section">
+  <h1 class="hero-title">Create Team</h1>
+  <p class="hero-subtitle">
+    Pick a match, build your Fantasy XI, and manage your team before the contest locks.
+  </p>
+</section>
 
-      <div class="closed-games-toggle" id="closedFantasyToggleWrap" style="display:none;">
-        <button class="btn-ghost" id="toggleClosedFantasyBtn" onclick="trackClick('view_closed_games'); toggleClosedFantasyMatches()">
-          View Closed Games
-        </button>
-      </div>
+<!-- Matches first -->
+<section class="content-section" id="matchesSection">
+  <div class="section-header">
+    <span class="section-label">Matches</span>
+    <div class="section-line"></div>
+  </div>
 
-      <div class="match-grid closed-match-list" id="closedFantasyMatchGrid"></div>
-    </section>
+  <div class="match-grid" id="openFantasyMatchGrid">
+    <div class="loading-row">Loading matches…</div>
+  </div>
 
+  <div class="closed-games-toggle" id="closedFantasyToggleWrap" style="display:none;">
+    <button class="btn-ghost" id="toggleClosedFantasyBtn" onclick="trackClick('view_closed_games'); toggleClosedFantasyMatches()">
+      View Closed Games
+    </button>
+  </div>
+
+  <div class="closed-match-list" id="closedFantasyMatchGrid"></div>
+</section>
+
+<!-- Buttons second -->
+<section class="hero-section">
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="trackClick('make_your_team'); scrollToSection('matchesSection')">🏏 Make Your Team</button>
+    <button class="btn-primary" onclick="trackClick('leaderboard'); window.location.href='leaderboard.html'">🏆 Leaderboard</button>
+  </div>
+
+  <div class="hero-scoring-link">
+    <button class="btn-scoring-rules" onclick="trackClick('scoring_rules'); openScoringModal()">📋 Scoring Rules</button>
+  </div>
+
+  <!-- Keep your existing prize-table block here exactly as-is -->
+  <div class="prize-table">
+    ...
+  </div>
+</section>
+    
     <!-- Leaderboard moved to leaderboard.html -->
 
   </div><!-- /page-wrap -->
