@@ -41,6 +41,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       margin-bottom: 40px;
     }
 
+        .leaderboard-section-header {
+      flex-wrap: wrap;
+    }
+    
+    .leaderboard-section-header .section-label,
+    .leaderboard-section-header .section-line {
+      order: 1;
+    }
+    
+    .leaderboard-section-header .lb-tabs,
+    .leaderboard-section-header .lb-refresh-btn {
+      order: 2;
+    }
+    
+    .leaderboard-section-header .lb-tabs {
+      margin-top: 8px;
+    }
+    
+    .leaderboard-section-header .lb-refresh-btn {
+      margin-top: 8px;
+    }
+
     .back-link {
       display: inline-flex;
       align-items: center;
@@ -1882,7 +1904,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- ── Leaderboard Section ── -->
 <section class="content-section" id="leaderboardSection">
-  <div class="section-header">
+  <div class="section-header leaderboard-section-header">
+  
     <span class="section-label">Fantasy Leaderboard</span>
     <div class="section-line"></div>
 
