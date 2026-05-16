@@ -4947,7 +4947,7 @@ const updateNote = currentMatchData?.score_update_note || '';
     async function loadWeekend1PollPrediction() {
       const userId = getCurrentUserId();
       if (!userId) {
-        setPollStatus('Choose a contestant and points range to submit your prediction.', '');
+        setPollStatus('', '');
         renderPollSubmitBtn();
         return;
       }
@@ -4978,7 +4978,7 @@ const updateNote = currentMatchData?.score_update_note || '';
         } else {
           _pollSavedPredictedId = null;
           _pollSavedPointsRange = null;
-          setPollStatus('Choose a contestant and points range to submit your prediction.', '');
+          setPollStatus('', '');
         }
 
         if (_pollLocked) {
