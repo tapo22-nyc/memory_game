@@ -222,6 +222,34 @@
   color: #06d6a0;
   text-align: right;
 }
+
+.prize-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  text-decoration: none;
+  color: #ffffff !important;
+  font-size: 1rem;
+  font-weight: 900;
+  background: transparent;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.prize-link-btn:hover {
+  transform: translateX(2px);
+  opacity: 0.85;
+  text-decoration: none;
+  color: #ffffff !important;
+}
+
+.prize-link-btn:visited,
+.prize-link-btn:active,
+.prize-link-btn:focus {
+  color: #ffffff !important;
+  text-decoration: none;
 }
     
     /* ── Section layout ── */
@@ -399,7 +427,7 @@
       .prize-rank,
       .prize-contest { font-size: 0.72rem; }
       .prize-amt { font-size: 0.82rem; }
-      .prize-link-btn { padding: 5px 7px; font-size: 0.62rem; }
+      
     }
 
     @media (max-width: 500px) {
