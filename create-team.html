@@ -3253,11 +3253,12 @@ function renderLeaderboardUpdateNote() {
         renderLeaderboardUpdateNote();
         await loadBottomLeaderboard();
         await openCreateTeamFromUrl();
+              
       } else if (tab === 'weekend1') {
-        const noteEl = document.getElementById('leaderboardUpdateNote');
-        if (noteEl) noteEl.innerHTML = '';
+        renderLeaderboardUpdateNote();
         await loadWeekend1Leaderboard();
-      } else {
+      }      
+      else {
         await loadMatchCards();
         renderMatchLeaderboardStrip();
         await loadMatchLeaderboard(selectedMatchLeaderboardId);
@@ -3269,9 +3270,12 @@ function renderLeaderboardUpdateNote() {
         await loadMatchCards();
         renderMatchLeaderboardStrip();
         await loadMatchLeaderboard(selectedMatchLeaderboardId);
-      } else if (activeLeaderboardTab === 'weekend1') {
-        await loadWeekend1Leaderboard();
-      } else {
+        
+        } else if (activeLeaderboardTab === 'weekend1') {
+          renderLeaderboardUpdateNote();
+          await loadWeekend1Leaderboard();
+        }      
+      else {
         renderLeaderboardUpdateNote();
         await loadBottomLeaderboard();
         await openCreateTeamFromUrl();
