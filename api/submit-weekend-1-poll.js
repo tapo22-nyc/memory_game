@@ -7,7 +7,7 @@ const WEEKEND_1_POLL_LOCK_TIME = new Date('2026-05-17T14:00:00Z');
 
 const POLL_NAME = 'super_weekend_1';
 
-const VALID_POINTS_RANGES = ['<2000', '2000-2249', '2249-2500', '2500-2749', '2749-3000', '3000+'];
+const VALID_POINTS_RANGES = ['<2000', '2000-2249', '2250-2499', '2500-2749', '2750-2999', '3000+'];
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
