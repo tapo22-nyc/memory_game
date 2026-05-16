@@ -3,7 +3,7 @@ const { neon } = require('@neondatabase/serverless');
 const sql = neon(process.env.DATABASE_URL);
 
 // Update this lock time before deploying.
-const WEEKEND_1_POLL_LOCK_TIME = new Date('2026-05-25T14:00:00Z');
+const WEEKEND_1_POLL_LOCK_TIME = new Date('2026-05-17T14:00:00Z');
 
 const POLL_NAME = 'super_weekend_1';
 
