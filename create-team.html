@@ -126,14 +126,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       flex-wrap: wrap;
     }
 
-.hero-scoring-link {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
+    .hero-scoring-link {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
     
+    .poll-action-link {
+      margin-top: 26px;
+    }    
     .btn-scoring-rules {
       display: inline-flex;
       align-items: center;
@@ -2063,7 +2066,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </button>
       </div>
       
-        <div class="hero-scoring-link">
+        <div class="hero-scoring-link poll-action-link">
     <button class="btn-scoring-rules"
       onclick="trackClick('weekend_1_poll_open'); openWeekend1PollModal()"
       style="border-color:rgba(255,209,102,0.4);color:#ffd166;">
