@@ -469,7 +469,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <h1 class="hero-title">Fantasy XI Arena</h1>
       <p class="hero-subtitle">Your fantasy cricket hub. Build teams, check leaderboards, track coins, and review your earnings from dedicated pages.</p>
       <div class="hero-actions">
-        <button class="btn-primary" onclick="trackClick('create_team_page'); requireUser(() => window.location.href='create-team.html')">🏏 Create Team</button>
+        <button class="btn-primary" onclick="trackClick('create_team_page'); window.location.href='create-team.html'">🏏 Create Team</button>
         <a class="btn-ghost" href="leaderboard.html" onclick="trackClick('leaderboard')">🏆 View Leaderboard</a>
       </div>
 
@@ -682,11 +682,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const btnKey = (STATUS_CONFIG[status]?.btnText || 'match_btn')
         .toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
       trackClick(btnKey, { fantasy_match_id: matchId, match_status: status, team_1: team1, team_2: team2 });
-      if (status === 'open') {
-        requireUser(() => { window.location.href = 'create-team.html'; });
-      } else {
-        window.location.href = 'create-team.html';
-      }
+      
+window.location.href = 'create-team.html';
+    
     }
 
     function togglePrizeRow(rowEl) {
