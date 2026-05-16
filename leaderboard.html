@@ -385,9 +385,9 @@
         <span class="section-label">Fantasy Leaderboard</span>
         <div class="section-line"></div>
         <div class="lb-tabs" role="tablist" aria-label="Fantasy leaderboard tabs">
+          <button class="lb-tab-btn" id="weekend1LeaderboardTab" onclick="trackClick('weekend_1_leaderboard_tab'); switchLeaderboardTab('weekend1')">Super Weekend 1</button>
           <button class="lb-tab-btn active" id="overallLeaderboardTab" onclick="trackClick('leaderboard_overall'); switchLeaderboardTab('overall')">Overall</button>
           <button class="lb-tab-btn" id="matchLeaderboardTab" onclick="trackClick('leaderboard_match_wise'); switchLeaderboardTab('match')">Match Wise</button>
-          <button class="lb-tab-btn" id="weekend1LeaderboardTab" onclick="trackClick('weekend_1_leaderboard_tab'); switchLeaderboardTab('weekend1')">Weekend 1</button>
         </div>
         <button class="lb-refresh-btn" onclick="trackClick('leaderboard_refresh', { active_tab: activeLeaderboardTab }); refreshActiveLeaderboard()">↻ Refresh</button>
       </div>
@@ -432,7 +432,7 @@
     let activeLeaderboardTab = 'overall';
     let selectedMatchLeaderboardId = null;
 
-    const WEEKEND_1_MATCH_IDS = [60, 61, 62];
+    const WEEKEND_1_MATCH_IDS = [63, 64, 65];
 
     const TEAM_FULL = {
       DC:'Delhi Capitals', CSK:'Chennai Super Kings', SRH:'Sunrisers Hyderabad', PBKS:'Punjab Kings', MI:'Mumbai Indians', RCB:'Royal Challengers Bengaluru', KKR:'Kolkata Knight Riders', RR:'Rajasthan Royals', GT:'Gujarat Titans', LSG:'Lucknow Super Giants'
@@ -615,10 +615,19 @@
           }
         }
         const combined = Object.values(map).sort((a, b) => b.total_points - a.total_points);
-        if (!combined.length) {
-          body.innerHTML = '<div class="lb-empty">Weekend 1 leaderboard will appear once scores are updated.</div>';
-          return;
-        }
+        
+           if (!combined.length) {
+      body.innerHTML = `
+        <div class="lb-empty">
+          <strong style="color:#ffd166;font-size:1rem;">Contest Yet to Begin</strong><br>
+          <span style="display:inline-block;margin-top:8px;color:#94a3b8;">
+            Super Weekend 1 leaderboard will appear once these matches start and scores are updated.
+          </span>
+        </div>
+      `;
+      return;
+    }
+        
         body.innerHTML = renderLeaderboardRows(combined);
       } catch (err) {
         body.innerHTML = '<div class="lb-empty" style="color:#f87171;">Could not load Weekend 1 leaderboard.</div>';
