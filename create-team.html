@@ -2152,6 +2152,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     let substituteBoosterEnabled = false;
     let availableCoins       = 0;
     let currentFantasyMatchId = null;
+    let pendingFantasyMatchId = null;
     let currentMatchData     = null;
     let allPlayers           = [];
     let allMatches           = [];   // stored on page load for user-team viewer
@@ -2265,11 +2266,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         localStorage.setItem(USER_ID_KEY, data.user.id);
         localStorage.setItem(USER_NAME_KEY, data.user.user_name);
 
-        hideUsernameModal();
-        await loadUserCoinBalance();
-        await loadMatchCards();
-        await loadBottomLeaderboard();
-        await openCreateTeamFromUrl();
+          hideUsernameModal();
+          await loadUserCoinBalance();
+          await loadMatchCards();
+          await loadBottomLeaderboard();
+          
+          if (pendingFantasyMatchId) {
+            const matchId = pendingFantasyMatchId;
+            pendingFantasyMatchId = null;
+            await openFantasyTeam(matchId);
+          }
+        
       } catch (error) {
         if (err) err.textContent = error.message || 'Something went wrong. Please try again.';
       } finally {
@@ -2640,6 +2647,7 @@ function renderSubstituteBoosterCard() {
     }
 
     async function submitSubstitution() {
+      
       const userId = getCurrentUserId();
       if (!userId) { showUsernameModal(); return; }
       if (!selectedSwapOutPlayerId || !substitutePlayerId) {
@@ -4256,9 +4264,14 @@ const updateNote = currentMatchData?.score_update_note || '';
 
     /* ── Open / Close modal ── */
     async function openFantasyTeam(fantasyMatchId) {
-      const userId=getCurrentUserId();
-      if (!userId) { showUsernameModal(); return; }
-
+      
+      const userId = getCurrentUserId();
+      if (!userId) {
+        pendingFantasyMatchId = fantasyMatchId;
+        showUsernameModal();
+        return;
+      }
+      
       currentFantasyMatchId=fantasyMatchId; selectedPlayers=[]; substitutePlayerId=null; substituteBoosterEnabled=false; substitutionUsed=false; selectedSwapOutPlayerId=null; savedFantasyTeamId=null; allPlayers=[]; currentMatchData=null;
       budget=75; modalStep=1; expandedTeams=new Set(); activePlayerTypeByTeam = {}; captainId=null; viceCaptainId=null; hasLoadedSavedTeamForOpenMatch=false; captainBoosterSelected=false; viceCaptainBoosterSelected=false;
       alreadyPaidCaptainBooster=false; alreadyPaidVCBooster=false; alreadyPaidSubBooster=false;
