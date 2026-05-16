@@ -2040,14 +2040,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         Pick a match, build your Fantasy XI, and manage your team before the contest locks.
       </p>
         <div class="hero-scoring-link">
-    <button class="btn-scoring-rules" onclick="trackClick('scoring_rules'); openScoringModal()">
-      📋 Scoring Rules
-    </button>
-    <button class="btn-scoring-rules" onclick="trackClick('weekend_1_poll_open'); openWeekend1PollModal()" style="border-color:rgba(255,209,102,0.4);color:#ffd166;">
-      🗳️ Predict Weekend 1 Winner
-    </button>
-  </div>
-      
+          <button class="btn-scoring-rules" onclick="trackClick('scoring_rules'); openScoringModal()">
+            📋 Scoring Rules
+          </button>
+        </div>      
     </section>
 
 
@@ -2066,6 +2062,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           View Closed Games
         </button>
       </div>
+      
+        <div class="hero-scoring-link">
+    <button class="btn-scoring-rules"
+      onclick="trackClick('weekend_1_poll_open'); openWeekend1PollModal()"
+      style="border-color:rgba(255,209,102,0.4);color:#ffd166;">
+      🗳️ Predict Weekend 1 Winner
+    </button>
+  </div>
 
       <div class="match-grid closed-match-list" id="closedFantasyMatchGrid"></div>
     </section>
