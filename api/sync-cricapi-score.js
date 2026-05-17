@@ -4,12 +4,11 @@ const sql = neon(process.env.DATABASE_URL);
 
 export default async function handler(req, res) {
   try {
-    const authHeader = req.headers.authorization;
-
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
+  // const authHeader = req.headers.authorization;
+  
+  // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  //   return res.status(401).json({ error: 'Unauthorized' });
+  // }
     const fantasyMatchId = Number(req.query.fantasy_match_id);
 
     if (!fantasyMatchId) {
