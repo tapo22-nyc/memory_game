@@ -10,7 +10,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const matchId = 54; // replace if different
+    const matchId = 64; // replace if different
 
     await sql`
       UPDATE fantasy_matches
