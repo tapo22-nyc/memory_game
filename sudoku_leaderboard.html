@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K3D0KKNXS2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-K3D0KKNXS2');
+</script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NGH76BBT');</script>
+<!-- End Google Tag Manager -->
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sudoku Leaderboard | MT Games</title>
+<meta name="description" content="See the latest Sudoku solves on MT Games." />
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #fff;
+    padding: 28px 20px 64px;
+  }
+
+  .page-wrap { max-width: 520px; margin: 0 auto; }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+
+  .logo-img { height: 36px; width: auto; object-fit: contain; }
+
+  .logo-text {
+    font-size: 1.05rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .nav-link {
+    color: #a0aec0;
+    text-decoration: none;
+    font-size: 0.84rem;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .nav-link:hover { color: #4cc9f0; }
+
+  /* ── Hero ── */
+  .lb-hero {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .lb-hero-title {
+    font-size: clamp(1.7rem, 6vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: 1px;
+    line-height: 1.15;
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, #4cc9f0, #7209b7, #f72585);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .lb-hero-sub {
+    font-size: 0.88rem;
+    color: #94a3b8;
+  }
+
+  /* ── Table card ── */
+  .lb-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .lb-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .lb-table thead tr {
+    background: rgba(76, 201, 240, 0.12);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .lb-table th {
+    padding: 14px 18px;
+    text-align: left;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #4cc9f0;
+  }
+
+  .lb-table th:last-child { text-align: right; }
+
+  .lb-table tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    transition: background 0.15s;
+  }
+
+  .lb-table tbody tr:last-child { border-bottom: none; }
+  .lb-table tbody tr:hover { background: rgba(255,255,255,0.04); }
+
+  .lb-table td {
+    padding: 15px 18px;
+    font-size: 0.92rem;
+    color: #e2e8f0;
+  }
+
+  .lb-table td:last-child {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: #4cc9f0;
+  }
+
+  .rank-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-right: 10px;
+  }
+
+  .rank-num.top1 { background: rgba(255,215,0,0.18); color: #ffd700; }
+  .rank-num.top2 { background: rgba(192,192,192,0.18); color: #c0c0c0; }
+  .rank-num.top3 { background: rgba(205,127,50,0.18); color: #cd7f32; }
+
+  .diff-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+
+  .diff-badge.easy   { background: rgba(72,199,142,0.18); color: #48c78e; }
+  .diff-badge.medium { background: rgba(255,179,71,0.18);  color: #ffb347; }
+  .diff-badge.hard   { background: rgba(247,37,133,0.18);  color: #f72585; }
+
+  /* ── Loading / empty ── */
+  .lb-state {
+    padding: 48px 20px;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: #4cc9f0;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    margin-bottom: 12px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NGH76BBT"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<div class="page-wrap">
+
+  <!-- Header -->
+  <header class="page-header">
+    <a href="index.html" class="logo-wrap" onclick="trackClick('lb_logo_click')">
+      <img src="mtgames_logo.png" alt="MT Games" class="logo-img" />
+      <span class="logo-text">MT Games</span>
+    </a>
+    <nav>
+      <a href="sudoku.html" class="nav-link" onclick="trackClick('lb_back_to_sudoku')">← Back to Sudoku</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <div class="lb-hero">
+    <div class="lb-hero-title">Sudoku Leaderboard</div>
+    <div class="lb-hero-sub">Last 10 successful solves — sorted by slowest to fastest</div>
+  </div>
+
+  <!-- Table -->
+  <div class="lb-card">
+    <div id="lb-content" class="lb-state">
+      <div class="spinner"></div><br/>Loading…
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+  const USER_ID_KEY   = 'mtgames_user_id';
+  const USER_NAME_KEY = 'mtgames_user_name';
+
+  function trackClick(buttonName, extraMeta = {}) {
+    const userId   = localStorage.getItem(USER_ID_KEY);
+    const userName = localStorage.getItem(USER_NAME_KEY);
+    const meta = { page: 'sudoku_leaderboard', ...extraMeta };
+    fetch('/api/track-click', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_id:        userId   ? Number(userId) : null,
+        user_name:      userName || 'anonymous',
+        button_name:    buttonName,
+        page_name:      'sudoku_leaderboard',
+        event_metadata: meta
+      })
+    }).catch(() => {});
+  }
+
+  function formatTime(seconds) {
+    if (seconds == null) return '—';
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return m > 0 ? `${m}m ${s}s` : `${s}s`;
+  }
+
+  function rankClass(i) {
+    if (i === 0) return 'top1';
+    if (i === 1) return 'top2';
+    if (i === 2) return 'top3';
+    return '';
+  }
+
+  async function loadLeaderboard() {
+    const container = document.getElementById('lb-content');
+    try {
+      const res = await fetch('/api/get-sudoku-leaderboard');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const { rows } = await res.json();
+
+      if (!rows || rows.length === 0) {
+        container.innerHTML = '<p>No solves yet — be the first! 🎯</p>';
+        return;
+      }
+
+      const tableRows = rows.map((row, i) => `
+        <tr>
+          <td>
+            <span class="rank-num ${rankClass(i)}">${i + 1}</span>
+            ${escHtml(row.user_name)}
+          </td>
+          <td><span class="diff-badge ${row.difficulty}">${row.difficulty}</span></td>
+          <td>${formatTime(row.time_taken_seconds)}</td>
+        </tr>
+      `).join('');
+
+      container.outerHTML = `
+        <table class="lb-table">
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th>Difficulty</th>
+              <th style="text-align:right">Time Taken</th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      `;
+      trackClick('lb_loaded', { row_count: rows.length });
+    } catch (err) {
+      container.innerHTML = '<p>Could not load leaderboard. Try again later.</p>';
+      console.error(err);
+    }
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  loadLeaderboard();
+</script>
+</body>
+</html>
