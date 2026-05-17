@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K3D0KKNXS2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-K3D0KKNXS2');
+</script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NGH76BBT');</script>
+<!-- End Google Tag Manager -->
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sudoku Puzzles | MT Games</title>
+<meta name="description" content="Play 9 hand-crafted sudoku puzzles — Easy, Medium, and Hard — on MT Games." />
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #fff;
+    padding: 28px 20px 64px;
+  }
+
+  .page-wrap { max-width: 860px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+
+  .logo-img {
+    height: 38px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .logo-text {
+    font-size: 1.1rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #a0aec0;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: #4cc9f0; }
+
+  .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  .page-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(76,201,240,0.1);
+    border: 1px solid rgba(76,201,240,0.25);
+    color: #4cc9f0;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  /* ── Hero ── */
+  .hero-section { text-align: center; margin-bottom: 44px; }
+
+  .hero-title {
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+    background: linear-gradient(90deg, #4cc9f0, #7209b7, #f72585);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.15;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    color: #a0aec0;
+    line-height: 1.75;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* ── Difficulty selector ── */
+  .selector-section { margin-bottom: 32px; }
+
+  .selector-label {
+    font-size: 0.7rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #4cc9f0;
+    margin-bottom: 12px;
+  }
+
+  .diff-tabs {
+    display: inline-flex;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 6px;
+  }
+
+  .diff-tab {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    background: transparent;
+    color: #64748b;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .diff-tab.active-easy   { background: linear-gradient(90deg, #06d6a0, #118ab2); color: #fff; }
+  .diff-tab.active-medium { background: linear-gradient(90deg, #ffd166, #ef476f); color: #1a1a2e; }
+  .diff-tab.active-hard   { background: linear-gradient(90deg, #f72585, #7209b7); color: #fff; }
+  .diff-tab:not([class*="active"]):hover { color: #fff; background: rgba(255,255,255,0.08); }
+
+  .puzzle-tabs {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .puzzle-tab {
+    padding: 8px 20px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: transparent;
+    color: #64748b;
+    transition: all 0.2s;
+  }
+
+  .puzzle-tab.active {
+    background: rgba(76,201,240,0.15);
+    border-color: #4cc9f0;
+    color: #4cc9f0;
+  }
+
+  .puzzle-tab:not(.active):hover { color: #fff; border-color: rgba(255,255,255,0.25); }
+
+  /* ── Stats bar ── */
+  .game-stats {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 10px 16px;
+    flex: 1;
+    min-width: 110px;
+  }
+
+  .stat-pill-icon { font-size: 1.1rem; }
+  .stat-pill-info {}
+  .stat-pill-val {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #f1f5f9;
+    line-height: 1;
+  }
+  .stat-pill-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+
+  /* ── Sudoku grid ── */
+  .grid-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .sudoku-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    border: 3px solid rgba(76,201,240,0.6);
+    border-radius: 6px;
+    overflow: hidden;
+    max-width: 100%;
+    width: min(504px, 98vw);
+    aspect-ratio: 1 / 1;
+  }
+
+  .sudoku-cell {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(0.9rem, 2.2vw, 1.2rem);
+    font-weight: 700;
+    cursor: pointer;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    transition: background 0.15s;
+    user-select: none;
+    position: relative;
+    outline: none;
+  }
+
+  /* Right border of columns 3 and 6 (3x3 box separators) */
+  .sudoku-cell:nth-child(9n+3),
+  .sudoku-cell:nth-child(9n+6) {
+    border-right: 2px solid rgba(76,201,240,0.45);
+  }
+
+  /* Bottom border of rows 3 and 6 */
+  .sudoku-cell:nth-child(n+19):nth-child(-n+27),
+  .sudoku-cell:nth-child(n+46):nth-child(-n+54) {
+    border-bottom: 2px solid rgba(76,201,240,0.45);
+  }
+
+  .sudoku-cell.given {
+    background: rgba(76,201,240,0.1);
+    color: #4cc9f0;
+    cursor: default;
+    font-weight: 800;
+  }
+
+  .sudoku-cell.editable {
+    color: #f1f5f9;
+  }
+
+  .sudoku-cell.editable:hover {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .sudoku-cell.selected {
+    background: rgba(114,9,183,0.35) !important;
+    box-shadow: inset 0 0 0 2px rgba(114,9,183,0.7);
+  }
+
+  .sudoku-cell.error-cell {
+    background: rgba(239,71,111,0.2) !important;
+    color: #ef476f !important;
+  }
+
+  .sudoku-cell.correct-cell {
+    background: rgba(6,214,160,0.15) !important;
+    color: #06d6a0 !important;
+  }
+
+  /* ── Number pad ── */
+  .numpad {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .num-btn {
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.07);
+    color: #f1f5f9;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .num-btn:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  .num-btn.erase {
+    border-color: rgba(239,71,111,0.3);
+    color: #ef476f;
+  }
+
+  /* ── Action buttons ── */
+  .action-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn-check {
+    flex: 1;
+    min-width: 120px;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.4px;
+    transition: opacity 0.2s, transform 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-check:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  .btn-submit { background: linear-gradient(90deg, #06d6a0, #118ab2); color: #fff; }
+  .btn-reset  { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; }
+
+  /* ── Toast / message ── */
+  .game-message {
+    display: none;
+    margin-top: 16px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .game-message.success {
+    display: block;
+    background: rgba(6,214,160,0.15);
+    border: 1px solid rgba(6,214,160,0.4);
+    color: #06d6a0;
+  }
+
+  .game-message.error {
+    display: block;
+    background: rgba(239,71,111,0.12);
+    border: 1px solid rgba(239,71,111,0.35);
+    color: #ef476f;
+  }
+
+  /* ── User modal ── */
+  .user-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,14,28,0.88);
+    backdrop-filter: blur(8px);
+    z-index: 900;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .user-modal-overlay.show { display: flex; }
+
+  .user-modal-card {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 36px 32px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .user-modal-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, #f72585, #4cc9f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .user-modal-copy {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    margin-bottom: 22px;
+    line-height: 1.6;
+  }
+
+  .username-input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    font-size: 1rem;
+    font-family: inherit;
+    margin-bottom: 10px;
+    outline: none;
+    transition: border-color 0.2s;
+    text-align: center;
+  }
+
+  .username-input:focus { border-color: #4cc9f0; }
+
+  .user-modal-error {
+    font-size: 0.8rem;
+    color: #ef476f;
+    min-height: 20px;
+    margin-bottom: 10px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #f72585, #7209b7);
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.4px;
+    transition: opacity 0.2s;
+  }
+
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  /* ── Responsive ── */
+  @media (max-width: 560px) {
+    .diff-tabs { flex-wrap: wrap; }
+    .diff-tab  { padding: 9px 16px; font-size: 0.82rem; }
+  }
+
+  @media (max-width: 400px) {
+    .sudoku-cell { font-size: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- User Sign-in Modal -->
+<div class="user-modal-overlay" id="userModal">
+  <div class="user-modal-card">
+    <div class="user-modal-title">🧩 Join MT Games</div>
+    <p class="user-modal-copy">Enter a username to track your puzzle times, attempts, and rankings.</p>
+    <input id="usernameInput" class="username-input" type="text" maxlength="24" placeholder="e.g. tapo22" autocomplete="off" />
+    <div class="user-modal-error" id="usernameError"></div>
+    <button class="btn-primary" id="usernameBtn" onclick="trackClick('sudoku_sign_in_submit'); createUserAccount()">Continue →</button>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- Header -->
+  <header class="page-header">
+    <a href="index.html" class="logo-wrap" onclick="trackClick('sudoku_logo_click')">
+      <img src="mtgames_logo.png" alt="MT Games" class="logo-img" />
+      <span class="logo-text">MT Games</span>
+    </a>
+    <div class="header-actions">
+      <a href="leaderboard.html" class="back-link" onclick="trackClick('sudoku_to_leaderboard')">🏆 Leaderboard</a>
+      <span class="page-eyebrow">🧩 Sudoku</span>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero-section">
+    <h1 class="hero-title">Sudoku Arena</h1>
+    <p class="hero-subtitle">
+      Choose your difficulty, pick a puzzle, and beat the clock.<br>
+      Easy, Medium, or Hard — every puzzle is a new challenge.
+    </p>
+  </section>
+
+  <!-- Difficulty selector -->
+  <div class="selector-section">
+    <div class="selector-label">Difficulty</div>
+    <div class="diff-tabs">
+      <button class="diff-tab active-easy" id="tab-easy"   onclick="selectDifficulty('easy')">✅ Easy</button>
+      <button class="diff-tab"             id="tab-medium" onclick="selectDifficulty('medium')">⚡ Medium</button>
+      <button class="diff-tab"             id="tab-hard"   onclick="selectDifficulty('hard')">🔥 Hard</button>
+    </div>
+
+    <div class="puzzle-tabs" id="puzzleTabs">
+      <button class="puzzle-tab active" id="ptab-1" onclick="selectPuzzle(1)">Puzzle 1</button>
+      <button class="puzzle-tab"        id="ptab-2" onclick="selectPuzzle(2)">Puzzle 2</button>
+      <button class="puzzle-tab"        id="ptab-3" onclick="selectPuzzle(3)">Puzzle 3</button>
+    </div>
+  </div>
+
+  <!-- Stats bar -->
+  <div class="game-stats">
+    <div class="stat-pill">
+      <span class="stat-pill-icon">⏱</span>
+      <div class="stat-pill-info">
+        <div class="stat-pill-val" id="timerDisplay">0:00</div>
+        <div class="stat-pill-label">Time</div>
+      </div>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-icon">🎯</span>
+      <div class="stat-pill-info">
+        <div class="stat-pill-val" id="attemptsDisplay">0</div>
+        <div class="stat-pill-label">Attempts</div>
+      </div>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-icon">🧩</span>
+      <div class="stat-pill-info">
+        <div class="stat-pill-val" id="diffDisplay">Easy</div>
+        <div class="stat-pill-label">Difficulty</div>
+      </div>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-icon">👤</span>
+      <div class="stat-pill-info">
+        <div class="stat-pill-val" id="userDisplay">—</div>
+        <div class="stat-pill-label">Player</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sudoku grid -->
+  <div class="grid-wrap">
+    <div class="sudoku-grid" id="sudokuGrid"></div>
+  </div>
+
+  <!-- Number pad -->
+  <div class="numpad" id="numpad">
+    <button class="num-btn" onclick="inputNumber(1)">1</button>
+    <button class="num-btn" onclick="inputNumber(2)">2</button>
+    <button class="num-btn" onclick="inputNumber(3)">3</button>
+    <button class="num-btn" onclick="inputNumber(4)">4</button>
+    <button class="num-btn" onclick="inputNumber(5)">5</button>
+    <button class="num-btn" onclick="inputNumber(6)">6</button>
+    <button class="num-btn" onclick="inputNumber(7)">7</button>
+    <button class="num-btn" onclick="inputNumber(8)">8</button>
+    <button class="num-btn" onclick="inputNumber(9)">9</button>
+    <button class="num-btn erase" onclick="inputNumber(0)">✕</button>
+  </div>
+
+  <!-- Actions -->
+  <div class="action-row">
+    <button class="btn-check btn-submit" onclick="checkSolution()">✓ Check Solution</button>
+    <button class="btn-check btn-reset"  onclick="resetPuzzle()">↺ Reset Puzzle</button>
+  </div>
+
+  <!-- Feedback message -->
+  <div class="game-message" id="gameMessage"></div>
+
+</div><!-- /page-wrap -->
+
+<script>
+  // ── Constants ──────────────────────────────────────────────
+  const USER_ID_KEY   = 'mtgames_user_id';
+  const USER_NAME_KEY = 'mtgames_user_name';
+
+  // ── Puzzle data ─────────────────────────────────────────────
+  // Format: [puzzle_grid, solution_grid] both as flat 81-length arrays (0 = empty)
+  const PUZZLES = {
+    easy: [
+      // Easy 1 — Wikipedia classic (30 givens) — Grid A
+      [
+        [5,3,0,0,7,0,0,0,0],
+        [6,0,0,1,9,5,0,0,0],
+        [0,9,8,0,0,0,0,6,0],
+        [8,0,0,0,6,0,0,0,3],
+        [4,0,0,8,0,3,0,0,1],
+        [7,0,0,0,2,0,0,0,6],
+        [0,6,0,0,0,0,2,8,0],
+        [0,0,0,4,1,9,0,0,5],
+        [0,0,0,0,8,0,0,7,9]
+      ],
+      [
+        [5,3,4,6,7,8,9,1,2],
+        [6,7,2,1,9,5,3,4,8],
+        [1,9,8,3,4,2,5,6,7],
+        [8,5,9,7,6,1,4,2,3],
+        [4,2,6,8,5,3,7,9,1],
+        [7,1,3,9,2,4,8,5,6],
+        [9,6,1,5,3,7,2,8,4],
+        [2,8,7,4,1,9,6,3,5],
+        [3,4,5,2,8,6,1,7,9]
+      ],
+      // Easy 2 — Grid B (30 givens)
+      [
+        [4,0,0,2,0,9,0,0,0],
+        [0,8,0,0,7,0,0,9,0],
+        [1,0,7,0,0,0,5,0,0],
+        [0,2,0,1,0,0,0,0,7],
+        [3,0,0,0,8,0,9,0,0],
+        [0,5,0,0,0,3,0,0,8],
+        [0,0,9,3,0,0,0,7,0],
+        [2,0,0,9,0,0,1,0,0],
+        [7,0,3,0,1,0,2,5,9]
+      ],
+      [
+        [4,3,5,2,6,9,7,8,1],
+        [6,8,2,5,7,1,4,9,3],
+        [1,9,7,8,3,4,5,6,2],
+        [8,2,6,1,9,5,3,4,7],
+        [3,7,4,6,8,2,9,1,5],
+        [9,5,1,7,4,3,6,2,8],
+        [5,1,9,3,2,6,8,7,4],
+        [2,4,8,9,5,7,1,3,6],
+        [7,6,3,4,1,8,2,5,9]
+      ],
+      // Easy 3 — Grid C (33 givens)
+      [
+        [1,5,0,4,0,9,0,0,0],
+        [7,0,9,0,5,0,0,4,0],
+        [0,6,8,3,0,0,0,0,5],
+        [3,0,0,0,2,0,0,5,0],
+        [0,9,0,7,0,3,0,0,0],
+        [2,0,0,0,9,0,0,1,0],
+        [0,1,0,6,0,7,0,0,0],
+        [6,0,0,0,4,0,0,3,0],
+        [0,7,0,5,0,2,9,6,4]
+      ],
+      [
+        [1,5,2,4,8,9,3,7,6],
+        [7,3,9,2,5,6,8,4,1],
+        [4,6,8,3,7,1,2,9,5],
+        [3,8,7,1,2,4,6,5,9],
+        [5,9,1,7,6,3,4,2,8],
+        [2,4,6,8,9,5,7,1,3],
+        [9,1,4,6,3,7,5,8,2],
+        [6,2,5,9,4,8,1,3,7],
+        [8,7,3,5,1,2,9,6,4]
+      ]
+    ],
+    medium: [
+      // Medium 1 — Grid A (20 givens)
+      [
+        [5,0,0,0,0,0,0,1,0],
+        [0,0,0,1,0,0,0,0,8],
+        [0,0,8,0,0,2,0,0,0],
+        [8,0,0,7,0,0,0,0,0],
+        [0,0,0,0,5,0,0,0,1],
+        [0,1,0,0,0,0,0,0,6],
+        [0,6,0,0,0,0,2,0,0],
+        [0,0,0,0,1,0,0,0,5],
+        [3,0,0,2,0,0,0,7,9]
+      ],
+      [
+        [5,3,4,6,7,8,9,1,2],
+        [6,7,2,1,9,5,3,4,8],
+        [1,9,8,3,4,2,5,6,7],
+        [8,5,9,7,6,1,4,2,3],
+        [4,2,6,8,5,3,7,9,1],
+        [7,1,3,9,2,4,8,5,6],
+        [9,6,1,5,3,7,2,8,4],
+        [2,8,7,4,1,9,6,3,5],
+        [3,4,5,2,8,6,1,7,9]
+      ],
+      // Medium 2 — Grid B (22 givens)
+      [
+        [4,0,0,0,0,9,0,0,0],
+        [0,0,2,0,0,0,4,0,0],
+        [0,0,0,8,0,0,0,6,0],
+        [0,2,0,0,9,0,0,0,0],
+        [3,0,0,0,8,0,0,0,5],
+        [0,0,1,0,0,3,0,0,0],
+        [0,0,0,3,0,0,8,0,0],
+        [0,4,0,0,0,0,0,3,0],
+        [0,0,3,0,1,0,2,5,9]
+      ],
+      [
+        [4,3,5,2,6,9,7,8,1],
+        [6,8,2,5,7,1,4,9,3],
+        [1,9,7,8,3,4,5,6,2],
+        [8,2,6,1,9,5,3,4,7],
+        [3,7,4,6,8,2,9,1,5],
+        [9,5,1,7,4,3,6,2,8],
+        [5,1,9,3,2,6,8,7,4],
+        [2,4,8,9,5,7,1,3,6],
+        [7,6,3,4,1,8,2,5,9]
+      ],
+      // Medium 3 — Grid C (22 givens)
+      [
+        [1,0,0,0,0,9,0,0,0],
+        [0,3,0,0,0,0,8,0,0],
+        [0,0,8,3,0,0,0,0,0],
+        [3,0,0,0,0,4,0,0,0],
+        [0,9,1,0,6,0,0,0,0],
+        [0,0,0,0,9,0,0,1,0],
+        [0,1,0,6,0,0,0,0,0],
+        [6,0,0,0,0,0,1,0,0],
+        [8,0,0,5,1,0,9,0,4]
+      ],
+      [
+        [1,5,2,4,8,9,3,7,6],
+        [7,3,9,2,5,6,8,4,1],
+        [4,6,8,3,7,1,2,9,5],
+        [3,8,7,1,2,4,6,5,9],
+        [5,9,1,7,6,3,4,2,8],
+        [2,4,6,8,9,5,7,1,3],
+        [9,1,4,6,3,7,5,8,2],
+        [6,2,5,9,4,8,1,3,7],
+        [8,7,3,5,1,2,9,6,4]
+      ]
+    ],
+    hard: [
+      // Hard 1 — Grid A (17 givens)
+      [
+        [5,0,0,0,0,0,0,0,0],
+        [0,7,0,0,0,5,0,0,0],
+        [0,0,8,0,0,0,0,0,7],
+        [0,0,0,7,0,0,0,0,0],
+        [0,0,6,0,0,0,7,0,0],
+        [0,0,0,0,2,0,0,5,0],
+        [9,0,0,0,0,7,0,0,0],
+        [0,0,0,4,0,0,0,3,0],
+        [0,0,5,0,8,0,0,0,9]
+      ],
+      [
+        [5,3,4,6,7,8,9,1,2],
+        [6,7,2,1,9,5,3,4,8],
+        [1,9,8,3,4,2,5,6,7],
+        [8,5,9,7,6,1,4,2,3],
+        [4,2,6,8,5,3,7,9,1],
+        [7,1,3,9,2,4,8,5,6],
+        [9,6,1,5,3,7,2,8,4],
+        [2,8,7,4,1,9,6,3,5],
+        [3,4,5,2,8,6,1,7,9]
+      ],
+      // Hard 2 — Grid B (17 givens)
+      [
+        [4,0,0,0,0,0,0,0,1],
+        [0,0,0,0,7,0,0,0,0],
+        [0,0,0,8,0,0,5,0,0],
+        [0,2,0,0,0,0,0,4,0],
+        [0,0,4,0,0,2,0,0,0],
+        [9,0,0,0,0,0,6,0,0],
+        [0,0,0,3,0,0,0,0,4],
+        [0,4,0,0,0,0,1,0,0],
+        [0,0,0,0,1,0,0,5,0]
+      ],
+      [
+        [4,3,5,2,6,9,7,8,1],
+        [6,8,2,5,7,1,4,9,3],
+        [1,9,7,8,3,4,5,6,2],
+        [8,2,6,1,9,5,3,4,7],
+        [3,7,4,6,8,2,9,1,5],
+        [9,5,1,7,4,3,6,2,8],
+        [5,1,9,3,2,6,8,7,4],
+        [2,4,8,9,5,7,1,3,6],
+        [7,6,3,4,1,8,2,5,9]
+      ],
+      // Hard 3 — Grid C (17 givens)
+      [
+        [1,0,0,0,0,0,0,7,0],
+        [0,0,9,0,5,0,0,0,0],
+        [0,6,0,0,0,0,0,0,5],
+        [0,0,0,1,0,0,6,0,0],
+        [0,9,0,0,0,3,0,0,0],
+        [0,0,6,0,9,0,0,0,0],
+        [0,0,0,6,0,0,0,8,0],
+        [6,0,0,0,0,8,0,0,0],
+        [0,0,3,0,0,0,0,0,0]
+      ],
+      [
+        [1,5,2,4,8,9,3,7,6],
+        [7,3,9,2,5,6,8,4,1],
+        [4,6,8,3,7,1,2,9,5],
+        [3,8,7,1,2,4,6,5,9],
+        [5,9,1,7,6,3,4,2,8],
+        [2,4,6,8,9,5,7,1,3],
+        [9,1,4,6,3,7,5,8,2],
+        [6,2,5,9,4,8,1,3,7],
+        [8,7,3,5,1,2,9,6,4]
+      ]
+    ]
+  };
+
+  // ── Game State ──────────────────────────────────────────────
+  let currentDifficulty = 'easy';
+  let currentPuzzleNum  = 1;
+  let playerGrid        = [];   // 9x9 of player values (0 = empty)
+  let givenGrid         = [];   // 9x9 booleans: true = given (fixed)
+  let selectedCell      = null; // { row, col }
+  let timerInterval     = null;
+  let elapsedSeconds    = 0;
+  let attemptsCount     = 0;
+  let puzzleSolved      = false;
+  let startTime         = null;
+
+  // ── User helpers ────────────────────────────────────────────
+  function getCurrentUser() {
+    return { id: localStorage.getItem(USER_ID_KEY), name: localStorage.getItem(USER_NAME_KEY) };
+  }
+
+  function showUsernameModal() {
+    const modal = document.getElementById('userModal');
+    const input = document.getElementById('usernameInput');
+    const err   = document.getElementById('usernameError');
+    if (err)   err.textContent = '';
+    if (input) input.value = '';
+    if (modal) modal.classList.add('show');
+    setTimeout(() => input && input.focus(), 50);
+  }
+
+  function hideUsernameModal() {
+    document.getElementById('userModal')?.classList.remove('show');
+  }
+
+  function sanitizeUsername(name) {
+    return String(name || '').trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+  }
+
+  async function createUserAccount() {
+    const input    = document.getElementById('usernameInput');
+    const err      = document.getElementById('usernameError');
+    const btn      = document.getElementById('usernameBtn');
+    const cleanName = sanitizeUsername(input ? input.value : '');
+    if (!cleanName || cleanName.length < 3) {
+      if (err) err.textContent = 'Please enter at least 3 characters. Use letters, numbers, or underscore.';
+      if (input) input.focus();
+      return;
+    }
+    try {
+      if (err) err.textContent = '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+      const res  = await fetch('/api/create-ipl-user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_name: cleanName }) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not create user.');
+      localStorage.setItem(USER_ID_KEY, data.user.id);
+      localStorage.setItem(USER_NAME_KEY, data.user.user_name);
+      hideUsernameModal();
+      updateUserDisplay();
+    } catch (error) {
+      if (err) err.textContent = error.message || 'Something went wrong. Please try again.';
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Continue →'; }
+    }
+  }
+
+  function updateUserDisplay() {
+    const user = getCurrentUser();
+    const el   = document.getElementById('userDisplay');
+    if (el) el.textContent = user.name || '—';
+  }
+
+  // ── Tracking ────────────────────────────────────────────────
+  function trackClick(buttonName, metadata = {}) {
+    const { id: userId, name: userName } = getCurrentUser();
+    fetch('/api/track-click', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
+      body: JSON.stringify({ user_id: userId ? Number(userId) : null, user_name: userName || null, event_name: 'button_click', button_name: buttonName, page_name: 'sudoku.html', page_url: window.location.pathname, event_metadata: { difficulty: currentDifficulty, puzzle_number: currentPuzzleNum, ...metadata } })
+    }).catch(() => {});
+  }
+
+  // ── Timer ───────────────────────────────────────────────────
+  function startTimer() {
+    stopTimer();
+    elapsedSeconds = 0;
+    startTime = Date.now();
+    timerInterval = setInterval(updateTimerDisplay, 1000);
+  }
+
+  function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  function updateTimerDisplay() {
+    elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+    const m = Math.floor(elapsedSeconds / 60);
+    const s = elapsedSeconds % 60;
+    document.getElementById('timerDisplay').textContent = `${m}:${String(s).padStart(2,'0')}`;
+  }
+
+  // ── Puzzle loading ───────────────────────────────────────────
+  function getPuzzleData(difficulty, puzzleNum) {
+    const list = PUZZLES[difficulty];
+    const idx  = (puzzleNum - 1) * 2; // pairs: [puzzle, solution]
+    return { puzzle: list[idx], solution: list[idx + 1] };
+  }
+
+  function loadPuzzle(difficulty, puzzleNum) {
+    puzzleSolved = false;
+    attemptsCount = 0;
+    hideMessage();
+    stopTimer();
+
+    currentDifficulty = difficulty;
+    currentPuzzleNum  = puzzleNum;
+
+    document.getElementById('diffDisplay').textContent =
+      difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+    document.getElementById('attemptsDisplay').textContent = '0';
+    document.getElementById('timerDisplay').textContent = '0:00';
+
+    const { puzzle } = getPuzzleData(difficulty, puzzleNum);
+
+    playerGrid = puzzle.map(row => [...row]);
+    givenGrid  = puzzle.map(row => row.map(v => v !== 0));
+    selectedCell = null;
+
+    renderGrid();
+    startTimer();
+    trackClick('sudoku_load_puzzle', { difficulty, puzzle_number: puzzleNum });
+  }
+
+  // ── Grid rendering ───────────────────────────────────────────
+  function renderGrid() {
+    const grid = document.getElementById('sudokuGrid');
+    grid.innerHTML = '';
+
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'sudoku-cell ' + (givenGrid[r][c] ? 'given' : 'editable');
+        cell.dataset.row = r;
+        cell.dataset.col = c;
+        cell.textContent = playerGrid[r][c] !== 0 ? playerGrid[r][c] : '';
+        cell.tabIndex = givenGrid[r][c] ? -1 : 0;
+
+        if (!givenGrid[r][c]) {
+          cell.addEventListener('click',   () => selectCell(r, c));
+          cell.addEventListener('keydown', (e) => handleKeyDown(e, r, c));
+        }
+
+        grid.appendChild(cell);
+      }
+    }
+  }
+
+  function getCellEl(row, col) {
+    return document.querySelector(`.sudoku-cell[data-row="${row}"][data-col="${col}"]`);
+  }
+
+  function selectCell(row, col) {
+    if (givenGrid[row][col]) return;
+    if (selectedCell) {
+      const prev = getCellEl(selectedCell.row, selectedCell.col);
+      if (prev) prev.classList.remove('selected');
+    }
+    selectedCell = { row, col };
+    const el = getCellEl(row, col);
+    if (el) { el.classList.add('selected'); el.focus(); }
+  }
+
+  function handleKeyDown(e, row, col) {
+    const nav = { ArrowUp: [-1,0], ArrowDown: [1,0], ArrowLeft: [0,-1], ArrowRight: [0,1] };
+    if (nav[e.key]) {
+      e.preventDefault();
+      const [dr, dc] = nav[e.key];
+      let nr = row + dr, nc = col + dc;
+      while (nr >= 0 && nr < 9 && nc >= 0 && nc < 9 && givenGrid[nr][nc]) {
+        nr += dr; nc += dc;
+      }
+      if (nr >= 0 && nr < 9 && nc >= 0 && nc < 9) selectCell(nr, nc);
+      return;
+    }
+    if (e.key === 'Backspace' || e.key === 'Delete') { inputNumber(0); return; }
+    const n = parseInt(e.key);
+    if (n >= 1 && n <= 9) inputNumber(n);
+  }
+
+  function inputNumber(n) {
+    if (!selectedCell || puzzleSolved) return;
+    const { row, col } = selectedCell;
+    if (givenGrid[row][col]) return;
+
+    playerGrid[row][col] = n;
+    const el = getCellEl(row, col);
+    if (el) {
+      el.textContent = n !== 0 ? n : '';
+      el.classList.remove('error-cell', 'correct-cell');
+    }
+    hideMessage();
+  }
+
+  // ── Solution check ───────────────────────────────────────────
+  function checkSolution() {
+    if (puzzleSolved) return;
+    attemptsCount++;
+    document.getElementById('attemptsDisplay').textContent = attemptsCount;
+    trackClick('sudoku_check_solution');
+
+    const { solution } = getPuzzleData(currentDifficulty, currentPuzzleNum);
+
+    let allFilled = true;
+    let allCorrect = true;
+
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        const el = getCellEl(r, c);
+        if (!el || givenGrid[r][c]) continue;
+        el.classList.remove('error-cell', 'correct-cell');
+        if (playerGrid[r][c] === 0) { allFilled = false; continue; }
+        if (playerGrid[r][c] === solution[r][c]) {
+          el.classList.add('correct-cell');
+        } else {
+          el.classList.add('error-cell');
+          allCorrect = false;
+        }
+      }
+    }
+
+    if (!allFilled) {
+      showMessage('error', '⚠️ Some cells are still empty. Fill in all cells before checking.');
+      return;
+    }
+
+    if (allCorrect) {
+      puzzleSolved = true;
+      stopTimer();
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      showMessage('success', `🎉 Brilliant! You solved the ${currentDifficulty.toUpperCase()} puzzle in ${formatTime(elapsed)} with ${attemptsCount} attempt${attemptsCount !== 1 ? 's' : ''}!`);
+      saveAttempt(true, elapsed);
+      trackClick('sudoku_solved', { time_seconds: elapsed, attempts: attemptsCount });
+    } else {
+      showMessage('error', `❌ Some cells are incorrect. Keep trying! (Attempt #${attemptsCount})`);
+      saveAttempt(false, null);
+    }
+  }
+
+  function resetPuzzle() {
+    trackClick('sudoku_reset_puzzle');
+    loadPuzzle(currentDifficulty, currentPuzzleNum);
+  }
+
+  function formatTime(s) {
+    const m = Math.floor(s / 60);
+    return `${m}:${String(s % 60).padStart(2,'0')}`;
+  }
+
+  // ── Message helpers ──────────────────────────────────────────
+  function showMessage(type, text) {
+    const el = document.getElementById('gameMessage');
+    el.className = `game-message ${type}`;
+    el.textContent = text;
+  }
+
+  function hideMessage() {
+    const el = document.getElementById('gameMessage');
+    el.className = 'game-message';
+    el.textContent = '';
+  }
+
+  // ── API: save attempt ────────────────────────────────────────
+  async function saveAttempt(completedCorrectly, timeTakenSeconds) {
+    const { id: userId } = getCurrentUser();
+    if (!userId) return;
+    try {
+      await fetch('/api/save-sudoku-attempt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id:             Number(userId),
+          difficulty:          currentDifficulty,
+          puzzle_number:       currentPuzzleNum,
+          attempts_count:      attemptsCount,
+          time_taken_seconds:  timeTakenSeconds,
+          completed_correctly: completedCorrectly
+        })
+      });
+    } catch (err) {
+      console.warn('Could not save sudoku attempt:', err);
+    }
+  }
+
+  // ── Difficulty / Puzzle selectors ────────────────────────────
+  function selectDifficulty(diff) {
+    currentDifficulty = diff;
+
+    ['easy','medium','hard'].forEach(d => {
+      const tab = document.getElementById(`tab-${d}`);
+      if (tab) tab.className = 'diff-tab' + (d === diff ? ` active-${d}` : '');
+    });
+
+    document.getElementById('diffDisplay').textContent = diff.charAt(0).toUpperCase() + diff.slice(1);
+    selectPuzzle(1);
+    trackClick('sudoku_select_difficulty', { difficulty: diff });
+  }
+
+  function selectPuzzle(num) {
+    currentPuzzleNum = num;
+    [1,2,3].forEach(n => {
+      const tab = document.getElementById(`ptab-${n}`);
+      if (tab) tab.className = 'puzzle-tab' + (n === num ? ' active' : '');
+    });
+    loadPuzzle(currentDifficulty, num);
+    trackClick('sudoku_select_puzzle', { puzzle_number: num });
+  }
+
+  // ── Init ─────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('usernameInput');
+    if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') createUserAccount(); });
+
+    const user = getCurrentUser();
+    if (!user.id || !user.name) {
+      showUsernameModal();
+    } else {
+      updateUserDisplay();
+    }
+
+    loadPuzzle('easy', 1);
+  });
+</script>
+
+</body>
+</html>
