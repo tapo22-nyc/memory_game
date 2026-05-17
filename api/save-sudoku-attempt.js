@@ -30,6 +30,9 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'puzzle_number must be 1, 2, or 3' });
     }
 
+    const completedAt = completed_correctly ? new Date().toISOString() : null;
+    const startedAt   = new Date(Date.now() - (Number(time_taken_seconds) || 0) * 1000).toISOString();
+
     const result = await sql`
       INSERT INTO sudoku_attempts
         (user_id, puzzle_id, difficulty, puzzle_number, attempts_count, time_taken_seconds, completed_correctly, started_at, completed_at)
@@ -42,8 +45,8 @@ module.exports = async function handler(req, res) {
           ${Number(attempts_count) || 0},
           ${completed_correctly && time_taken_seconds != null ? Number(time_taken_seconds) : null},
           ${Boolean(completed_correctly)},
-          NOW() - INTERVAL '1 second' * ${Number(time_taken_seconds) || 0},
-          ${completed_correctly ? sql`NOW()` : null}
+          ${startedAt},
+          ${completedAt}
         )
       RETURNING id, created_at
     `;
