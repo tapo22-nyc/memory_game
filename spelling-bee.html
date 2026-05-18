@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K3D0KKNXS2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-K3D0KKNXS2');
+</script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NGH76BBT');</script>
+<!-- End Google Tag Manager -->
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cricket Spelling Bee | MT Games</title>
+<meta name="description" content="Cricket Spelling Bee — Find words using 7 letters. Every word must use the center letter." />
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #fff;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-img { height: 38px; width: auto; object-fit: contain; }
+
+  .logo-text {
+    font-size: 1.1rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn-how-to-play {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #cbd5e1;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
+  .btn-how-to-play:hover { background: rgba(255,255,255,0.14); color: #fff; }
+
+  .btn-lb-link {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+    white-space: nowrap;
+  }
+  .btn-lb-link:hover { color: #fff; background: rgba(255,255,255,0.08); }
+
+  /* ── Page wrap ── */
+  .page-wrap {
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+
+  /* ── Title ── */
+  .game-title {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-align: center;
+    background: linear-gradient(90deg, #ffd166, #f72585, #7209b7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+
+  .game-subtitle {
+    font-size: 0.82rem;
+    color: #64748b;
+    text-align: center;
+    letter-spacing: 0.3px;
+    margin-top: -16px;
+  }
+
+  /* ── Stats bar ── */
+  .stats-bar {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: #94a3b8;
+  }
+
+  .stat-pill strong {
+    color: #f1f5f9;
+    font-size: 1rem;
+  }
+
+  .found-toggle-btn {
+    background: rgba(76,201,240,0.12);
+    border: 1px solid rgba(76,201,240,0.25);
+    color: #4cc9f0;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .found-toggle-btn:hover { background: rgba(76,201,240,0.22); }
+
+  /* ── Found words list ── */
+  .found-words-panel {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: none;
+  }
+
+  .found-words-panel.open { display: block; }
+
+  .found-words-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #4cc9f0;
+    margin-bottom: 10px;
+  }
+
+  .found-words-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .found-word-chip {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #e2e8f0;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .found-word-chip.pangram {
+    background: linear-gradient(90deg, rgba(255,209,102,0.2), rgba(247,37,133,0.2));
+    border-color: rgba(255,209,102,0.4);
+    color: #ffd166;
+  }
+
+  .found-words-empty {
+    font-size: 0.82rem;
+    color: #475569;
+    font-style: italic;
+  }
+
+  /* ── Hive ── */
+  .hive-outer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+  }
+
+  .hive {
+    position: relative;
+    width: 260px;
+    height: 240px;
+    flex-shrink: 0;
+  }
+
+  .hex-btn {
+    position: absolute;
+    width: 74px;
+    height: 74px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.45rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    border: none;
+    outline: none;
+    transition: transform 0.12s, filter 0.12s;
+    letter-spacing: 1px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .hex-center {
+    background: linear-gradient(135deg, #f72585, #7209b7);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(247,37,133,0.4);
+  }
+
+  .hex-outer {
+    background: rgba(255,255,255,0.1);
+    color: #e2e8f0;
+  }
+
+  .hex-btn:hover { transform: scale(1.09); filter: brightness(1.18); }
+  .hex-btn:active { transform: scale(0.94); }
+
+  /* ── Word display ── */
+  .word-display-wrap {
+    width: 100%;
+    text-align: center;
+  }
+
+  .word-display {
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #f1f5f9;
+    min-height: 2.4rem;
+    word-break: break-all;
+  }
+
+  .word-display .center-char { color: #f72585; }
+
+  .word-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.8rem;
+    background: #4cc9f0;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ── Controls row ── */
+  .controls-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .btn-delete {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #cbd5e1;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .btn-delete:hover { background: rgba(255,255,255,0.13); }
+
+  .btn-shuffle {
+    background: rgba(76,201,240,0.1);
+    border: 1px solid rgba(76,201,240,0.25);
+    color: #4cc9f0;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .btn-shuffle:hover { background: rgba(76,201,240,0.2); }
+
+  .btn-submit {
+    background: linear-gradient(90deg, #f72585, #7209b7);
+    border: none;
+    color: #fff;
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    box-shadow: 0 4px 18px rgba(247,37,133,0.3);
+    letter-spacing: 0.4px;
+  }
+  .btn-submit:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-submit:active { transform: translateY(0); }
+
+  /* ── Feedback ── */
+  .feedback {
+    width: 100%;
+    text-align: center;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feedback-msg {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    animation: fadeInUp 0.2s ease;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .feedback-correct  { background: rgba(6,214,160,0.15); border: 1px solid rgba(6,214,160,0.35); color: #06d6a0; }
+  .feedback-pangram  { background: linear-gradient(90deg, rgba(255,209,102,0.2), rgba(247,37,133,0.2)); border: 1px solid rgba(255,209,102,0.4); color: #ffd166; }
+  .feedback-invalid  { background: rgba(239,71,111,0.12); border: 1px solid rgba(239,71,111,0.3); color: #ef476f; }
+  .feedback-duplicate { background: rgba(255,209,102,0.1); border: 1px solid rgba(255,209,102,0.25); color: #ffd166; }
+
+  /* ── Loading / error states ── */
+  .loading-state, .error-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: #64748b;
+  }
+
+  .loading-state { color: #4cc9f0; font-size: 0.9rem; }
+  .error-state   { color: #ef476f; font-size: 0.9rem; }
+
+  /* ── Modal overlay ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    padding: 20px;
+    display: none;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal-card {
+    background: linear-gradient(145deg, #1e2a45, #162032);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  }
+
+  .modal-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .modal-subtitle {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 22px;
+    line-height: 1.6;
+  }
+
+  .modal-input {
+    width: 100%;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .modal-input:focus { border-color: rgba(247,37,133,0.6); }
+  .modal-input::placeholder { color: #475569; }
+
+  .modal-error {
+    font-size: 0.8rem;
+    color: #ef476f;
+    margin-bottom: 12px;
+    min-height: 1.2em;
+  }
+
+  .modal-btn {
+    width: 100%;
+    background: linear-gradient(90deg, #f72585, #7209b7);
+    border: none;
+    color: #fff;
+    padding: 13px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.4px;
+    transition: opacity 0.2s;
+    box-shadow: 0 4px 18px rgba(247,37,133,0.3);
+  }
+  .modal-btn:hover { opacity: 0.88; }
+  .modal-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  /* ── How to Play modal ── */
+  .htp-rule {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 0.88rem;
+    color: #cbd5e1;
+    line-height: 1.55;
+  }
+
+  .htp-rule-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .htp-close {
+    width: 100%;
+    margin-top: 20px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff;
+    padding: 11px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .htp-close:hover { background: rgba(255,255,255,0.14); }
+
+  /* ── Footer ── */
+  .site-footer {
+    text-align: center;
+    padding: 32px 24px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    background: rgba(0,0,0,0.2);
+    font-size: 0.75rem;
+    color: #334155;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 380px) {
+    .hive { transform: scale(0.85); transform-origin: top center; height: 205px; }
+    .word-display { font-size: 1.5rem; }
+    .controls-row { gap: 8px; }
+    .btn-delete, .btn-shuffle, .btn-submit { padding: 10px 14px; font-size: 0.82rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="site-header">
+  <a href="/" class="logo-wrap" onclick="trackClick('bee_header_logo')">
+    <img src="mtgames_logo.png" alt="MT Games" class="logo-img" />
+    <span class="logo-text">MT Games</span>
+  </a>
+  <div class="header-right">
+    <a href="spelling-bee-leaderboard.html" class="btn-lb-link" onclick="trackClick('bee_header_leaderboard')">🏆 Leaderboard</a>
+    <button class="btn-how-to-play" onclick="openHowToPlay()">? How to Play</button>
+  </div>
+</header>
+
+<!-- ── Main content ── -->
+<div class="page-wrap" id="main-content">
+
+  <div style="text-align:center;">
+    <div class="game-title">Cricket Spelling Bee</div>
+    <div class="game-subtitle" id="puzzle-number-label">Loading today's puzzle…</div>
+  </div>
+
+  <!-- Stats bar -->
+  <div class="stats-bar" id="stats-bar" style="display:none;">
+    <div class="stat-pill">
+      Found <strong id="found-count">0</strong>
+    </div>
+    <div class="stat-pill">
+      Remaining <strong id="remaining-count">—</strong>
+    </div>
+    <button class="found-toggle-btn" onclick="toggleFoundWords()">Show Words ▾</button>
+  </div>
+
+  <!-- Found words panel -->
+  <div class="found-words-panel" id="found-words-panel">
+    <div class="found-words-label">Words Found</div>
+    <div class="found-words-list" id="found-words-list">
+      <span class="found-words-empty">No words found yet.</span>
+    </div>
+  </div>
+
+  <!-- Loading / error -->
+  <div class="loading-state" id="loading-state">Loading puzzle…</div>
+  <div class="error-state" id="error-state" style="display:none;">
+    Could not load puzzle. Please refresh.
+  </div>
+
+  <!-- Game area (hidden until loaded) -->
+  <div id="game-area" style="display:none; width:100%; display:none; flex-direction:column; align-items:center; gap:22px;">
+
+    <!-- Hive -->
+    <div class="hive-outer">
+      <div class="hive" id="hive"></div>
+    </div>
+
+    <!-- Word display -->
+    <div class="word-display-wrap">
+      <div class="word-display" id="word-display"><span class="word-cursor"></span></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-row">
+      <button class="btn-delete" onclick="deleteLetter()">⌫ Delete</button>
+      <button class="btn-shuffle" onclick="shuffleLetters()">⟳ Shuffle</button>
+      <button class="btn-submit" onclick="submitGuess()">Enter</button>
+    </div>
+
+    <!-- Feedback -->
+    <div class="feedback" id="feedback"></div>
+
+  </div>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer class="site-footer">
+  © 2025 MT Games. All rights reserved.
+</footer>
+
+<!-- ── Username modal ── -->
+<div class="modal-overlay" id="username-modal">
+  <div class="modal-card">
+    <div class="modal-title">Choose a Username</div>
+    <div class="modal-subtitle">Pick a username to save your progress and appear on the leaderboard.</div>
+    <input
+      type="text"
+      class="modal-input"
+      id="username-input"
+      placeholder="e.g. cricketfan99"
+      maxlength="20"
+      autocomplete="off"
+      autocapitalize="none"
+    />
+    <div class="modal-error" id="username-error"></div>
+    <button class="modal-btn" id="username-btn" onclick="saveUsername()">Start Playing</button>
+  </div>
+</div>
+
+<!-- ── How to Play modal ── -->
+<div class="modal-overlay" id="htp-modal">
+  <div class="modal-card">
+    <div class="modal-title">How to Play</div>
+    <div class="modal-subtitle">Cricket Spelling Bee</div>
+
+    <div class="htp-rule">
+      <span class="htp-rule-icon">🔤</span>
+      <span>Make words using the 7 letters in the hive. Click letters or type with your keyboard.</span>
+    </div>
+    <div class="htp-rule">
+      <span class="htp-rule-icon">⭐</span>
+      <span>Every word <strong>must include the center letter</strong> (shown in pink/purple).</span>
+    </div>
+    <div class="htp-rule">
+      <span class="htp-rule-icon">🔁</span>
+      <span>Letters can be reused as many times as you like.</span>
+    </div>
+    <div class="htp-rule">
+      <span class="htp-rule-icon">📏</span>
+      <span>Words must be at least 4 letters long.</span>
+    </div>
+    <div class="htp-rule">
+      <span class="htp-rule-icon">🌟</span>
+      <span>A <strong>Pangram</strong> uses all 7 letters at least once. Can you find it?</span>
+    </div>
+    <div class="htp-rule">
+      <span class="htp-rule-icon">⟳</span>
+      <span>Use the Shuffle button to rearrange the outer letters.</span>
+    </div>
+
+    <button class="htp-close" onclick="closeHowToPlay()">Got it!</button>
+  </div>
+</div>
+
+<script>
+  // ── Constants ──
+  const USER_ID_KEY   = 'mtgames_user_id';
+  const USER_NAME_KEY = 'mtgames_user_name';
+
+  // ── State ──
+  let puzzleId     = null;
+  let centerLetter = '';
+  let outerLetters = [];
+  let totalWords   = 0;
+  let foundWords   = []; // array of lowercase words found
+  let currentWord  = '';
+  let pangramWords = new Set();
+
+  // ── Init ──
+  window.addEventListener('DOMContentLoaded', loadPuzzle);
+
+  // ── Keyboard support ──
+  document.addEventListener('keydown', (e) => {
+    if (document.getElementById('username-modal').classList.contains('open')) return;
+    if (document.getElementById('htp-modal').classList.contains('open')) return;
+    if (!puzzleId) return;
+
+    const key = e.key;
+    if (key === 'Enter') { submitGuess(); return; }
+    if (key === 'Backspace') { deleteLetter(); return; }
+    if (/^[a-zA-Z]$/.test(key)) { appendLetter(key); return; }
+  });
+
+  // ── Load puzzle ──
+  async function loadPuzzle() {
+    const userId   = localStorage.getItem(USER_ID_KEY);
+    const userName = localStorage.getItem(USER_NAME_KEY);
+
+    let url = '/api/get-spelling-bee-puzzle';
+    const params = [];
+    if (userId)   params.push('user_id='   + encodeURIComponent(userId));
+    if (userName) params.push('user_name=' + encodeURIComponent(userName));
+    if (params.length) url += '?' + params.join('&');
+
+    try {
+      const resp = await fetch(url);
+      const data = await resp.json();
+
+      if (!resp.ok || data.error) {
+        showError(data.error || 'Failed to load puzzle');
+        return;
+      }
+
+      puzzleId     = data.puzzle_id;
+      centerLetter = data.center_letter.toLowerCase();
+      outerLetters = data.outer_letters.split(',').map(l => l.trim().toLowerCase());
+      totalWords   = data.total_words;
+      foundWords   = (data.user_guesses || []).map(w => w.toLowerCase());
+
+      document.getElementById('puzzle-number-label').textContent = 'Puzzle #' + data.puzzle_number;
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('stats-bar').style.display = 'flex';
+
+      const gameArea = document.getElementById('game-area');
+      gameArea.style.display = 'flex';
+
+      updateStats();
+      renderHive();
+      renderFoundWords();
+
+      trackClick('bee_puzzle_load', { puzzle_id: puzzleId });
+    } catch (err) {
+      showError('Connection error. Please refresh.');
+    }
+  }
+
+  function showError(msg) {
+    document.getElementById('loading-state').style.display = 'none';
+    const errEl = document.getElementById('error-state');
+    errEl.style.display = 'block';
+    errEl.textContent = msg;
+  }
+
+  // ── Hive render ──
+  function renderHive() {
+    const hive = document.getElementById('hive');
+    hive.innerHTML = '';
+
+    const W = 74, H = 74, R = 80;
+    const cx = 130, cy = 120;
+
+    // Center
+    const centerBtn = makeHexBtn(centerLetter, true, cx - W/2, cy - H/2);
+    hive.appendChild(centerBtn);
+
+    // Outer (start top, clockwise)
+    outerLetters.forEach((letter, i) => {
+      const angle = (-90 + i * 60) * Math.PI / 180;
+      const x = cx + R * Math.cos(angle);
+      const y = cy + R * Math.sin(angle);
+      hive.appendChild(makeHexBtn(letter, false, x - W/2, y - H/2));
+    });
+  }
+
+  function makeHexBtn(letter, isCenter, left, top) {
+    const btn = document.createElement('button');
+    btn.className = 'hex-btn ' + (isCenter ? 'hex-center' : 'hex-outer');
+    btn.textContent = letter.toUpperCase();
+    btn.style.left = Math.round(left) + 'px';
+    btn.style.top  = Math.round(top)  + 'px';
+    btn.setAttribute('aria-label', 'Letter ' + letter.toUpperCase());
+    btn.onclick = () => appendLetter(letter);
+    return btn;
+  }
+
+  // ── Word building ──
+  function appendLetter(letter) {
+    currentWord += letter.toLowerCase();
+    renderWordDisplay();
+  }
+
+  function deleteLetter() {
+    if (currentWord.length === 0) return;
+    currentWord = currentWord.slice(0, -1);
+    renderWordDisplay();
+  }
+
+  function renderWordDisplay() {
+    const display = document.getElementById('word-display');
+    if (currentWord.length === 0) {
+      display.innerHTML = '<span class="word-cursor"></span>';
+      return;
+    }
+    let html = '';
+    for (const ch of currentWord) {
+      if (ch === centerLetter) {
+        html += '<span class="center-char">' + ch.toUpperCase() + '</span>';
+      } else {
+        html += ch.toUpperCase();
+      }
+    }
+    html += '<span class="word-cursor"></span>';
+    display.innerHTML = html;
+  }
+
+  // ── Shuffle outer letters ──
+  function shuffleLetters() {
+    for (let i = outerLetters.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [outerLetters[i], outerLetters[j]] = [outerLetters[j], outerLetters[i]];
+    }
+    renderHive();
+    trackClick('bee_shuffle');
+  }
+
+  // ── Submit guess ──
+  async function submitGuess() {
+    const word = currentWord.trim();
+    if (word.length === 0) return;
+
+    const userId   = localStorage.getItem(USER_ID_KEY);
+    const userName = localStorage.getItem(USER_NAME_KEY);
+
+    // Ask for username if none
+    if (!userId && !userName) {
+      pendingWordBeforeSignup = word;
+      openUsernameModal();
+      return;
+    }
+
+    // Client-side pre-checks for instant feedback
+    if (word.length < 4) {
+      showFeedback('Too short! Minimum 4 letters.', 'invalid');
+      currentWord = '';
+      renderWordDisplay();
+      return;
+    }
+    if (!word.includes(centerLetter)) {
+      showFeedback('Must include the center letter "' + centerLetter.toUpperCase() + '"', 'invalid');
+      currentWord = '';
+      renderWordDisplay();
+      return;
+    }
+    if (foundWords.includes(word)) {
+      showFeedback('Already found!', 'duplicate');
+      currentWord = '';
+      renderWordDisplay();
+      return;
+    }
+
+    try {
+      const resp = await fetch('/api/submit-spelling-bee-guess', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          puzzle_id: puzzleId,
+          user_id:   userId ? Number(userId) : undefined,
+          user_name: userName || undefined,
+          guessed_word: word
+        })
+      });
+
+      const data = await resp.json();
+
+      if (!resp.ok || data.error) {
+        showFeedback('Error — please try again.', 'invalid');
+        return;
+      }
+
+      currentWord = '';
+      renderWordDisplay();
+
+      if (data.result === 'correct') {
+        foundWords.push(word);
+        if (data.is_pangram) pangramWords.add(word);
+        updateStats();
+        renderFoundWords();
+        showFeedback(data.is_pangram ? '🌟 Pangram! ' + word.toUpperCase() : '✓ ' + word.toUpperCase(), data.is_pangram ? 'pangram' : 'correct');
+        trackClick('bee_correct_guess', { word });
+      } else if (data.result === 'duplicate') {
+        showFeedback('Already found!', 'duplicate');
+      } else {
+        showFeedback(data.message || 'Not in word list', 'invalid');
+      }
+    } catch (err) {
+      showFeedback('Connection error.', 'invalid');
+    }
+  }
+
+  // ── Stats ──
+  function updateStats() {
+    document.getElementById('found-count').textContent     = foundWords.length;
+    document.getElementById('remaining-count').textContent = Math.max(0, totalWords - foundWords.length);
+  }
+
+  // ── Found words list ──
+  function renderFoundWords() {
+    const list = document.getElementById('found-words-list');
+    if (foundWords.length === 0) {
+      list.innerHTML = '<span class="found-words-empty">No words found yet.</span>';
+      return;
+    }
+    const sorted = [...foundWords].sort();
+    list.innerHTML = sorted.map(w => {
+      const cls = pangramWords.has(w) ? 'found-word-chip pangram' : 'found-word-chip';
+      return '<span class="' + cls + '">' + w.toUpperCase() + '</span>';
+    }).join('');
+  }
+
+  function toggleFoundWords() {
+    const panel = document.getElementById('found-words-panel');
+    const btn   = document.querySelector('.found-toggle-btn');
+    panel.classList.toggle('open');
+    btn.textContent = panel.classList.contains('open') ? 'Hide Words ▴' : 'Show Words ▾';
+  }
+
+  // ── Feedback ──
+  let feedbackTimer = null;
+
+  function showFeedback(msg, type) {
+    const el = document.getElementById('feedback');
+    clearTimeout(feedbackTimer);
+    el.innerHTML = '<span class="feedback-msg feedback-' + type + '">' + msg + '</span>';
+    feedbackTimer = setTimeout(() => { el.innerHTML = ''; }, 2400);
+  }
+
+  // ── How to Play modal ──
+  function openHowToPlay() {
+    document.getElementById('htp-modal').classList.add('open');
+    trackClick('bee_how_to_play');
+  }
+  function closeHowToPlay() {
+    document.getElementById('htp-modal').classList.remove('open');
+  }
+  document.getElementById('htp-modal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeHowToPlay();
+  });
+
+  // ── Username modal ──
+  let pendingWordBeforeSignup = '';
+
+  function openUsernameModal() {
+    document.getElementById('username-modal').classList.add('open');
+    setTimeout(() => document.getElementById('username-input').focus(), 100);
+  }
+
+  function closeUsernameModal() {
+    document.getElementById('username-modal').classList.remove('open');
+  }
+
+  document.getElementById('username-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') saveUsername();
+  });
+
+  async function saveUsername() {
+    const input = document.getElementById('username-input');
+    const errEl = document.getElementById('username-error');
+    const btn   = document.getElementById('username-btn');
+
+    const raw   = input.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+    if (raw.length < 3) {
+      errEl.textContent = 'Username must be at least 3 characters.';
+      return;
+    }
+
+    btn.disabled    = true;
+    btn.textContent = 'Saving…';
+    errEl.textContent = '';
+
+    try {
+      const resp = await fetch('/api/create-ipl-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_name: raw })
+      });
+      const data = await resp.json();
+
+      if (!resp.ok || data.error) {
+        errEl.textContent = data.error || 'Could not save username. Try again.';
+        btn.disabled = false;
+        btn.textContent = 'Start Playing';
+        return;
+      }
+
+      const user = data.user;
+      localStorage.setItem(USER_ID_KEY,   user.id);
+      localStorage.setItem(USER_NAME_KEY, user.user_name);
+
+      closeUsernameModal();
+
+      // Resume submission that triggered signup
+      if (pendingWordBeforeSignup) {
+        currentWord = pendingWordBeforeSignup;
+        pendingWordBeforeSignup = '';
+        renderWordDisplay();
+        submitGuess();
+      }
+    } catch (err) {
+      errEl.textContent = 'Connection error. Please try again.';
+      btn.disabled = false;
+      btn.textContent = 'Start Playing';
+    }
+  }
+
+  // ── Analytics ──
+  function trackClick(buttonName, metadata = {}) {
+    const userId   = localStorage.getItem(USER_ID_KEY);
+    const userName = localStorage.getItem(USER_NAME_KEY);
+    fetch('/api/track-click', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      keepalive: true,
+      body: JSON.stringify({
+        user_id:    userId ? Number(userId) : null,
+        user_name:  userName || null,
+        event_name: 'button_click',
+        button_name: buttonName,
+        page_name:  'spelling-bee.html',
+        page_url:   window.location.pathname,
+        event_metadata: metadata
+      })
+    }).catch(() => {});
+  }
+</script>
+
+</body>
+</html>
