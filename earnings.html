@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K3D0KKNXS2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-K3D0KKNXS2');
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Earnings | MTGames</title>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #f8fafc;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: #111827;
+      padding: 24px 16px 60px;
+    }
+
+    .page-wrap { max-width: 960px; margin: 0 auto; }
+
+    /* ── Header ── */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #6b7280;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #2563eb; }
+
+    .page-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #dbeafe;
+      border: 1px solid #bfdbfe;
+      color: #2563eb;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    /* ── Hero ── */
+    .hero-section { text-align: center; margin-bottom: 28px; }
+
+    .hero-title {
+      font-size: clamp(1.7rem, 5vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.15;
+    }
+
+    .hero-subtitle {
+      font-size: 0.9rem;
+      color: #6b7280;
+      line-height: 1.6;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* ── Section wrapper ── */
+    .content-section { margin-bottom: 32px; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #2563eb;
+      white-space: nowrap;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, #d1d5db, transparent);
+    }
+
+    /* ── Metrics Strip ── */
+    .metrics-strip {
+      display: flex;
+      align-items: stretch;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .metric-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 10px;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .metric-divider {
+      width: 1px;
+      background: #e5e7eb;
+      flex-shrink: 0;
+      margin: 10px 0;
+    }
+
+    .metric-icon {
+      font-size: 13px;
+      opacity: 0.7;
+      line-height: 1;
+    }
+
+    .metric-val {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #06d6a0;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+    }
+
+    .metric-val.rank-val  { color: #4cc9f0; }
+    .metric-val.games-val { color: #a78bfa; }
+
+    .metric-label {
+      font-size: 0.6rem;
+      color: #6b7280;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      white-space: nowrap;
+    }
+
+    /* ── Coin Summary Panel ── */
+    .coin-summary-panel {
+      margin-top: 10px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .coin-summary-note {
+      padding: 12px 14px;
+      background: #f5f3ff;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 0.78rem;
+      color: #374151;
+      line-height: 1.45;
+    }
+
+    .coin-summary-note strong { color: #7c3aed; }
+
+    .coin-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .coin-row:last-child { border-bottom: none; }
+
+    .coin-row-icon {
+      width: 24px;
+      text-align: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .coin-row-label {
+      flex: 1;
+      min-width: 0;
+      font-size: 0.82rem;
+      font-weight: 750;
+      color: #374151;
+    }
+
+    .coin-row-value {
+      font-size: 0.9rem;
+      font-weight: 900;
+      color: #06d6a0;
+      white-space: nowrap;
+    }
+
+    .coin-row-value.gold { color: #f4a31a; }
+    .coin-row-value.red  { color: #fb7185; }
+
+    .coin-toggle {
+      border: 0;
+      background: rgba(76,201,240,0.08);
+      color: #4cc9f0;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .coin-toggle:hover { background: rgba(76,201,240,0.14); }
+
+    .booster-detail-panel {
+      display: none;
+      background: #f8fafc;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .booster-detail-panel.open { display: block; }
+
+    .bu-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px 9px 48px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .bu-row:last-child { border-bottom: none; }
+
+    .bu-icon {
+      font-size: 14px;
+      flex-shrink: 0;
+      width: 22px;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .bu-name {
+      flex: 1;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #6b7280;
+      min-width: 0;
+    }
+
+    .bu-times {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #6b7280;
+      white-space: nowrap;
+      background: #f3f4f6;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .bu-times.has-uses {
+      color: #2563eb;
+      background: #dbeafe;
+    }
+
+    .bu-coins {
+      font-size: 0.74rem;
+      font-weight: 850;
+      color: #64748b;
+      white-space: nowrap;
+      min-width: 70px;
+      text-align: right;
+    }
+
+    .bu-coins.has-spend { color: #f4a31a; }
+
+    .bu-empty {
+      padding: 12px 14px 12px 48px;
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+
+    /* ── Match-wise Earnings ── */
+    .mw-panel {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .mw-head {
+      display: grid;
+      grid-template-columns: 32px 1fr auto 20px;
+      gap: 8px;
+      align-items: center;
+      padding: 9px 14px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .mw-head-cell {
+      font-size: 0.6rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #6b7280;
+    }
+
+    .mw-head-cell.right { text-align: right; }
+
+    .mw-row-wrap {
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .mw-row-wrap:last-child { border-bottom: none; }
+
+    .mw-row-main {
+      display: grid;
+      grid-template-columns: 32px 1fr auto 20px;
+      gap: 8px;
+      align-items: center;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: background 0.12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .mw-row-main:hover { background: #f8fafc; }
+
+    .mw-rank {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.75rem;
+      color: #6b7280;
+      flex-shrink: 0;
+    }
+
+    .mw-match-name {
+      font-size: 0.87rem;
+      font-weight: 700;
+      color: #374151;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mw-total {
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: #06d6a0;
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    .mw-chevron {
+      font-size: 1rem;
+      color: #9ca3af;
+      text-align: center;
+      transition: transform 0.2s;
+      line-height: 1;
+      user-select: none;
+    }
+
+    .mw-row-main.open .mw-chevron { transform: rotate(90deg); }
+
+    /* Expandable detail */
+    .mw-detail {
+      display: none;
+      padding: 0 14px 14px;
+    }
+
+    .mw-detail.open { display: block; }
+
+    .mw-breakdown {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .mw-bd-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 0.8rem;
+    }
+
+    .mw-bd-row:last-child { border-bottom: none; }
+
+    .mw-bd-label { color: #6b7280; font-weight: 600; }
+    .mw-bd-val   { color: #374151; font-weight: 700; }
+    .mw-bd-val.accent { color: #06d6a0; }
+    .mw-bd-val.gold   { color: #f4a31a; }
+    .mw-bd-val.purple { color: #a78bfa; }
+
+    .mw-bd-row.total-row {
+      background: rgba(6,214,160,0.05);
+      border-top: 1px solid rgba(6,214,160,0.15);
+    }
+
+    .mw-bd-row.total-row .mw-bd-label { color: #94a3b8; font-weight: 700; }
+    .mw-bd-row.total-row .mw-bd-val   { color: #06d6a0; font-size: 0.88rem; }
+
+    .mw-empty {
+      padding: 40px 20px;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 0.88rem;
+    }
+
+    /* ── Loading skeleton ── */
+    .skeleton {
+      background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 6px;
+      height: 14px;
+    }
+
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* ── Username Modal ── */
+    .user-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .user-modal-overlay.show { display: flex; }
+
+    .user-modal-card {
+      width: 100%;
+      max-width: 430px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+
+    .user-modal-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #111827;
+    }
+
+    .user-modal-copy {
+      color: #374151;
+      font-size: 0.94rem;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .username-input {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      padding: 14px 16px;
+      color: #111827;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    .username-input::placeholder { color: #9ca3af; }
+
+    .user-modal-error {
+      min-height: 20px;
+      color: #f72585;
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: #2563eb;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      body { padding: 18px 12px 52px; }
+      .hero-title { font-size: 1.5rem; }
+      .hero-subtitle { font-size: 0.82rem; }
+      .metric-val { font-size: 1.15rem; }
+      .metric-label { font-size: 0.56rem; }
+      .mw-match-name { font-size: 0.78rem; }
+    }
+
+    @media (max-width: 360px) {
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Username Modal ── -->
+  <div class="user-modal-overlay" id="userModal">
+    <div class="user-modal-card">
+      <div class="user-modal-title">Sign in to MTGames</div>
+      <p class="user-modal-copy">
+        Enter your existing username to continue, or create a new one. Your player identity stays linked to that username.
+      </p>
+      <input id="usernameInput" class="username-input" type="text" maxlength="24" placeholder="e.g. tapo22" />
+      <div class="user-modal-error" id="usernameError"></div>
+      <button class="btn-primary" id="usernameBtn" onclick="trackClick('sign_in_modal_submit'); createUserAccount()">Continue</button>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+
+    <!-- ── Header ── -->
+    <header class="page-header">
+      <a href="fantasy.html" class="back-link" onclick="trackClick('earnings_back_to_fantasy')">&#8592; Fantasy Arena</a>
+      <a href="prizes.html" class="page-eyebrow" onclick="trackClick('earnings_to_prizes')">🏅 Prizes</a>
+    </header>
+
+    <!-- ── Hero ── -->
+    <section class="hero-section">
+      <h1 class="hero-title">My Earnings</h1>
+      <p class="hero-subtitle">Your fantasy performance, coin balance, and match-wise breakdown.</p>
+    </section>
+
+    <!-- ── Summary Metrics Strip ── -->
+    <section class="content-section">
+      <div class="section-header">
+        <span class="section-label">Summary</span>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="metrics-strip">
+        <div class="metric-item">
+          <div class="metric-icon">🏅</div>
+          <div class="metric-val rank-val" id="earningOverallRank">--</div>
+          <div class="metric-label">Overall Rank</div>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric-item">
+          <div class="metric-icon">⚡</div>
+          <div class="metric-val" id="earningTotalPoints">--</div>
+          <div class="metric-label">Total Points</div>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric-item">
+          <div class="metric-icon">🎮</div>
+          <div class="metric-val games-val" id="earningGamesPlayed">--</div>
+          <div class="metric-label">Games Played</div>
+        </div>
+      </div>
+
+      <!-- ── Coins Summary ── -->
+      <div class="coin-summary-panel">
+        <div class="coin-summary-note">
+          <strong>Match points become coins.</strong> Earn coins from your fantasy points and spend them on boosters without changing your leaderboard rank.
+        </div>
+
+        <div class="coin-row">
+          <span class="coin-row-icon">🏆</span>
+          <span class="coin-row-label">Total Coins Earned from Matches</span>
+          <span class="coin-row-value" id="coinsMatchPoints">--</span>
+        </div>
+
+        <div class="coin-row">
+          <span class="coin-row-icon">⚡</span>
+          <span class="coin-row-label">Total Coins Used for Boosters</span>
+          <span class="coin-row-value red" id="coinsBoosterSpent">--</span>
+          <button class="coin-toggle" id="boosterBreakdownToggle" onclick="toggleBoosterBreakdown()">Details ▾</button>
+        </div>
+
+        <div class="booster-detail-panel" id="boosterUsagePanel">
+          <div class="bu-empty">Loading booster stats&#8230;</div>
+        </div>
+
+        <div class="coin-row">
+          <span class="coin-row-icon">🪙</span>
+          <span class="coin-row-label">Coins Available</span>
+          <span class="coin-row-value gold" id="coinsAvailable">--</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Match-wise Earnings ── -->
+    <section class="content-section">
+      <div class="section-header">
+        <span class="section-label">Match Wise Earnings</span>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="mw-panel">
+        <div class="mw-head">
+          <div class="mw-head-cell">#</div>
+          <div class="mw-head-cell">Match</div>
+          <div class="mw-head-cell right">Total Pts</div>
+          <div class="mw-head-cell"></div>
+        </div>
+        <div id="earningsMatchBody">
+          <div class="mw-empty">Loading your earnings&#8230;</div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /.page-wrap -->
+
+  <script>
+    const USER_ID_KEY   = 'mtgames_user_id';
+    const USER_NAME_KEY = 'mtgames_user_name';
+    let allMatches = [];
+
+    /* ── Auth helpers ── */
+    function getCurrentUserId() { return localStorage.getItem(USER_ID_KEY); }
+    function getCurrentUser()   { return { id: localStorage.getItem(USER_ID_KEY), name: localStorage.getItem(USER_NAME_KEY) }; }
+
+    function showUsernameModal() {
+      const modal = document.getElementById('userModal');
+      const input = document.getElementById('usernameInput');
+      const err   = document.getElementById('usernameError');
+      if (err)   err.textContent = '';
+      if (input) input.value = '';
+      if (modal) modal.classList.add('show');
+      setTimeout(() => input && input.focus(), 50);
+    }
+
+    function hideUsernameModal() {
+      const modal = document.getElementById('userModal');
+      if (modal) modal.classList.remove('show');
+    }
+
+    function sanitizeUsername(name) {
+      return String(name || '').trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+    }
+
+    function escapeHTML(v) {
+      return String(v || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    async function createUserAccount() {
+      const input     = document.getElementById('usernameInput');
+      const err       = document.getElementById('usernameError');
+      const btn       = document.getElementById('usernameBtn');
+      const cleanName = sanitizeUsername(input ? input.value : '');
+
+      if (!cleanName || cleanName.length < 3) {
+        if (err)   err.textContent = 'Please enter at least 3 characters. Use letters, numbers, or underscore.';
+        if (input) input.focus();
+        return;
+      }
+
+      try {
+        if (err) err.textContent = '';
+        if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+
+        const response = await fetch('/api/create-ipl-user', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ user_name: cleanName })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Could not create user.');
+
+        localStorage.setItem(USER_ID_KEY,   data.user.id);
+        localStorage.setItem(USER_NAME_KEY, data.user.user_name);
+
+        hideUsernameModal();
+        await loadMyEarnings();
+      } catch (error) {
+        if (err) err.textContent = error.message || 'Something went wrong. Please try again.';
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Continue'; }
+      }
+    }
+
+    function trackClick(buttonName, metadata = {}) {
+      const userId   = localStorage.getItem(USER_ID_KEY);
+      const userName = localStorage.getItem(USER_NAME_KEY);
+      fetch('/api/track-click', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        keepalive: true,
+        body: JSON.stringify({
+          user_id:          userId ? Number(userId) : null,
+          user_name:        userName || null,
+          event_name:       'button_click',
+          button_name:      buttonName,
+          page_name:        'earnings.html',
+          page_url:         window.location.pathname,
+          fantasy_match_id: metadata.fantasy_match_id || null,
+          ipl_match_id:     metadata.ipl_match_id     || null,
+          event_metadata:   metadata
+        })
+      }).catch(err => console.warn('Click tracking failed:', err));
+    }
+
+    /* ── Match row accordion ── */
+    function toggleMatchRow(mainEl) {
+      const wrap   = mainEl.closest('.mw-row-wrap');
+      const detail = wrap ? wrap.querySelector('.mw-detail') : null;
+      if (!detail) return;
+
+      const isOpen = detail.classList.contains('open');
+      detail.classList.toggle('open', !isOpen);
+      mainEl.classList.toggle('open', !isOpen);
+
+      const matchName = mainEl.querySelector('.mw-match-name');
+      trackClick(isOpen ? 'earnings_match_row_collapse' : 'earnings_match_row_expand', {
+        match_title: matchName ? matchName.textContent : ''
+      });
+    }
+
+    /* ── Booster usage renderer ── */
+    const BOOSTER_DEFS = [
+      { type: 'captain_3x', icon: '👑', name: 'Captain 3X'       },
+      { type: 'vc_2x',      icon: '⭐', name: 'Vice Captain 2X'  },
+      { type: 'substitute', icon: '🔄', name: 'Substitute'        }
+    ];
+
+
+    function toggleBoosterBreakdown() {
+      const panel = document.getElementById('boosterUsagePanel');
+      const btn   = document.getElementById('boosterBreakdownToggle');
+      if (!panel) return;
+
+      const isOpen = panel.classList.toggle('open');
+      if (btn) btn.textContent = isOpen ? 'Hide ▴' : 'Details ▾';
+      trackClick(isOpen ? 'earnings_booster_breakdown_open' : 'earnings_booster_breakdown_close');
+    }
+
+    function renderBoosterUsage(usageRows) {
+      const panel   = document.getElementById('boosterUsagePanel');
+      const spentEl = document.getElementById('coinsBoosterSpent');
+      if (!panel) return;
+
+      const safeRows = Array.isArray(usageRows) ? usageRows : [];
+      const totalSpent = safeRows.reduce((s, r) => s + Number(r.total_coins_spent || 0), 0);
+      if (spentEl) spentEl.textContent = totalSpent;
+
+      panel.innerHTML = BOOSTER_DEFS.map(b => {
+        const stat  = safeRows.find(r => r.booster_type === b.type);
+        const times = stat ? Number(stat.times_used        || 0) : 0;
+        const spent = stat ? Number(stat.total_coins_spent || 0) : 0;
+
+        const timesLabel = times === 0 ? 'Never used'
+                         : times === 1 ? '1 time'
+                         : `${times} times`;
+
+        return `
+          <div class="bu-row">
+            <span class="bu-icon">${b.icon}</span>
+            <span class="bu-name">${escapeHTML(b.name)}</span>
+            <span class="bu-times ${times > 0 ? 'has-uses' : ''}">${timesLabel}</span>
+            <span class="bu-coins ${spent > 0 ? 'has-spend' : ''}">${spent > 0 ? spent + ' coins' : '0 coins'}</span>
+          </div>`;
+      }).join('');
+    }
+
+    /* ── Match row renderer ── */
+    function renderMatchRow(row, idx) {
+      const coinsFromMatch = row.total;
+
+      return `
+        <div class="mw-row-wrap">
+          <div class="mw-row-main" onclick="toggleMatchRow(this)" role="button" aria-expanded="false">
+            <div class="mw-rank">${row.rank}</div>
+            <div class="mw-match-name" title="${escapeHTML(row.matchTitle)}">${escapeHTML(row.matchTitle)}</div>
+            <div class="mw-total">${row.total} pts</div>
+            <div class="mw-chevron">›</div>
+          </div>
+          <div class="mw-detail">
+            <div class="mw-breakdown">
+              <div class="mw-bd-row">
+                <span class="mw-bd-label">Base Points</span>
+                <span class="mw-bd-val">${row.base} pts</span>
+              </div>
+              <div class="mw-bd-row">
+                <span class="mw-bd-label">Captain Bonus</span>
+                <span class="mw-bd-val purple">+${row.captain} pts</span>
+              </div>
+              <div class="mw-bd-row">
+                <span class="mw-bd-label">Vice Captain Bonus</span>
+                <span class="mw-bd-val purple">+${row.vice} pts</span>
+              </div>
+              <div class="mw-bd-row">
+                <span class="mw-bd-label">Rank This Match</span>
+                <span class="mw-bd-val">#${row.rank}</span>
+              </div>
+              <div class="mw-bd-row">
+                <span class="mw-bd-label">Coins Earned</span>
+                <span class="mw-bd-val gold">${coinsFromMatch} coins</span>
+              </div>
+              <div class="mw-bd-row total-row">
+                <span class="mw-bd-label">Total Points</span>
+                <span class="mw-bd-val accent">${row.total} pts</span>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    /* ── Data loaders ── */
+    async function loadMatchesForEarnings() {
+      const res  = await fetch('/api/get-fantasy-match');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to load matches.');
+      allMatches = data.matches || [];
+    }
+
+    /* ── Main earnings loader ── */
+    async function loadMyEarnings() {
+      const userId  = Number(getCurrentUserId());
+      const totalEl = document.getElementById('earningTotalPoints');
+      const gamesEl = document.getElementById('earningGamesPlayed');
+      const rankEl  = document.getElementById('earningOverallRank');
+      const bodyEl  = document.getElementById('earningsMatchBody');
+      const buPanel = document.getElementById('boosterUsagePanel');
+
+      // Reset to loading state
+      if (totalEl) totalEl.textContent = '--';
+      if (gamesEl) gamesEl.textContent = '--';
+      if (rankEl)  rankEl.textContent  = '--';
+      if (bodyEl)  bodyEl.innerHTML    = '<div class="mw-empty">Loading your earnings&#8230;</div>';
+      if (buPanel) buPanel.innerHTML   = '<div class="bu-empty">Loading booster stats&#8230;</div>';
+      const spentEl = document.getElementById('coinsBoosterSpent');
+      if (spentEl) spentEl.textContent = '--';
+
+      if (!userId) {
+        if (bodyEl) bodyEl.innerHTML = '<div class="mw-empty">Please sign in to view your earnings.</div>';
+        if (buPanel) buPanel.innerHTML = '<div class="bu-empty">Sign in to see your booster history.</div>';
+        const spentEl = document.getElementById('coinsBoosterSpent');
+        if (spentEl) spentEl.textContent = '--';
+        showUsernameModal();
+        return;
+      }
+
+      try {
+        // ── Load matches list (needed for the per-match loop) ──
+        if (!allMatches || !allMatches.length) {
+          await loadMatchesForEarnings();
+        }
+
+        // ── 1. Overall leaderboard → rank / total pts / games ──
+        const overallRes  = await fetch('/api/get-fantasy-leaderboard');
+        const overallData = await overallRes.json();
+        if (!overallRes.ok) throw new Error(overallData.error || 'Could not load earnings.');
+
+        const leaderboard = overallData.leaderboard || [];
+        const myIndex     = leaderboard.findIndex(p => Number(p.user_id) === userId);
+        const me          = myIndex >= 0 ? leaderboard[myIndex] : null;
+
+        if (me) {
+          if (totalEl) totalEl.textContent = `${Math.round(Number(me.total_points   || 0))}`;
+          if (gamesEl) gamesEl.textContent = `${Number(me.matches_played || 0)}`;
+          if (rankEl)  rankEl.textContent  = `#${myIndex + 1}`;
+        } else {
+          if (totalEl) totalEl.textContent = '0';
+          if (gamesEl) gamesEl.textContent = '0';
+          if (rankEl)  rankEl.textContent  = '--';
+        }
+
+        // ── 2. Coin balance (accurate — accounts for booster spend) ──
+        try {
+          const balRes  = await fetch(`/api/get-user-coin-balance?user_id=${encodeURIComponent(userId)}`);
+          const balData = await balRes.json();
+          if (balRes.ok && balData.success) {
+            const pts  = Math.round(Number(balData.balance?.total_points_earned || 0));
+            const avail = Math.round(Number(balData.balance?.available_coins    || 0));
+            const mpEl  = document.getElementById('coinsMatchPoints');
+            const caEl  = document.getElementById('coinsAvailable');
+            if (mpEl) mpEl.textContent = pts;
+            if (caEl) caEl.textContent = avail;
+          }
+        } catch (e) {
+          // Fallback to leaderboard total if coin API fails
+          const pts = me ? Math.round(Number(me.total_points || 0)) : 0;
+          const mpEl = document.getElementById('coinsMatchPoints');
+          const caEl = document.getElementById('coinsAvailable');
+          if (mpEl) mpEl.textContent = pts;
+          if (caEl) caEl.textContent = pts;
+        }
+
+        // ── 3. Booster usage breakdown ──
+        let boosterRows = [];
+        try {
+          const bstRes  = await fetch(`/api/get-booster-usage?user_id=${encodeURIComponent(userId)}`);
+          const bstData = await bstRes.json();
+          if (bstRes.ok && bstData.success) {
+            boosterRows = bstData.boosters || [];
+          }
+        } catch (e) {
+          // API not yet available — render zeros gracefully
+        }
+        renderBoosterUsage(boosterRows);
+
+        // ── 4. Match-wise earnings ──
+        if (!me) {
+          if (bodyEl) bodyEl.innerHTML = '<div class="mw-empty">You have not earned fantasy points yet.</div>';
+          return;
+        }
+
+        const eligibleMatches = (allMatches || [])
+          .filter(m => ['locked', 'closed'].includes(String(m.status || '').toLowerCase()))
+          .sort((a, b) => Number(b.id) - Number(a.id));
+
+        const rows = [];
+
+        for (const match of eligibleMatches) {
+          try {
+            const res  = await fetch(`/api/get-fantasy-leaderboard?fantasy_match_id=${encodeURIComponent(match.id)}`);
+            const data = await res.json();
+            if (!res.ok) continue;
+
+            const matchPlayers = data.leaderboard || [];
+            const myMatchIndex = matchPlayers.findIndex(p => Number(p.user_id) === userId);
+            const myMatch      = myMatchIndex >= 0 ? matchPlayers[myMatchIndex] : null;
+            if (!myMatch) continue;
+
+            rows.push({
+              rank:       myMatchIndex + 1,
+              matchTitle: match.match_title || `${match.team_1} vs ${match.team_2}`,
+              base:       Math.round(Number(myMatch.base_points        || 0)),
+              captain:    Math.round(Number(myMatch.captain_bonus      || 0)),
+              vice:       Math.round(Number(myMatch.vice_captain_bonus || 0)),
+              total:      Math.round(Number(myMatch.total_points       || 0))
+            });
+          } catch (err) {
+            console.error('Could not load match earning:', err);
+          }
+        }
+
+        if (!rows.length) {
+          if (bodyEl) bodyEl.innerHTML = '<div class="mw-empty">No match-wise earnings available yet.</div>';
+          return;
+        }
+
+        if (bodyEl) bodyEl.innerHTML = rows.map((row, idx) => renderMatchRow(row, idx)).join('');
+
+      } catch (err) {
+        console.error('Could not load earnings:', err);
+        if (bodyEl) bodyEl.innerHTML = '<div class="mw-empty" style="color:#f87171;">Could not load your earnings. Please try again.</div>';
+      }
+    }
+
+    /* ── Boot ── */
+    document.addEventListener('DOMContentLoaded', () => {
+      const usernameInput = document.getElementById('usernameInput');
+      if (usernameInput) {
+        usernameInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') createUserAccount();
+        });
+      }
+
+      const user = getCurrentUser();
+      if (!user.id || !user.name) {
+        showUsernameModal();
+      } else {
+        loadMyEarnings();
+      }
+    });
+  </script>
+</body>
+</html>
