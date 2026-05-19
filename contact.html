@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K3D0KKNXS2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-K3D0KKNXS2');
+</script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NGH76BBT');</script>
+<!-- End Google Tag Manager -->
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Contact Us | MT Games</title>
+<meta name="description" content="Contact the MT Games team with questions, suggestions, bug reports, or prize concerns." />
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: #f8fafc;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #111827;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .logo-img { height: 38px; width: auto; object-fit: contain; }
+  .logo-text {
+    font-size: 1.1rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hamburger-wrapper { position: relative; }
+  .hamburger-menu-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .hamburger-menu-btn span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: #374151;
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+  .hamburger-menu-btn:hover span { background: #2563eb; }
+
+  .hamburger-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    min-width: 210px;
+    z-index: 1000;
+    overflow: hidden;
+  }
+  .hamburger-dropdown.open { display: block; }
+  .hamburger-dropdown a {
+    display: block;
+    padding: 12px 18px;
+    color: #374151;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background 0.15s, color 0.15s;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .hamburger-dropdown a:last-child { border-bottom: none; }
+  .hamburger-dropdown a:hover { background: #f3f4f6; color: #2563eb; }
+  .hamburger-dropdown a.active-page { color: #2563eb; background: #eff6ff; font-weight: 700; }
+
+  /* ── Page wrap ── */
+  .page-wrap {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* ── Hero ── */
+  .contact-hero {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .contact-hero-icon {
+    font-size: 2.8rem;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .contact-hero-title {
+    font-size: clamp(1.8rem, 6vw, 2.4rem);
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #f72585, #7209b7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .contact-hero-sub {
+    font-size: 0.95rem;
+    color: #6b7280;
+    line-height: 1.7;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+
+  /* ── Card ── */
+  .contact-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 32px 28px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+
+  /* ── Form ── */
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 6px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .form-label .required-star {
+    color: #ef476f;
+    margin-left: 2px;
+  }
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 0.93rem;
+    font-family: inherit;
+    color: #111827;
+    background: #f9fafb;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+  }
+  .form-input.error,
+  .form-select.error,
+  .form-textarea.error {
+    border-color: #ef476f;
+    background: #fff5f7;
+  }
+  .form-textarea {
+    min-height: 110px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+  .form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7280' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+    cursor: pointer;
+  }
+  .field-error {
+    display: none;
+    color: #ef476f;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-top: 5px;
+  }
+  .field-error.visible { display: block; }
+
+  /* ── Submit button ── */
+  .btn-submit {
+    width: 100%;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #f72585, #7209b7);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 14px rgba(114,9,183,0.3);
+    margin-top: 8px;
+    letter-spacing: 0.3px;
+  }
+  .btn-submit:hover:not(:disabled) {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(114,9,183,0.38);
+  }
+  .btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ── Status messages ── */
+  .status-msg {
+    display: none;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-top: 16px;
+    text-align: center;
+  }
+  .status-msg.success {
+    background: #f0fdf4;
+    border: 1.5px solid #86efac;
+    color: #15803d;
+  }
+  .status-msg.error {
+    background: #fff5f7;
+    border: 1.5px solid #fca5a5;
+    color: #dc2626;
+  }
+  .status-msg.visible { display: block; }
+
+  /* ── Back link ── */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: #2563eb; }
+
+  /* ── Footer ── */
+  .site-footer {
+    text-align: center;
+    padding: 32px 24px;
+    border-top: 1px solid #e5e7eb;
+    background: #f1f5f9;
+    margin-top: 60px;
+  }
+  .footer-logo { height: 28px; width: auto; margin-bottom: 10px; opacity: 0.7; }
+  .footer-copy { font-size: 0.78rem; color: #9ca3af; font-weight: 500; }
+
+  /* ── Mobile ── */
+  @media (max-width: 480px) {
+    .contact-card { padding: 24px 18px; }
+    .page-wrap { padding: 28px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NGH76BBT"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<header class="site-header">
+  <a href="index.html" class="logo-wrap" onclick="trackClick('contact_logo_click')">
+    <img src="mtgames_logo.png" alt="MT Games logo" class="logo-img" />
+    <span class="logo-text">MT Games</span>
+  </a>
+  <div class="hamburger-wrapper">
+    <button class="hamburger-menu-btn" id="hamburgerMenuBtn" aria-label="Open navigation menu" onclick="toggleHamburgerMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="hamburger-dropdown" id="hamburgerDropdown">
+      <a href="index.html" onclick="trackClick('contact_nav_home')">🏠 Home</a>
+      <a href="fantasy.html" onclick="trackClick('contact_nav_fantasy')">⚾ Fantasy</a>
+      <a href="sudoku.html" onclick="trackClick('contact_nav_sudoku')">🧩 Sudoku</a>
+      <a href="spelling-bee.html" onclick="trackClick('contact_nav_bee')">🐝 Spelling Bee</a>
+      <a href="prizes.html" onclick="trackClick('contact_nav_prizes')">🎁 Prizes</a>
+      <a href="contact.html" class="active-page" onclick="trackClick('contact_nav_contact')">✉️ Contact Us</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page-wrap">
+  <a href="index.html" class="back-link" onclick="trackClick('contact_back_home')">&#8592; Back to Home</a>
+
+  <div class="contact-hero">
+    <span class="contact-hero-icon">✉️</span>
+    <h1 class="contact-hero-title">Contact Us</h1>
+    <p class="contact-hero-sub">Have a question, suggestion, bug report, or prize related concern? Send us a message.</p>
+  </div>
+
+  <div class="contact-card">
+    <form id="contactForm" novalidate>
+
+      <div class="form-group">
+        <label class="form-label" for="userName">Your Name <span class="required-star">*</span></label>
+        <input
+          class="form-input"
+          type="text"
+          id="userName"
+          name="user_name"
+          placeholder="Your name, or the legendary username your friends know you by"
+          autocomplete="name"
+        />
+        <span class="field-error" id="userNameError">Please enter your name.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="userQuestion">Your Question <span class="required-star">*</span></label>
+        <textarea
+          class="form-textarea"
+          id="userQuestion"
+          name="user_question"
+          placeholder="Tell us what's confusing, broken, exciting, or wildly unfair"
+        ></textarea>
+        <span class="field-error" id="userQuestionError">Please enter your question or message.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="userEmail">Your Email <span class="required-star">*</span></label>
+        <input
+          class="form-input"
+          type="email"
+          id="userEmail"
+          name="user_email"
+          placeholder="So we can reply before your fantasy captain lets you down"
+          autocomplete="email"
+        />
+        <span class="field-error" id="userEmailError">Please enter a valid email address.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="messageType">Message Type <span class="required-star">*</span></label>
+        <select class="form-select" id="messageType" name="message_type">
+          <option value="" disabled selected>Select a category</option>
+          <option value="General Question">General Question</option>
+          <option value="Fantasy Cricket">Fantasy Cricket</option>
+          <option value="Spelling Bee">Spelling Bee</option>
+          <option value="Sudoku">Sudoku</option>
+          <option value="Prize / Payment">Prize / Payment</option>
+          <option value="Bug Report">Bug Report</option>
+          <option value="Other">Other</option>
+        </select>
+        <span class="field-error" id="messageTypeError">Please select a message type.</span>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn" onclick="trackClick('contact_us_submit_click')">
+        Send Message
+      </button>
+
+    </form>
+
+    <div class="status-msg success" id="successMsg">
+      ✅ Thanks! Your message has been submitted. We'll get back to you soon.
+    </div>
+    <div class="status-msg error" id="errorMsg">
+      ❌ Something went wrong. Please try again.
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <img src="mtgames_logo.png" alt="MT Games" class="footer-logo" />
+  <div class="footer-copy">© 2025 MT Games. All rights reserved.</div>
+</footer>
+
+<script>
+  function trackClick(buttonName, metadata = {}) {
+    const userId   = localStorage.getItem('mtgames_user_id');
+    const userName = localStorage.getItem('mtgames_user_name');
+    fetch('/api/track-click', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      keepalive: true,
+      body: JSON.stringify({
+        user_id:    userId ? Number(userId) : null,
+        user_name:  userName || null,
+        event_name: 'button_click',
+        button_name: buttonName,
+        page_name:  'contact.html',
+        page_url:   window.location.pathname,
+        event_metadata: metadata
+      })
+    }).catch(() => {});
+  }
+
+  function toggleHamburgerMenu() {
+    const dropdown = document.getElementById('hamburgerDropdown');
+    dropdown.classList.toggle('open');
+  }
+
+  document.addEventListener('click', function(e) {
+    const wrapper = document.querySelector('.hamburger-wrapper');
+    const dropdown = document.getElementById('hamburgerDropdown');
+    if (wrapper && !wrapper.contains(e.target)) {
+      dropdown.classList.remove('open');
+    }
+  });
+
+  function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function clearErrors() {
+    document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(el => el.classList.remove('error'));
+    document.querySelectorAll('.field-error').forEach(el => el.classList.remove('visible'));
+    document.getElementById('successMsg').classList.remove('visible');
+    document.getElementById('errorMsg').classList.remove('visible');
+  }
+
+  function validateForm() {
+    let valid = true;
+    const name  = document.getElementById('userName').value.trim();
+    const question = document.getElementById('userQuestion').value.trim();
+    const email = document.getElementById('userEmail').value.trim();
+    const type  = document.getElementById('messageType').value;
+
+    if (!name) {
+      document.getElementById('userName').classList.add('error');
+      document.getElementById('userNameError').classList.add('visible');
+      valid = false;
+    }
+    if (!question) {
+      document.getElementById('userQuestion').classList.add('error');
+      document.getElementById('userQuestionError').classList.add('visible');
+      valid = false;
+    }
+    if (!email || !validateEmail(email)) {
+      document.getElementById('userEmail').classList.add('error');
+      document.getElementById('userEmailError').classList.add('visible');
+      valid = false;
+    }
+    if (!type) {
+      document.getElementById('messageType').classList.add('error');
+      document.getElementById('messageTypeError').classList.add('visible');
+      valid = false;
+    }
+    return valid;
+  }
+
+  document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    clearErrors();
+    if (!validateForm()) return;
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+
+    const payload = {
+      user_name:    document.getElementById('userName').value.trim(),
+      user_question: document.getElementById('userQuestion').value.trim(),
+      user_email:   document.getElementById('userEmail').value.trim(),
+      message_type: document.getElementById('messageType').value
+    };
+
+    try {
+      const res = await fetch('/api/submit-contact-us', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        document.getElementById('contactForm').style.display = 'none';
+        document.getElementById('successMsg').classList.add('visible');
+      } else {
+        document.getElementById('errorMsg').classList.add('visible');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Message';
+      }
+    } catch (err) {
+      document.getElementById('errorMsg').classList.add('visible');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Message';
+    }
+  });
+</script>
+
+</body>
+</html>
