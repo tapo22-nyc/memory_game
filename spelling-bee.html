@@ -1,0 +1,1826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K3D0KKNXS2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-K3D0KKNXS2');
+</script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NGH76BBT');</script>
+<!-- End Google Tag Manager -->
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Spelling Bee | MT Games</title>
+<meta name="description" content="Spelling Bee — Find words using 7 letters. Every word must use the center letter." />
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: #f8fafc;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #111827;
+  }
+
+  /* ── Screens ── */
+  #screen-difficulty,
+  #screen-rules,
+  #screen-puzzle-select { display: block; width: 100%; }
+  #screen-game { display: none; width: 100%; flex-direction: column; align-items: center; gap: 24px; }
+
+  /* ── Header ── */
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-img { height: 38px; width: auto; object-fit: contain; }
+  .logo-text {
+    font-size: 1.1rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Hamburger / More button ── */
+  .hamburger-wrapper { position: relative; }
+  .hamburger-menu-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 10px;
+    font-size: 1.3rem;
+    line-height: 1;
+    transition: transform 0.2s, filter 0.2s;
+    filter: drop-shadow(0 0 0px #fbbf24);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 8px;
+  }
+  .hamburger-menu-btn:hover {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 6px #fbbf24);
+    background: #fffbeb;
+  }
+  .hamburger-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #374151;
+    letter-spacing: 0.3px;
+    line-height: 1;
+  }
+  .hamburger-menu-btn:hover .hamburger-label { color: #2563eb; }
+
+  .hamburger-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    min-width: 210px;
+    z-index: 1000;
+    overflow: hidden;
+  }
+  .hamburger-dropdown.open { display: block; }
+  .hamburger-dropdown button,
+  .hamburger-dropdown a {
+    display: block;
+    width: 100%;
+    padding: 12px 18px;
+    color: #374151;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background 0.15s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    box-sizing: border-box;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .hamburger-dropdown button:last-child,
+  .hamburger-dropdown a:last-child { border-bottom: none; }
+  .hamburger-dropdown button:hover,
+  .hamburger-dropdown a:hover { background: #f3f4f6; color: #2563eb; }
+
+  /* ── Page wrap ── */
+  .page-wrap {
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+
+  /* ════════════════════════════════════════
+     SCREEN 1 — Difficulty Selection
+     ════════════════════════════════════════ */
+  .diff-hero { text-align: center; margin-bottom: 36px; }
+  .diff-hero-title {
+    font-size: clamp(1.8rem, 6vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .diff-hero-sub { font-size: 0.92rem; color: #6b7280; line-height: 1.7; }
+  .diff-cards { display: flex; flex-direction: column; gap: 16px; }
+  .diff-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 24px 22px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.18s, background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    position: relative;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .diff-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 18px 0 0 18px;
+  }
+  .diff-card:hover, .diff-card:active { transform: translateY(-3px); background: #f8fafc; border-color: #d1d5db; }
+  .diff-card.easy-card::before   { background: linear-gradient(180deg, #06d6a0, #118ab2); }
+  .diff-card.medium-card::before { background: linear-gradient(180deg, #ffd166, #ef476f); }
+  .diff-card.hard-card::before   { background: linear-gradient(180deg, #f72585, #7209b7); }
+  .diff-card-icon { font-size: 2rem; flex-shrink: 0; }
+  .diff-card-body { flex: 1; }
+  .diff-card-name { font-size: 1.15rem; font-weight: 800; margin-bottom: 4px; color: #111827; }
+  .diff-card-hint { font-size: 0.8rem; color: #6b7280; line-height: 1.5; }
+  .diff-card-arrow { font-size: 1.2rem; color: #9ca3af; flex-shrink: 0; }
+
+  /* ════════════════════════════════════════
+     SCREEN 2 — Rules / How to Play
+     ════════════════════════════════════════ */
+  .rules-back-btn {
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: inherit;
+    transition: color 0.2s;
+    margin-bottom: 20px;
+  }
+  .rules-back-btn:hover { color: #2563eb; }
+
+  .rules-hero { text-align: center; margin-bottom: 24px; }
+  .diff-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .diff-badge.easy   { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+  .diff-badge.medium { background: #fef9c3; color: #92400e; border: 1px solid #fde68a; }
+  .diff-badge.hard   { background: #fce7f3; color: #9d174d; border: 1px solid #f9a8d4; }
+
+  .rules-title {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    color: #111827;
+  }
+  .rules-subtitle { font-size: 0.88rem; color: #6b7280; line-height: 1.6; }
+
+  /* ── Mini Hive illustration ── */
+  .mini-hive-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 4px 0 20px;
+  }
+  .mini-hive {
+    position: relative;
+    width: 158px;
+    height: 156px;
+    flex-shrink: 0;
+  }
+  .mini-hex {
+    position: absolute;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.88rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    pointer-events: none;
+    user-select: none;
+  }
+  .mini-hex.mh-outer  { background: #f3f4f6; color: #374151; }
+  .mini-hex.mh-center { background: #2563eb; color: #ffffff; box-shadow: 0 2px 10px rgba(37,99,235,0.3); }
+
+  /* ── Rules card ── */
+  .rules-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 28px 24px;
+    margin-bottom: 16px;
+  }
+  .rules-list { display: flex; flex-direction: column; gap: 13px; }
+  .rules-rule {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 0.88rem;
+    color: #374151;
+    line-height: 1.6;
+  }
+  .rules-rule-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+  .btn-choose-puzzle {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+    letter-spacing: 0.4px;
+    font-family: inherit;
+  }
+  .btn-choose-puzzle:hover { opacity: 0.92; transform: translateY(-1px); }
+
+  /* ════════════════════════════════════════
+     SCREEN 3 — Puzzle Selection
+     ════════════════════════════════════════ */
+  .ps-back-btn {
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: inherit;
+    transition: color 0.2s;
+    margin-bottom: 20px;
+  }
+  .ps-back-btn:hover { color: #2563eb; }
+
+  .ps-hero { text-align: center; margin-bottom: 28px; }
+  .ps-hero-title {
+    font-size: clamp(1.4rem, 5vw, 1.9rem);
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    color: #111827;
+  }
+  .ps-hero-sub { font-size: 0.88rem; color: #6b7280; line-height: 1.6; }
+
+  .ps-cards { display: flex; flex-direction: column; gap: 14px; }
+  .ps-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.18s, background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ps-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 16px 0 0 16px;
+  }
+  .ps-card.ps-easy::before   { background: linear-gradient(180deg, #06d6a0, #118ab2); }
+  .ps-card.ps-medium::before { background: linear-gradient(180deg, #ffd166, #ef476f); }
+  .ps-card.ps-hard::before   { background: linear-gradient(180deg, #f72585, #7209b7); }
+  .ps-card:hover, .ps-card:active { transform: translateY(-3px); background: #f8fafc; border-color: #d1d5db; }
+  .ps-card-icon { font-size: 1.7rem; flex-shrink: 0; }
+  .ps-card-body { flex: 1; }
+  .ps-card-num  { font-size: 1.05rem; font-weight: 800; color: #111827; margin-bottom: 3px; }
+  .ps-card-meta { font-size: 0.78rem; color: #6b7280; }
+  .ps-card-arrow { font-size: 1.2rem; color: #9ca3af; flex-shrink: 0; }
+
+  .ps-loading { text-align: center; padding: 40px 24px; color: #2563eb; font-size: 0.9rem; }
+  .ps-error   { text-align: center; padding: 40px 24px; color: #dc2626; font-size: 0.9rem; display: none; }
+
+  /* ════════════════════════════════════════
+     SCREEN 4 — Game
+     ════════════════════════════════════════ */
+
+  /* ── Back / nav ── */
+  .btn-back-diff {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: color 0.2s;
+    font-family: inherit;
+  }
+  .btn-back-diff:hover { color: #2563eb; }
+
+  /* ── Timer bar ── */
+  .timer-bar {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .timer-display {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #374151;
+    letter-spacing: 0.5px;
+  }
+  .timer-display.timer-warning { color: #dc2626; animation: timerPulse 0.8s ease infinite; }
+  @keyframes timerPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+  /* ── Stats bar ── */
+  .stats-bar {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .stat-pill { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #6b7280; }
+  .stat-pill strong { color: #111827; font-size: 1rem; }
+  .found-toggle-btn {
+    background: #dbeafe;
+    border: 1px solid #bfdbfe;
+    color: #2563eb;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .found-toggle-btn:hover { background: #bfdbfe; }
+
+  /* ── Found words panel ── */
+  .found-words-panel {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: none;
+  }
+  .found-words-panel.open { display: block; }
+  .found-words-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #2563eb;
+    margin-bottom: 10px;
+  }
+  .found-words-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .found-word-chip {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .found-word-chip.pangram { background: #fffbeb; border-color: #fde68a; color: #d97706; }
+  .found-words-empty { font-size: 0.82rem; color: #9ca3af; font-style: italic; }
+
+  /* ── Hive ── */
+  .hive-outer { display: flex; justify-content: center; align-items: center; padding: 10px 0; }
+  .hive { position: relative; width: 260px; height: 240px; flex-shrink: 0; }
+  .hex-btn {
+    position: absolute;
+    width: 74px;
+    height: 74px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.45rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    border: none;
+    outline: none;
+    transition: transform 0.12s, filter 0.12s;
+    letter-spacing: 1px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hex-center { background: #2563eb; color: #ffffff; box-shadow: 0 4px 16px rgba(37,99,235,0.3); }
+  .hex-outer  { background: #f3f4f6; color: #374151; }
+  .hex-btn:hover  { transform: scale(1.09); filter: brightness(1.18); }
+  .hex-btn:active { transform: scale(0.94); }
+
+  /* ── Word display ── */
+  .word-display-wrap { width: 100%; text-align: center; }
+  .word-display {
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #111827;
+    min-height: 2.4rem;
+    word-break: break-all;
+  }
+  .word-display .center-char { color: #2563eb; }
+  .word-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.8rem;
+    background: #2563eb;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ── Controls ── */
+  .controls-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .btn-delete {
+    background: #f3f4f6; border: 1px solid #e5e7eb; color: #374151;
+    padding: 12px 20px; border-radius: 12px; font-size: 0.9rem; font-weight: 700;
+    cursor: pointer; transition: background 0.2s; letter-spacing: 0.3px;
+  }
+  .btn-delete:hover { background: #e5e7eb; }
+  .btn-shuffle {
+    background: #dbeafe; border: 1px solid #bfdbfe; color: #2563eb;
+    padding: 12px 20px; border-radius: 12px; font-size: 0.9rem; font-weight: 700;
+    cursor: pointer; transition: background 0.2s; letter-spacing: 0.3px;
+  }
+  .btn-shuffle:hover { background: #bfdbfe; }
+  .btn-enter {
+    background: #2563eb; border: none; color: #fff;
+    padding: 12px 28px; border-radius: 12px; font-size: 0.9rem; font-weight: 700;
+    cursor: pointer; transition: background 0.2s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.25); letter-spacing: 0.4px;
+  }
+  .btn-enter:hover { background: #1d4ed8; transform: translateY(-1px); }
+  .btn-enter:active { transform: translateY(0); }
+  .btn-enter:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  /* ── Submit Score ── */
+  .submit-score-wrap {
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+  }
+  .score-submit-msg {
+    font-size: 0.85rem;
+    color: #6b7280;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .score-submit-msg.success { color: #15803d; font-weight: 700; }
+  .score-submit-msg.error   { color: #dc2626; }
+  .btn-submit-score {
+    background: #111827; border: none; color: #fff;
+    padding: 11px 28px; border-radius: 12px; font-size: 0.88rem; font-weight: 700;
+    cursor: pointer; transition: background 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    font-family: inherit; letter-spacing: 0.3px;
+  }
+  .btn-submit-score:hover { background: #374151; }
+  .btn-submit-score:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── Leaderboard link ── */
+  .btn-leaderboard-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #6b7280;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 9px 18px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+  .btn-leaderboard-link:hover { color: #2563eb; background: #eff6ff; border-color: #bfdbfe; }
+
+  /* ── Feedback ── */
+  .feedback {
+    width: 100%;
+    text-align: center;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .feedback-msg {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    animation: fadeInUp 0.2s ease;
+  }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .feedback-correct   { background: #dcfce7; border: 1px solid #bbf7d0; color: #15803d; }
+  .feedback-pangram   { background: #fffbeb; border: 1px solid #fde68a; color: #d97706; }
+  .feedback-invalid   { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+  .feedback-duplicate { background: #fffbeb; border: 1px solid #fde68a; color: #d97706; }
+  .feedback-timesup   { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-size: 1rem; }
+
+  /* ── Loading / error ── */
+  .loading-state, .error-state { text-align: center; padding: 48px 24px; }
+  .loading-state { color: #2563eb; font-size: 0.9rem; }
+  .error-state   { color: #dc2626; font-size: 0.9rem; display: none; }
+
+  /* ════════════════════════════════════════
+     MODALS (shared)
+     ════════════════════════════════════════ */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+  }
+  .modal-title   { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; color: #111827; }
+  .modal-subtitle { font-size: 0.85rem; color: #6b7280; margin-bottom: 22px; line-height: 1.6; }
+  .modal-input {
+    width: 100%; background: #ffffff; border: 1px solid #d1d5db; color: #111827;
+    padding: 12px 16px; border-radius: 10px; font-size: 1rem; font-weight: 600;
+    margin-bottom: 12px; outline: none; transition: border-color 0.2s;
+  }
+  .modal-input:focus { border-color: #2563eb; }
+  .modal-input::placeholder { color: #9ca3af; }
+  .modal-error { font-size: 0.8rem; color: #dc2626; margin-bottom: 12px; min-height: 1.2em; }
+  .modal-btn {
+    width: 100%; background: #2563eb; border: none; color: #fff;
+    padding: 13px; border-radius: 12px; font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; letter-spacing: 0.4px; transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+  }
+  .modal-btn:hover { background: #1d4ed8; }
+  .modal-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .htp-rule {
+    display: flex; align-items: flex-start; gap: 10px;
+    margin-bottom: 14px; font-size: 0.88rem; color: #374151; line-height: 1.55;
+  }
+  .htp-rule-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .htp-close {
+    width: 100%; margin-top: 20px; background: #f3f4f6; border: 1px solid #e5e7eb;
+    color: #374151; padding: 11px; border-radius: 10px; font-size: 0.9rem;
+    font-weight: 600; cursor: pointer; transition: background 0.2s; font-family: inherit;
+  }
+  .htp-close:hover { background: #e5e7eb; }
+
+  /* ── Reveal modal extras ── */
+  .reveal-modal-inner {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(90vh - 80px);
+  }
+  .reveal-summary {
+    font-size: 0.78rem;
+    color: #6b7280;
+    margin-bottom: 12px;
+  }
+  .reveal-words-list {
+    overflow-y: auto;
+    max-height: 300px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-right: 4px;
+    margin-bottom: 16px;
+  }
+  .reveal-words-list::-webkit-scrollbar { width: 4px; }
+  .reveal-words-list::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+  .reveal-word-chip {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #374151;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .reveal-word-chip.pangram-chip { background: #fffbeb; border-color: #fde68a; color: #d97706; }
+  .reveal-word-chip .found-check { color: #15803d; font-weight: 800; }
+  .pangram-tag { font-size: 0.68rem; font-weight: 700; }
+
+  /* ── Footer ── */
+  .site-footer {
+    text-align: center;
+    padding: 32px 24px;
+    border-top: 1px solid #e5e7eb;
+    background: #f1f5f9;
+    font-size: 0.75rem;
+    color: #9ca3af;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 380px) {
+    .hive { transform: scale(0.85); transform-origin: top center; height: 205px; }
+    .word-display { font-size: 1.5rem; }
+    .controls-row { gap: 8px; }
+    .btn-delete, .btn-shuffle, .btn-enter { padding: 10px 14px; font-size: 0.82rem; }
+    .mini-hive { transform: scale(0.85); transform-origin: top center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NGH76BBT"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<!-- ── Header ── -->
+<header class="site-header">
+  <a href="/" class="logo-wrap" onclick="trackClick('bee_header_logo')">
+    <img src="mtgames_logo.png" alt="MT Games" class="logo-img" />
+    <span class="logo-text">MT Games</span>
+  </a>
+  <div class="hamburger-wrapper">
+    <button class="hamburger-menu-btn" id="hamburgerMenuBtn" aria-label="Open menu" onclick="toggleHamburgerMenu()">
+      <span style="font-size:1.3rem; line-height:1;">💡</span>
+      <span class="hamburger-label">More</span>
+    </button>
+    <nav class="hamburger-dropdown" id="hamburgerDropdown">
+      <button onclick="openHowToPlay(); closeDropdown();">❓ How to Play</button>
+      <a href="spelling-bee-leaderboard.html" onclick="trackClick('bee_nav_leaderboard')">🏆 Spelling Bee Leaderboard</a>
+      <button onclick="openRevealModal()">🔍 Reveal Words</button>
+      <button onclick="openHintsModal()">💡 Hints</button>
+      <a href="contact.html" onclick="trackClick('contact_us_menu_click')">✉️ Contact Us</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── Main content ── -->
+<div class="page-wrap" id="main-content">
+
+  <!-- ══ SCREEN 1: Difficulty Selection ══ -->
+  <div id="screen-difficulty">
+    <div class="diff-hero">
+      <h1 class="diff-hero-title">🐝 Spelling Bee</h1>
+      <p class="diff-hero-sub">Find words using the 7 hive letters.<br>Every word must use the centre letter.</p>
+    </div>
+    <div class="diff-cards">
+
+      <div class="diff-card easy-card" onclick="showRulesScreen('easy')" role="button" tabindex="0">
+        <div class="diff-card-icon">✅</div>
+        <div class="diff-card-body">
+          <div class="diff-card-name">Easy</div>
+          <div class="diff-card-hint">Great for warming up — find as many words as you can!</div>
+        </div>
+        <div class="diff-card-arrow">›</div>
+      </div>
+
+      <div class="diff-card medium-card" onclick="showRulesScreen('medium')" role="button" tabindex="0">
+        <div class="diff-card-icon">⚡</div>
+        <div class="diff-card-body">
+          <div class="diff-card-name">Medium</div>
+          <div class="diff-card-hint">Push yourself — more words to discover.</div>
+        </div>
+        <div class="diff-card-arrow">›</div>
+      </div>
+
+      <div class="diff-card hard-card" onclick="showRulesScreen('hard')" role="button" tabindex="0">
+        <div class="diff-card-icon">🔥</div>
+        <div class="diff-card-body">
+          <div class="diff-card-name">Hard</div>
+          <div class="diff-card-hint">Maximum challenge — for true word masters.</div>
+        </div>
+        <div class="diff-card-arrow">›</div>
+      </div>
+
+    </div>
+  </div><!-- /screen-difficulty -->
+
+
+  <!-- ══ SCREEN 2: Rules / How to Play ══ -->
+  <div id="screen-rules" style="display:none;">
+    <button class="rules-back-btn" onclick="showScreen('difficulty')">&#8592; Back</button>
+
+    <div class="rules-hero">
+      <div class="diff-badge" id="rules-diff-badge">Easy</div>
+      <h2 class="rules-title">How to Play</h2>
+      <p class="rules-subtitle">Spelling Bee — read the rules, then choose your puzzle.</p>
+    </div>
+
+    <!-- Mini hive illustration (decorative) -->
+    <div class="mini-hive-wrap" aria-hidden="true">
+      <div class="mini-hive">
+        <!-- center letter -->
+        <div class="mini-hex mh-center" style="left:56px;top:56px;">A</div>
+        <!-- outer letters: B R E D M I -->
+        <div class="mini-hex mh-outer" style="left:56px;top:6px;">B</div>
+        <div class="mini-hex mh-outer" style="left:100px;top:31px;">R</div>
+        <div class="mini-hex mh-outer" style="left:100px;top:81px;">E</div>
+        <div class="mini-hex mh-outer" style="left:56px;top:106px;">D</div>
+        <div class="mini-hex mh-outer" style="left:12px;top:81px;">M</div>
+        <div class="mini-hex mh-outer" style="left:12px;top:31px;">I</div>
+      </div>
+    </div>
+
+    <div class="rules-card">
+      <div class="rules-list">
+        <div class="rules-rule">
+          <span class="rules-rule-icon">🔤</span>
+          <span>Create words using the letters in the hive.</span>
+        </div>
+        <div class="rules-rule">
+          <span class="rules-rule-icon">📏</span>
+          <span>Every word must be <strong>4 letters or longer</strong>.</span>
+        </div>
+        <div class="rules-rule">
+          <span class="rules-rule-icon">⭐</span>
+          <span>Every word must include the <strong>center letter</strong>.</span>
+        </div>
+        <div class="rules-rule">
+          <span class="rules-rule-icon">🔁</span>
+          <span>Letters can be reused as many times as you like.</span>
+        </div>
+        <div class="rules-rule">
+          <span class="rules-rule-icon">🌟</span>
+          <span>Find the <strong>pangram</strong> for bonus points — it uses every letter in the hive at least once.</span>
+        </div>
+        <div class="rules-rule">
+          <span class="rules-rule-icon">⏱️</span>
+          <span>Try to find as many words as possible <strong>in under 4 minutes</strong>.</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-choose-puzzle" onclick="goToPuzzleSelect()">
+      Choose Puzzle →
+    </button>
+  </div><!-- /screen-rules -->
+
+
+  <!-- ══ SCREEN 3: Puzzle Selection ══ -->
+  <div id="screen-puzzle-select" style="display:none;">
+    <button class="ps-back-btn" onclick="showScreen('rules')">&#8592; Back to Rules</button>
+
+    <div class="ps-hero">
+      <div class="diff-badge" id="ps-diff-badge">Easy</div>
+      <h2 class="ps-hero-title">Choose Your Puzzle</h2>
+      <p class="ps-hero-sub">Pick one of the puzzles below to start playing.</p>
+    </div>
+
+    <div class="ps-loading" id="ps-loading">Loading puzzles…</div>
+    <div class="ps-error"   id="ps-error"></div>
+    <div class="ps-cards"   id="ps-cards" style="display:none;"></div>
+  </div><!-- /screen-puzzle-select -->
+
+
+  <!-- ══ SCREEN 4: Game ══ -->
+  <div id="screen-game">
+
+    <span id="puzzle-number-label" style="display:none;"></span>
+
+    <!-- Back to difficulty -->
+    <button class="btn-back-diff" onclick="goBackToDifficulty()">&#8592; Change Difficulty</button>
+
+    <!-- Timer bar -->
+    <div class="timer-bar" id="timer-bar" style="display:none;">
+      <span>⏱️</span>
+      <span class="timer-display" id="timer-display">Time Left: 04:00</span>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="stats-bar" id="stats-bar" style="display:none;">
+      <div class="stat-pill">
+        Words Found: <strong id="found-count">0</strong> / <strong id="total-words-count">—</strong>
+      </div>
+      <button class="found-toggle-btn" onclick="toggleFoundWords()">Show Words ▾</button>
+    </div>
+
+    <!-- Found words panel -->
+    <div class="found-words-panel" id="found-words-panel">
+      <div class="found-words-label">Words Found</div>
+      <div class="found-words-list" id="found-words-list">
+        <span class="found-words-empty">No words found yet.</span>
+      </div>
+    </div>
+
+    <!-- Loading / error -->
+    <div class="loading-state" id="loading-state">Loading puzzle…</div>
+    <div class="error-state"   id="error-state"></div>
+
+    <!-- Game area (revealed after puzzle loads) -->
+    <div id="game-area" style="display:none; width:100%; flex-direction:column; align-items:center; gap:22px;">
+
+      <div class="feedback" id="feedback"></div>
+
+      <div class="hive-outer">
+        <div class="hive" id="hive"></div>
+      </div>
+
+      <div class="word-display-wrap">
+        <div class="word-display" id="word-display"><span class="word-cursor"></span></div>
+      </div>
+
+      <div class="controls-row">
+        <button class="btn-delete" onclick="deleteLetter()">⌫ Delete</button>
+        <button class="btn-shuffle" onclick="shuffleLetters()">⟳ Shuffle</button>
+        <button class="btn-enter" id="btn-enter" onclick="submitGuess()">Enter</button>
+      </div>
+
+      <!-- Submit score -->
+      <div id="submit-score-wrap" class="submit-score-wrap">
+        <div id="score-submit-msg" class="score-submit-msg"></div>
+        <button id="submit-score-btn" class="btn-submit-score" onclick="handleSubmitScore()">
+          📊 Submit Score
+        </button>
+      </div>
+
+      <!-- Leaderboard link -->
+      <a class="btn-leaderboard-link" href="spelling-bee-leaderboard.html" onclick="trackClick('bee_view_leaderboard')">
+        🏆 View Spelling Bee Leaderboard
+      </a>
+
+    </div>
+
+  </div><!-- /screen-game -->
+
+</div><!-- /page-wrap -->
+
+<!-- ── Footer ── -->
+<footer class="site-footer">
+  © 2025 MT Games. All rights reserved.
+</footer>
+
+<!-- ── USERNAME MODAL ── -->
+<div class="modal-overlay" id="username-modal">
+  <div class="modal-card">
+    <div class="modal-title">Choose a Username</div>
+    <div class="modal-subtitle">Pick a username to save your progress and appear on the leaderboard.</div>
+    <input
+      type="text"
+      class="modal-input"
+      id="username-input"
+      placeholder="e.g. cricketfan99"
+      maxlength="20"
+      autocomplete="off"
+      autocapitalize="none"
+    />
+    <div class="modal-error" id="username-error"></div>
+    <button class="modal-btn" id="username-btn" onclick="saveUsername()">Start Playing</button>
+  </div>
+</div>
+
+<!-- ── HINTS MODAL ── -->
+<div class="modal-overlay" id="hints-modal">
+  <div class="modal-card">
+    <div class="modal-title">💡 Hints</div>
+    <p style="font-size:0.9rem; color:#6b7280; line-height:1.6; margin-bottom:20px;">
+      Hints are a work in progress. Please check back soon.
+    </p>
+    <button class="htp-close" onclick="closeHintsModal()">Close</button>
+  </div>
+</div>
+
+<!-- ── HOW TO PLAY MODAL ── -->
+<div class="modal-overlay" id="htp-modal">
+  <div class="modal-card">
+    <div class="modal-title">How to Play</div>
+    <div class="modal-subtitle">Spelling Bee</div>
+    <div class="htp-rule">
+      <span class="htp-rule-icon">🔤</span>
+      <span>Make words using the 7 letters in the hive. Click letters or type with your keyboard.</span>
+    </div>
+    <div class="htp-rule">
+      <span class="htp-rule-icon">⭐</span>
+      <span>Every word <strong>must include the center letter</strong> (shown in blue).</span>
+    </div>
+    <div class="htp-rule">
+      <span class="htp-rule-icon">🔁</span>
+      <span>Letters can be reused as many times as you like.</span>
+    </div>
+    <div class="htp-rule">
+      <span class="htp-rule-icon">📏</span>
+      <span>Words must be at least 4 letters long.</span>
+    </div>
+    <div class="htp-rule">
+      <span class="htp-rule-icon">🌟</span>
+      <span>A <strong>Pangram</strong> uses all 7 letters at least once. Can you find it?</span>
+    </div>
+    <div class="htp-rule">
+      <span class="htp-rule-icon">⏱️</span>
+      <span>You have <strong>4 minutes</strong>. Submit your score to the leaderboard when done!</span>
+    </div>
+    <button class="htp-close" onclick="closeHowToPlay()">Got it!</button>
+  </div>
+</div>
+
+<!-- ── REVEAL WORDS MODAL ── -->
+<div class="modal-overlay" id="reveal-modal">
+  <div class="modal-card">
+    <div class="reveal-modal-inner">
+      <div class="modal-title">🔍 All Words</div>
+      <div id="reveal-words-content">
+        <p style="color:#2563eb; text-align:center; padding:20px 0;">Loading words…</p>
+      </div>
+      <button class="htp-close" onclick="closeRevealModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Constants ──
+  const USER_ID_KEY   = 'mtgames_user_id';
+  const USER_NAME_KEY = 'mtgames_user_name';
+  const TIMER_DURATION = 240; // 4 minutes
+
+  // ── Game state ──
+  let puzzleId     = null;
+  let centerLetter = '';
+  let outerLetters = [];
+  let totalWords   = 0;
+  let foundWords   = [];
+  let currentWord  = '';
+  let pangramWords = new Set();
+  let selectedDifficulty = 'easy';
+
+  // ── Timer state ──
+  let timerInterval = null;
+  let timerSeconds  = TIMER_DURATION;
+  let timerActive   = false;
+  let gameEnded     = false;
+
+  // ── Score ──
+  let scoreSubmitted = false;
+
+  // ── Pending action after signup ──
+  let pendingWordBeforeSignup = '';
+
+
+  // ════════════════════════════════════════
+  // SCREEN NAVIGATION
+  // ════════════════════════════════════════
+
+  function showScreen(name) {
+    ['difficulty', 'rules', 'puzzle-select', 'game'].forEach(id => {
+      const el = document.getElementById('screen-' + id);
+      if (el) el.style.display = 'none';
+    });
+    const target = document.getElementById('screen-' + name);
+    if (!target) return;
+    target.style.display = (name === 'game') ? 'flex' : 'block';
+  }
+
+  function showRulesScreen(difficulty) {
+    selectedDifficulty = difficulty;
+    const badge = document.getElementById('rules-diff-badge');
+    if (badge) {
+      badge.textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+      badge.className = 'diff-badge ' + difficulty;
+    }
+    trackClick('spelling_bee_difficulty_selected', { difficulty });
+    showScreen('rules');
+  }
+
+  function goToPuzzleSelect() {
+    trackClick('spelling_bee_rules_continue', { difficulty: selectedDifficulty });
+    const psBadge = document.getElementById('ps-diff-badge');
+    if (psBadge) {
+      psBadge.textContent = selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1);
+      psBadge.className = 'diff-badge ' + selectedDifficulty;
+    }
+    showScreen('puzzle-select');
+    loadPuzzleList();
+  }
+
+  async function loadPuzzleList() {
+    const cardsEl   = document.getElementById('ps-cards');
+    const loadingEl = document.getElementById('ps-loading');
+    const errorEl   = document.getElementById('ps-error');
+
+    loadingEl.style.display = 'block';
+    cardsEl.style.display   = 'none';
+    errorEl.style.display   = 'none';
+
+    try {
+      const resp = await fetch('/api/get-spelling-bee-puzzles?difficulty=' + encodeURIComponent(selectedDifficulty));
+      const data = await resp.json();
+
+      loadingEl.style.display = 'none';
+
+      if (!resp.ok || data.error) {
+        errorEl.textContent   = data.error || 'Could not load puzzles. Please refresh.';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      const puzzles = data.puzzles || [];
+      cardsEl.style.display = 'flex';
+
+      if (puzzles.length === 0) {
+        cardsEl.innerHTML = '<p style="color:#6b7280; text-align:center; padding:20px 0;">No puzzles available for this difficulty yet.</p>';
+        return;
+      }
+
+      const icon = selectedDifficulty === 'easy' ? '✅' : selectedDifficulty === 'medium' ? '⚡' : '🔥';
+      cardsEl.innerHTML = puzzles.map(p => `
+        <div class="ps-card ps-${selectedDifficulty}"
+             onclick="selectPuzzle(${p.id}, ${p.puzzle_number})"
+             role="button" tabindex="0"
+             onkeydown="if(event.key==='Enter')selectPuzzle(${p.id},${p.puzzle_number})">
+          <div class="ps-card-icon">${icon}</div>
+          <div class="ps-card-body">
+            <div class="ps-card-num">Puzzle ${p.puzzle_number}</div>
+            <div class="ps-card-meta">${p.total_words || '?'} words · Centre: <strong>${(p.center_letter || '?').toUpperCase()}</strong></div>
+          </div>
+          <div class="ps-card-arrow">›</div>
+        </div>
+      `).join('');
+
+    } catch (err) {
+      loadingEl.style.display = 'none';
+      errorEl.textContent     = 'Connection error. Please try again.';
+      errorEl.style.display   = 'block';
+    }
+  }
+
+  function selectPuzzle(pid, puzzleNum) {
+    trackClick('spelling_bee_puzzle_selected', { puzzle_id: pid, puzzle_number: puzzleNum, difficulty: selectedDifficulty });
+    resetGameState();
+    showScreen('game');
+    loadPuzzle(pid);
+  }
+
+  function goBackToDifficulty() {
+    resetGameState();
+    showScreen('difficulty');
+    trackClick('bee_back_to_difficulty');
+  }
+
+  function resetGameState() {
+    stopTimer();
+    puzzleId      = null;
+    centerLetter  = '';
+    outerLetters  = [];
+    totalWords    = 0;
+    foundWords    = [];
+    currentWord   = '';
+    pangramWords  = new Set();
+    gameEnded     = false;
+    scoreSubmitted = false;
+
+    const gameArea = document.getElementById('game-area');
+    if (gameArea) gameArea.style.display = 'none';
+
+    const statsBar = document.getElementById('stats-bar');
+    if (statsBar) statsBar.style.display = 'none';
+
+    const timerBar = document.getElementById('timer-bar');
+    if (timerBar) timerBar.style.display = 'none';
+
+    const loadingEl = document.getElementById('loading-state');
+    if (loadingEl) loadingEl.style.display = 'block';
+
+    const errorEl = document.getElementById('error-state');
+    if (errorEl) errorEl.style.display = 'none';
+
+    const feedbackEl = document.getElementById('feedback');
+    if (feedbackEl) feedbackEl.innerHTML = '';
+
+    const panel = document.getElementById('found-words-panel');
+    if (panel) panel.classList.remove('open');
+
+    const toggleBtn = document.querySelector('.found-toggle-btn');
+    if (toggleBtn) toggleBtn.textContent = 'Show Words ▾';
+
+    const submitWrap = document.getElementById('submit-score-wrap');
+    if (submitWrap) submitWrap.style.display = 'none';
+
+    const submitMsg = document.getElementById('score-submit-msg');
+    if (submitMsg) { submitMsg.textContent = ''; submitMsg.className = 'score-submit-msg'; }
+
+    const submitBtn = document.getElementById('submit-score-btn');
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '📊 Submit Score'; submitBtn.style.display = ''; }
+
+    const timerDisplay = document.getElementById('timer-display');
+    if (timerDisplay) { timerDisplay.textContent = 'Time Left: 04:00'; timerDisplay.classList.remove('timer-warning'); }
+
+    const enterBtn = document.getElementById('btn-enter');
+    if (enterBtn) enterBtn.disabled = false;
+  }
+
+
+  // ════════════════════════════════════════
+  // TIMER
+  // ════════════════════════════════════════
+
+  function startTimer() {
+    stopTimer();
+    timerSeconds = TIMER_DURATION;
+    timerActive  = true;
+    gameEnded    = false;
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+      timerSeconds = Math.max(0, timerSeconds - 1);
+      updateTimerDisplay();
+      if (timerSeconds <= 0) {
+        stopTimer();
+        onTimerEnd();
+      }
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    timerActive = false;
+  }
+
+  function updateTimerDisplay() {
+    const mins    = Math.floor(timerSeconds / 60);
+    const secs    = timerSeconds % 60;
+    const display = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+    const el = document.getElementById('timer-display');
+    if (!el) return;
+    el.textContent = 'Time Left: ' + display;
+    if (timerSeconds <= 30) el.classList.add('timer-warning');
+    else                     el.classList.remove('timer-warning');
+  }
+
+  function onTimerEnd() {
+    gameEnded = true;
+    const enterBtn = document.getElementById('btn-enter');
+    if (enterBtn) enterBtn.disabled = true;
+    showFeedback("⏰ Time's up! No more guesses.", 'timesup');
+
+    const timerEl = document.getElementById('timer-display');
+    if (timerEl) { timerEl.textContent = 'Time Left: 00:00'; timerEl.classList.add('timer-warning'); }
+
+    // Auto-submit if user already has a name, otherwise surface the button
+    const userName = localStorage.getItem(USER_NAME_KEY);
+    if (userName) {
+      doSubmitScore(userName);
+    } else {
+      const submitWrap = document.getElementById('submit-score-wrap');
+      if (submitWrap) submitWrap.style.display = 'flex';
+      const msg = document.getElementById('score-submit-msg');
+      if (msg) msg.textContent = "⏰ Time's up! Add your username to save your score.";
+    }
+  }
+
+
+  // ════════════════════════════════════════
+  // SCORE SUBMISSION
+  // ════════════════════════════════════════
+
+  function handleSubmitScore() {
+    if (scoreSubmitted) return;
+    stopTimer();
+    const userName = localStorage.getItem(USER_NAME_KEY);
+    if (!userName) {
+      pendingWordBeforeSignup = '__submit_score__';
+      openUsernameModal();
+      return;
+    }
+    doSubmitScore(userName);
+  }
+
+  async function doSubmitScore(playerName) {
+    if (scoreSubmitted || !puzzleId) return;
+    scoreSubmitted = true;
+    trackClick('spelling_bee_submit_score', { puzzle_id: puzzleId, words_found: foundWords.length });
+
+    const submitBtn = document.getElementById('submit-score-btn');
+    const submitMsg = document.getElementById('score-submit-msg');
+
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting…'; }
+
+    const elapsed = TIMER_DURATION - timerSeconds;
+
+    try {
+      const resp = await fetch('/api/submit-spelling-bee-result', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          puzzle_id:          puzzleId,
+          player_name:        playerName,
+          words_found:        foundWords.length,
+          total_words:        totalWords,
+          time_taken_seconds: elapsed
+        })
+      });
+      const data = await resp.json();
+
+      if (resp.ok && data.success) {
+        if (submitBtn) submitBtn.style.display = 'none';
+        if (submitMsg) {
+          submitMsg.textContent = '✅ Score saved! ' + foundWords.length + ' word' + (foundWords.length !== 1 ? 's' : '') + ' found.';
+          submitMsg.className = 'score-submit-msg success';
+        }
+        const submitWrap = document.getElementById('submit-score-wrap');
+        if (submitWrap) submitWrap.style.display = 'flex';
+      } else {
+        scoreSubmitted = false;
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '📊 Submit Score'; }
+        if (submitMsg) { submitMsg.textContent = 'Could not save score. Try again.'; submitMsg.className = 'score-submit-msg error'; }
+      }
+    } catch (err) {
+      scoreSubmitted = false;
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '📊 Submit Score'; }
+      if (submitMsg) { submitMsg.textContent = 'Connection error. Try again.'; submitMsg.className = 'score-submit-msg error'; }
+    }
+  }
+
+
+  // ════════════════════════════════════════
+  // PUZZLE LOADING
+  // ════════════════════════════════════════
+
+  async function loadPuzzle(requestedPuzzleId) {
+    const userId   = localStorage.getItem(USER_ID_KEY);
+    const userName = localStorage.getItem(USER_NAME_KEY);
+
+    let url = '/api/get-spelling-bee-puzzle?puzzle_id=' + encodeURIComponent(requestedPuzzleId);
+    if (userId)   url += '&user_id='   + encodeURIComponent(userId);
+    if (userName) url += '&user_name=' + encodeURIComponent(userName);
+
+    try {
+      const resp = await fetch(url);
+      const data = await resp.json();
+
+      if (!resp.ok || data.error) {
+        showError(data.error || 'Failed to load puzzle');
+        return;
+      }
+
+      puzzleId     = data.puzzle_id;
+      centerLetter = data.center_letter.toLowerCase();
+      outerLetters = data.outer_letters.split(',').map(l => l.trim().toLowerCase());
+      totalWords   = data.total_words;
+      foundWords   = (data.user_guesses || []).map(w => w.toLowerCase());
+
+      document.getElementById('puzzle-number-label').textContent = 'Puzzle #' + data.puzzle_number;
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('stats-bar').style.display     = 'flex';
+      document.getElementById('timer-bar').style.display     = 'flex';
+      document.getElementById('total-words-count').textContent = totalWords;
+
+      const gameArea = document.getElementById('game-area');
+      gameArea.style.display = 'flex';
+
+      const submitWrap = document.getElementById('submit-score-wrap');
+      if (submitWrap) submitWrap.style.display = 'flex';
+
+      updateStats();
+      renderHive();
+      renderFoundWords();
+      startTimer();
+
+      trackClick('bee_puzzle_load', { puzzle_id: puzzleId, difficulty: selectedDifficulty });
+    } catch (err) {
+      showError('Connection error. Please refresh.');
+    }
+  }
+
+  function showError(msg) {
+    document.getElementById('loading-state').style.display = 'none';
+    const errEl = document.getElementById('error-state');
+    errEl.style.display = 'block';
+    errEl.textContent   = msg;
+  }
+
+
+  // ════════════════════════════════════════
+  // HIVE RENDERING
+  // ════════════════════════════════════════
+
+  function renderHive() {
+    const hive = document.getElementById('hive');
+    hive.innerHTML = '';
+    const W = 74, H = 74, R = 80;
+    const cx = 130, cy = 120;
+    hive.appendChild(makeHexBtn(centerLetter, true, cx - W/2, cy - H/2));
+    outerLetters.forEach((letter, i) => {
+      const angle = (-90 + i * 60) * Math.PI / 180;
+      const x = cx + R * Math.cos(angle);
+      const y = cy + R * Math.sin(angle);
+      hive.appendChild(makeHexBtn(letter, false, x - W/2, y - H/2));
+    });
+  }
+
+  function makeHexBtn(letter, isCenter, left, top) {
+    const btn = document.createElement('button');
+    btn.className   = 'hex-btn ' + (isCenter ? 'hex-center' : 'hex-outer');
+    btn.textContent = letter.toUpperCase();
+    btn.style.left  = Math.round(left) + 'px';
+    btn.style.top   = Math.round(top)  + 'px';
+    btn.setAttribute('aria-label', 'Letter ' + letter.toUpperCase());
+    btn.onclick = () => appendLetter(letter);
+    return btn;
+  }
+
+
+  // ════════════════════════════════════════
+  // WORD BUILDING
+  // ════════════════════════════════════════
+
+  function appendLetter(letter) {
+    if (gameEnded) return;
+    currentWord += letter.toLowerCase();
+    renderWordDisplay();
+  }
+
+  function deleteLetter() {
+    if (currentWord.length === 0) return;
+    currentWord = currentWord.slice(0, -1);
+    renderWordDisplay();
+  }
+
+  function renderWordDisplay() {
+    const display = document.getElementById('word-display');
+    if (currentWord.length === 0) {
+      display.innerHTML = '<span class="word-cursor"></span>';
+      return;
+    }
+    let html = '';
+    for (const ch of currentWord) {
+      html += ch === centerLetter
+        ? '<span class="center-char">' + ch.toUpperCase() + '</span>'
+        : ch.toUpperCase();
+    }
+    html += '<span class="word-cursor"></span>';
+    display.innerHTML = html;
+  }
+
+  function shuffleLetters() {
+    for (let i = outerLetters.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [outerLetters[i], outerLetters[j]] = [outerLetters[j], outerLetters[i]];
+    }
+    renderHive();
+    trackClick('bee_shuffle');
+  }
+
+
+  // ════════════════════════════════════════
+  // SUBMIT GUESS
+  // ════════════════════════════════════════
+
+  async function submitGuess() {
+    if (gameEnded) {
+      showFeedback("⏰ Time's up! No more guesses.", 'timesup');
+      currentWord = '';
+      renderWordDisplay();
+      return;
+    }
+
+    const word = currentWord.trim();
+    if (word.length === 0) return;
+
+    const userId   = localStorage.getItem(USER_ID_KEY);
+    const userName = localStorage.getItem(USER_NAME_KEY);
+
+    if (!userId && !userName) {
+      pendingWordBeforeSignup = word;
+      openUsernameModal();
+      return;
+    }
+
+    if (word.length < 4) {
+      showFeedback('Too short! Minimum 4 letters.', 'invalid');
+      currentWord = '';
+      renderWordDisplay();
+      return;
+    }
+    if (!word.includes(centerLetter)) {
+      showFeedback('Must include the center letter "' + centerLetter.toUpperCase() + '"', 'invalid');
+      currentWord = '';
+      renderWordDisplay();
+      return;
+    }
+    if (foundWords.includes(word)) {
+      showFeedback('Already found!', 'duplicate');
+      currentWord = '';
+      renderWordDisplay();
+      return;
+    }
+
+    try {
+      const resp = await fetch('/api/submit-spelling-bee-guess', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          puzzle_id:    puzzleId,
+          user_id:      userId  ? Number(userId) : undefined,
+          user_name:    userName || undefined,
+          guessed_word: word
+        })
+      });
+      const data = await resp.json();
+
+      if (!resp.ok || data.error) {
+        showFeedback('Error — please try again.', 'invalid');
+        return;
+      }
+
+      currentWord = '';
+      renderWordDisplay();
+
+      if (data.result === 'correct') {
+        foundWords.push(word);
+        if (data.is_pangram) pangramWords.add(word);
+        updateStats();
+        renderFoundWords();
+        showFeedback(
+          data.is_pangram ? '🌟 Pangram! ' + word.toUpperCase() : '✓ ' + word.toUpperCase(),
+          data.is_pangram ? 'pangram' : 'correct'
+        );
+        trackClick('bee_correct_guess', { word });
+      } else if (data.result === 'duplicate') {
+        showFeedback('Already found!', 'duplicate');
+      } else {
+        showFeedback(data.message || 'Not in word list', 'invalid');
+      }
+    } catch (err) {
+      showFeedback('Connection error.', 'invalid');
+    }
+  }
+
+
+  // ════════════════════════════════════════
+  // STATS
+  // ════════════════════════════════════════
+
+  function updateStats() {
+    document.getElementById('found-count').textContent      = foundWords.length;
+    document.getElementById('total-words-count').textContent = totalWords;
+  }
+
+
+  // ════════════════════════════════════════
+  // FOUND WORDS LIST
+  // ════════════════════════════════════════
+
+  function renderFoundWords() {
+    const list = document.getElementById('found-words-list');
+    if (foundWords.length === 0) {
+      list.innerHTML = '<span class="found-words-empty">No words found yet.</span>';
+      return;
+    }
+    const sorted = [...foundWords].sort();
+    list.innerHTML = sorted.map(w => {
+      const cls = pangramWords.has(w) ? 'found-word-chip pangram' : 'found-word-chip';
+      return '<span class="' + cls + '">' + w.toUpperCase() + '</span>';
+    }).join('');
+  }
+
+  function toggleFoundWords() {
+    const panel = document.getElementById('found-words-panel');
+    const btn   = document.querySelector('.found-toggle-btn');
+    panel.classList.toggle('open');
+    btn.textContent = panel.classList.contains('open') ? 'Hide Words ▴' : 'Show Words ▾';
+  }
+
+
+  // ════════════════════════════════════════
+  // FEEDBACK
+  // ════════════════════════════════════════
+
+  let feedbackTimer = null;
+
+  function showFeedback(msg, type) {
+    const el = document.getElementById('feedback');
+    clearTimeout(feedbackTimer);
+    el.innerHTML = '<span class="feedback-msg feedback-' + type + '">' + msg + '</span>';
+    if (type !== 'timesup') {
+      feedbackTimer = setTimeout(() => { el.innerHTML = ''; }, 2400);
+    }
+  }
+
+
+  // ════════════════════════════════════════
+  // REVEAL WORDS
+  // ════════════════════════════════════════
+
+  async function openRevealModal() {
+    closeDropdown();
+    trackClick('spelling_bee_reveal_words_click', { puzzle_id: puzzleId });
+    document.getElementById('reveal-modal').classList.add('open');
+    if (!puzzleId) {
+      document.getElementById('reveal-words-content').innerHTML =
+        '<p style="color:#6b7280; text-align:center; padding:20px 0;">Load a puzzle first to see its words.</p>';
+      return;
+    }
+    await loadRevealWords();
+  }
+
+  async function loadRevealWords() {
+    const contentEl = document.getElementById('reveal-words-content');
+    contentEl.innerHTML = '<p style="color:#2563eb; text-align:center; padding:20px 0;">Loading words…</p>';
+    try {
+      const resp = await fetch('/api/get-spelling-bee-answers?puzzle_id=' + encodeURIComponent(puzzleId));
+      const data = await resp.json();
+      if (!resp.ok || data.error) {
+        contentEl.innerHTML = '<p style="color:#dc2626; text-align:center; padding:20px 0;">Could not load answers.</p>';
+        return;
+      }
+      const words = data.words || [];
+      if (words.length === 0) {
+        contentEl.innerHTML = '<p style="color:#9ca3af; text-align:center; padding:20px 0;">No words available.</p>';
+        return;
+      }
+      const pangramCount = words.filter(w => w.is_pangram).length;
+      const chips = words.map(w => {
+        const found   = foundWords.includes(w.word.toLowerCase());
+        const isPang  = w.is_pangram;
+        return `<span class="reveal-word-chip ${isPang ? 'pangram-chip' : ''}">
+          ${w.word.toUpperCase()}
+          ${isPang  ? '<span class="pangram-tag">⭐ Pangram</span>' : ''}
+          ${found   ? '<span class="found-check">✓</span>' : ''}
+        </span>`;
+      }).join('');
+      contentEl.innerHTML = `
+        <div class="modal-subtitle" style="margin-bottom:4px;">${words.length} possible words · ${pangramCount} pangram</div>
+        <div class="reveal-words-list">${chips}</div>
+      `;
+    } catch (err) {
+      contentEl.innerHTML = '<p style="color:#dc2626; text-align:center; padding:20px 0;">Connection error.</p>';
+    }
+  }
+
+  function closeRevealModal() {
+    document.getElementById('reveal-modal').classList.remove('open');
+  }
+
+
+  // ════════════════════════════════════════
+  // HOW TO PLAY MODAL
+  // ════════════════════════════════════════
+
+  function openHowToPlay() {
+    document.getElementById('htp-modal').classList.add('open');
+    trackClick('bee_how_to_play');
+  }
+  function closeHowToPlay() {
+    document.getElementById('htp-modal').classList.remove('open');
+  }
+  document.getElementById('htp-modal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeHowToPlay();
+  });
+
+
+  // ════════════════════════════════════════
+  // USERNAME MODAL
+  // ════════════════════════════════════════
+
+  function openUsernameModal() {
+    document.getElementById('username-modal').classList.add('open');
+    setTimeout(() => document.getElementById('username-input').focus(), 100);
+  }
+  function closeUsernameModal() {
+    document.getElementById('username-modal').classList.remove('open');
+  }
+
+  document.getElementById('username-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveUsername();
+  });
+
+  async function saveUsername() {
+    const input = document.getElementById('username-input');
+    const errEl = document.getElementById('username-error');
+    const btn   = document.getElementById('username-btn');
+
+    const raw = input.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+    if (raw.length < 3) {
+      errEl.textContent = 'Username must be at least 3 characters.';
+      return;
+    }
+
+    btn.disabled    = true;
+    btn.textContent = 'Saving…';
+    errEl.textContent = '';
+
+    try {
+      const resp = await fetch('/api/create-ipl-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_name: raw })
+      });
+      const data = await resp.json();
+
+      if (!resp.ok || data.error) {
+        errEl.textContent = data.error || 'Could not save username. Try again.';
+        btn.disabled = false;
+        btn.textContent = 'Start Playing';
+        return;
+      }
+
+      const user = data.user;
+      localStorage.setItem(USER_ID_KEY,   user.id);
+      localStorage.setItem(USER_NAME_KEY, user.user_name);
+      closeUsernameModal();
+
+      if (pendingWordBeforeSignup === '__submit_score__') {
+        pendingWordBeforeSignup = '';
+        doSubmitScore(user.user_name);
+      } else if (pendingWordBeforeSignup) {
+        currentWord = pendingWordBeforeSignup;
+        pendingWordBeforeSignup = '';
+        renderWordDisplay();
+        submitGuess();
+      }
+    } catch (err) {
+      errEl.textContent = 'Connection error. Please try again.';
+      btn.disabled = false;
+      btn.textContent = 'Start Playing';
+    }
+  }
+
+
+  // ════════════════════════════════════════
+  // HINTS MODAL
+  // ════════════════════════════════════════
+
+  function openHintsModal() {
+    document.getElementById('hints-modal').classList.add('open');
+    closeDropdown();
+    trackClick('bee_hints_open');
+  }
+  function closeHintsModal() {
+    document.getElementById('hints-modal').classList.remove('open');
+  }
+  document.getElementById('hints-modal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeHintsModal();
+  });
+  document.getElementById('reveal-modal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeRevealModal();
+  });
+
+
+  // ════════════════════════════════════════
+  // HAMBURGER MENU
+  // ════════════════════════════════════════
+
+  function toggleHamburgerMenu() {
+    document.getElementById('hamburgerDropdown').classList.toggle('open');
+  }
+  function closeDropdown() {
+    document.getElementById('hamburgerDropdown').classList.remove('open');
+  }
+  document.addEventListener('click', e => {
+    const btn      = document.getElementById('hamburgerMenuBtn');
+    const dropdown = document.getElementById('hamburgerDropdown');
+    if (dropdown && btn && !btn.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.classList.remove('open');
+    }
+  });
+
+
+  // ════════════════════════════════════════
+  // KEYBOARD SUPPORT
+  // ════════════════════════════════════════
+
+  document.addEventListener('keydown', e => {
+    if (document.getElementById('username-modal').classList.contains('open')) return;
+    if (document.getElementById('htp-modal').classList.contains('open')) return;
+    if (document.getElementById('hints-modal').classList.contains('open')) return;
+    if (document.getElementById('reveal-modal').classList.contains('open')) return;
+    if (!puzzleId) return;
+    const key = e.key;
+    if (key === 'Enter')     { submitGuess();        return; }
+    if (key === 'Backspace') { deleteLetter();       return; }
+    if (/^[a-zA-Z]$/.test(key)) { appendLetter(key); return; }
+  });
+
+
+  // ════════════════════════════════════════
+  // ANALYTICS
+  // ════════════════════════════════════════
+
+  function trackClick(buttonName, metadata = {}) {
+    const userId   = localStorage.getItem(USER_ID_KEY);
+    const userName = localStorage.getItem(USER_NAME_KEY);
+    fetch('/api/track-click', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      keepalive: true,
+      body: JSON.stringify({
+        user_id:        userId ? Number(userId) : null,
+        user_name:      userName || null,
+        event_name:     'button_click',
+        button_name:    buttonName,
+        page_name:      'spelling-bee.html',
+        page_url:       window.location.pathname,
+        event_metadata: metadata
+      })
+    }).catch(() => {});
+  }
+</script>
+
+</body>
+</html>
