@@ -2,25 +2,36 @@ const { neon } = require('@neondatabase/serverless');
 
 const sql = neon(process.env.DATABASE_URL);
 
+const VALID_DIFFICULTIES = ['easy', 'medium', 'hard'];
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
+    const { difficulty } = req.query || {};
+
+    if (!difficulty || !VALID_DIFFICULTIES.includes(difficulty)) {
+      return res.status(400).json({ error: 'difficulty must be easy, medium, or hard' });
+    }
+
     const rows = await sql`
       SELECT
-        p.puzzle_number,
-        p.difficulty,
-        COALESCE(g.user_name, u.user_name) AS user_name,
-        COUNT(*) AS correct_words_count
-      FROM spelling_bee_user_guesses g
-      JOIN spelling_bee_puzzles p ON p.id = g.puzzle_id
-      LEFT JOIN ipl_users u ON u.id = g.user_id
-      WHERE g.is_correct = true
-      GROUP BY p.puzzle_number, p.difficulty, COALESCE(g.user_name, u.user_name)
-      ORDER BY correct_words_count DESC, p.puzzle_number DESC
-      LIMIT 100
+        r.id,
+        r.puzzle_id,
+        COALESCE(r.puzzle_number, p.puzzle_number) AS puzzle_number,
+        r.difficulty,
+        r.player_name,
+        r.words_found,
+        r.total_words,
+        r.time_taken_seconds,
+        r.completed_at
+      FROM spelling_bee_results r
+      JOIN spelling_bee_puzzles p ON r.puzzle_id = p.id
+      WHERE r.difficulty = ${difficulty}
+      ORDER BY r.words_found DESC, r.time_taken_seconds ASC
+      LIMIT 50
     `;
 
     return res.status(200).json({ rows });
