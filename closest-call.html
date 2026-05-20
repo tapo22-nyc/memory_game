@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NGH76BBT');</script>
+<!-- End Google Tag Manager -->
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Closest Call Cricket | MTGames</title>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: #f8fafc;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #111827;
+    padding: 28px 20px 64px;
+  }
+
+  .page-wrap { max-width: 960px; margin: 0 auto; }
+
+  /* ── Page Header ── */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+  }
+
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .logo-img { height: 40px; width: auto; object-fit: contain; }
+  .logo-text {
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+
+  /* ── Hamburger ── */
+  .hamburger-wrapper { position: relative; flex-shrink: 0; }
+  .hamburger-menu-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 38px; height: 38px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 8px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .hamburger-menu-btn:hover { background: #f3f4f6; border-color: #d1d5db; }
+  .hamburger-menu-btn span {
+    display: block; width: 100%; height: 2px;
+    background: #374151; border-radius: 2px;
+  }
+  .hamburger-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 210px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    z-index: 200;
+    overflow: hidden;
+  }
+  .hamburger-dropdown.open { display: block; }
+  .hamburger-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.12s, color 0.12s;
+  }
+  .hamburger-dropdown a:last-child { border-bottom: none; }
+  .hamburger-dropdown a:hover { background: #f8fafc; color: #2563eb; }
+  .hamburger-dropdown a.active-page { color: #2563eb; background: #eff6ff; font-weight: 700; }
+
+  /* ── Hero ── */
+  .hero-section { text-align: center; margin-bottom: 52px; }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #dbeafe;
+    border: 1px solid #bfdbfe;
+    color: #2563eb;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 800;
+    margin-bottom: 22px;
+  }
+  .hero-title {
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.15;
+  }
+  .hero-subtitle {
+    font-size: 1rem;
+    color: #6b7280;
+    line-height: 1.75;
+    max-width: 540px;
+    margin: 0 auto 28px;
+  }
+  .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 28px; border: none; border-radius: 50px;
+    font-size: 0.92rem; font-weight: 700; letter-spacing: 0.4px;
+    cursor: pointer; background: #2563eb; color: #fff;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+    transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+    text-decoration: none;
+  }
+  .btn-primary:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(37,99,235,0.35); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 26px; border: 1.5px solid #d1d5db; border-radius: 50px;
+    font-size: 0.92rem; font-weight: 600; cursor: pointer;
+    background: #ffffff; color: #374151;
+    transition: background 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+  }
+  .btn-ghost:hover { background: #f3f4f6; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+  /* ── How it works ── */
+  .how-it-works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 0;
+  }
+  .how-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 20px 18px;
+    text-align: center;
+  }
+  .how-icon { font-size: 1.8rem; margin-bottom: 10px; }
+  .how-title { font-size: 0.9rem; font-weight: 700; color: #111827; margin-bottom: 6px; }
+  .how-desc  { font-size: 0.8rem; color: #6b7280; line-height: 1.6; }
+
+  /* ── Section headers ── */
+  .content-section { margin-bottom: 52px; }
+  .section-header  {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+  }
+  .section-label {
+    font-size: 0.72rem; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: #2563eb; white-space: nowrap;
+  }
+  .section-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, #d1d5db, transparent);
+  }
+
+  /* ── Match cards ── */
+  .match-grid { display: flex; flex-direction: column; gap: 10px; }
+
+  .match-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 14px 16px;
+    transition: transform 0.18s, border-color 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .match-card:hover { transform: translateY(-2px); border-color: #93c5fd; }
+
+  .match-card-info { flex: 1; min-width: 0; }
+  .match-teams {
+    font-size: 1rem; font-weight: 800;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    color: #111827;
+  }
+  .match-date-label {
+    font-size: 0.75rem; color: #6b7280; margin-top: 3px;
+  }
+
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 999px;
+    font-size: 0.65rem; font-weight: 900;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .status-open   { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+  .status-locked { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+  .status-closed { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+
+  .match-card-btn {
+    padding: 8px 16px; border: none; border-radius: 10px;
+    font-size: 0.82rem; font-weight: 700; cursor: pointer;
+    transition: transform 0.12s, background 0.15s;
+    letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0;
+  }
+  .match-card-btn:active { transform: scale(0.97); }
+  .btn-open   { background: #2563eb; color: #fff; box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
+  .btn-open:hover { background: #1d4ed8; }
+  .btn-locked { background: #fef3c7; color: #d97706; border: 1.5px solid #fde68a; }
+  .btn-locked:hover { background: #fde68a; }
+  .btn-results { background: #f0fdf4; color: #15803d; border: 1.5px solid #bbf7d0; }
+  .btn-results:hover { background: #dcfce7; }
+
+  .match-empty {
+    padding: 36px 20px; text-align: center;
+    color: #9ca3af; font-size: 0.9rem;
+    background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px;
+  }
+
+  /* ── USERNAME MODAL ── */
+  .user-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 3000;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .user-modal-overlay.show { display: flex; }
+  .user-modal-card {
+    width: 100%; max-width: 460px;
+    background: #ffffff; border: 1px solid #e5e7eb;
+    border-radius: 24px; box-shadow: 0 24px 70px rgba(0,0,0,0.15);
+    padding: 32px; text-align: center;
+  }
+  .user-modal-title   { font-size: 1.7rem; font-weight: 800; margin-bottom: 8px; color: #111827; }
+  .user-modal-copy    { color: #374151; font-size: 0.94rem; line-height: 1.6; margin-bottom: 18px; }
+  .username-input {
+    width: 100%; background: #ffffff; border: 1px solid #d1d5db;
+    border-radius: 14px; padding: 14px 16px; color: #111827;
+    font-size: 1rem; font-family: inherit; outline: none; margin-bottom: 10px;
+  }
+  .username-input::placeholder { color: #9ca3af; }
+  .username-input:focus { border-color: #2563eb; }
+  .user-modal-error { min-height: 20px; color: #dc2626; font-size: 0.85rem; margin-bottom: 12px; }
+
+  /* ── PREDICTION MODAL ── */
+  .pred-modal {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.5);
+    align-items: center; justify-content: center;
+  }
+  .pred-modal.show { display: flex; }
+
+  .pred-modal-wrapper {
+    position: relative; width: 100%;
+    max-width: 480px; height: 100%; max-height: 100dvh;
+    background: #ffffff;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  @media (min-width: 520px) {
+    .pred-modal-wrapper {
+      max-height: 95dvh;
+      border-radius: 20px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+    }
+  }
+
+  .pred-modal-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+    padding: 14px 16px 18px;
+    flex-shrink: 0;
+  }
+  .pred-modal-header.locked-header { background: linear-gradient(135deg, #92400e, #d97706); }
+  .pred-modal-header.closed-header { background: linear-gradient(135deg, #374151, #6b7280); }
+
+  .pred-modal-header-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .pred-modal-back-btn {
+    background: rgba(255,255,255,0.15); border: none; color: white;
+    width: 34px; height: 34px; border-radius: 50%; font-size: 16px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .pred-modal-back-btn:hover { background: rgba(255,255,255,0.25); }
+
+  .pred-modal-title-wrap  { text-align: center; flex: 1; margin: 0 8px; }
+  .pred-modal-title-wrap h3 { margin: 0; font-size: 16px; font-weight: 700; color: white; }
+  .pred-modal-subtitle    { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+
+  .pred-modal-close-btn {
+    background: rgba(255,255,255,0.15); border: none; color: white;
+    width: 34px; height: 34px; border-radius: 50%; font-size: 18px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1;
+  }
+  .pred-modal-close-btn:hover { background: rgba(255,255,255,0.25); }
+
+  /* Summary bar */
+  .pred-summary-bar {
+    background: #f8fafc; border-bottom: 1px solid #e5e7eb;
+    padding: 10px 12px; display: flex; align-items: stretch; gap: 0;
+    flex-shrink: 0; overflow-x: auto; scrollbar-width: none;
+  }
+  .pred-summary-bar::-webkit-scrollbar { display: none; }
+  .pred-summary-stat {
+    flex: 1; min-width: 60px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 4px 6px; border-right: 1px solid #e5e7eb; text-align: center;
+  }
+  .pred-summary-stat:last-child { border-right: none; }
+  .pred-summary-val   { font-size: 15px; font-weight: 700; color: #d97706; line-height: 1.2; white-space: nowrap; }
+  .pred-summary-val.good { color: #059669; }
+  .pred-summary-label { font-size: 10px; color: #6b7280; margin-top: 2px; white-space: nowrap; }
+
+  /* Modal body */
+  .pred-modal-body {
+    flex: 1; overflow-y: auto;
+    padding: 16px 14px 8px; scroll-behavior: smooth;
+  }
+  .pred-modal-body::-webkit-scrollbar { width: 4px; }
+  .pred-modal-body::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+
+  /* Phase section */
+  .phase-section { margin-bottom: 24px; }
+  .phase-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .phase-label-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 999px;
+    font-size: 0.65rem; font-weight: 900;
+    letter-spacing: 0.8px; text-transform: uppercase;
+  }
+  .phase-pre_match   { background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; }
+  .phase-powerplay   { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+  .phase-mid_innings { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .phase-final       { background: #fdf2f8; color: #be185d; border: 1px solid #fbcfe8; }
+  .phase-title { font-size: 0.85rem; font-weight: 700; color: #374151; }
+
+  /* Question cards */
+  .question-card {
+    background: #f9fafb;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+  .question-card.is-open  { border-color: #93c5fd; background: #f0f9ff; }
+  .question-card.is-scored { border-color: #bbf7d0; background: #f0fdf4; }
+  .question-card.is-locked { opacity: 0.7; }
+
+  .question-text {
+    font-size: 0.92rem; font-weight: 700; color: #111827;
+    margin-bottom: 10px; line-height: 1.4;
+  }
+
+  .question-meta {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .q-max-pts {
+    font-size: 0.72rem; font-weight: 700;
+    color: #6b7280; background: #f3f4f6;
+    border-radius: 6px; padding: 2px 8px;
+  }
+  .q-max-pts span { color: #059669; }
+
+  /* Input row */
+  .question-input-row {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .pred-number-input {
+    width: 90px; padding: 10px 12px;
+    border: 1.5px solid #d1d5db; border-radius: 10px;
+    font-size: 1rem; font-weight: 700; color: #111827;
+    background: #ffffff; outline: none;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+  .pred-number-input::-webkit-inner-spin-button,
+  .pred-number-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .pred-number-input:focus { border-color: #2563eb; }
+  .pred-number-input:disabled { background: #f9fafb; color: #9ca3af; cursor: not-allowed; }
+
+  .existing-pred-badge {
+    font-size: 0.78rem; font-weight: 600;
+    color: #2563eb; background: #dbeafe;
+    border-radius: 8px; padding: 4px 10px;
+  }
+
+  /* Lock reason */
+  .lock-reason-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.72rem; font-weight: 700;
+    color: #6b7280; background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px; padding: 5px 10px;
+    margin-top: 8px;
+  }
+
+  /* Scored result */
+  .scored-result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px; margin-top: 8px;
+  }
+  .scored-stat {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 8px 10px;
+    text-align: center;
+  }
+  .scored-stat-val   { font-size: 1.1rem; font-weight: 800; color: #111827; }
+  .scored-stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; margin-top: 3px; }
+  .scored-stat.exact-call .scored-stat-val { color: #059669; }
+  .scored-pts-val { font-size: 1.1rem; font-weight: 800; color: #2563eb; }
+
+  /* Modal footer */
+  .pred-modal-footer {
+    padding: 12px 14px;
+    border-top: 1px solid #e5e7eb;
+    flex-shrink: 0; background: #ffffff;
+  }
+  .pred-submit-btn {
+    display: block; width: 100%;
+    padding: 14px; border: none; border-radius: 12px;
+    background: #2563eb; color: #fff;
+    font-size: 0.95rem; font-weight: 800;
+    cursor: pointer; transition: background 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .pred-submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .pred-submit-btn:not(:disabled):hover { background: #1d4ed8; }
+  .pred-submit-status {
+    min-height: 20px; text-align: center;
+    font-size: 0.82rem; font-weight: 600;
+    margin-top: 8px;
+  }
+  .pred-submit-status.success { color: #059669; }
+  .pred-submit-status.error   { color: #dc2626; }
+
+  .pred-loading {
+    text-align: center; padding: 48px 16px;
+    color: #6b7280; font-size: 0.9rem;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 500px) {
+    body { padding: 18px 14px 52px; }
+    .hero-title { letter-spacing: 0.5px; }
+    .hero-actions { flex-direction: column; align-items: stretch; }
+    .hero-actions .btn-primary,
+    .hero-actions .btn-ghost { text-align: center; justify-content: center; }
+    .scored-result-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Username modal -->
+<div class="user-modal-overlay" id="userModal">
+  <div class="user-modal-card">
+    <div class="user-modal-title">Enter Your Username</div>
+    <p class="user-modal-copy">Enter your MT Games username to save your predictions and climb the leaderboard.</p>
+    <input id="usernameInput" class="username-input" type="text" maxlength="24" placeholder="e.g. tapo22" autocomplete="off" />
+    <div class="user-modal-error" id="usernameError"></div>
+    <button class="btn-primary" id="usernameBtn" style="width:100%;justify-content:center;" onclick="handleUsernameSubmit()">Continue →</button>
+  </div>
+</div>
+
+<!-- Prediction modal -->
+<div class="pred-modal" id="predModal">
+  <div class="pred-modal-wrapper">
+    <div class="pred-modal-header" id="predModalHeader">
+      <div class="pred-modal-header-top">
+        <button class="pred-modal-back-btn" onclick="closePredModal()">←</button>
+        <div class="pred-modal-title-wrap">
+          <h3 id="predModalTitle">Make Predictions</h3>
+          <div class="pred-modal-subtitle" id="predModalSubtitle">Enter your predictions below</div>
+        </div>
+        <button class="pred-modal-close-btn" onclick="closePredModal()">✕</button>
+      </div>
+    </div>
+    <div class="pred-summary-bar" id="predSummaryBar"></div>
+    <div class="pred-modal-body" id="predModalBody">
+      <div class="pred-loading">Loading questions…</div>
+    </div>
+    <div class="pred-modal-footer" id="predModalFooter" style="display:none;">
+      <button class="pred-submit-btn" id="predSubmitBtn" onclick="submitPredictions()">Save Predictions</button>
+      <div class="pred-submit-status" id="predSubmitStatus"></div>
+    </div>
+  </div>
+</div>
+
+<div class="page-wrap">
+  <header class="page-header">
+    <a href="index.html" class="logo-wrap" onclick="trackClick('cc_logo_click')">
+      <img src="mtgames_logo.png" alt="MT Games logo" class="logo-img" />
+      <span class="logo-text">MT Games</span>
+    </a>
+    <div class="hamburger-wrapper">
+      <button class="hamburger-menu-btn" id="hamburgerMenuBtn" aria-label="Open navigation menu" onclick="toggleHamburgerMenu()">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="hamburger-dropdown" id="hamburgerDropdown">
+        <a href="fantasy.html"                 onclick="trackClick('nav_fantasy_home')">⚾ Fantasy Cricket</a>
+        <a href="create-team.html"             onclick="trackClick('nav_create_team')">🏏 Fantasy 11</a>
+        <a href="closest-call.html" class="active-page">🎯 Closest Call Cricket</a>
+        <a href="fantasy_leaderboard.html"     onclick="trackClick('nav_fantasy_lb')">🏆 Fantasy Leaderboard</a>
+        <a href="closest-call-leaderboard.html" onclick="trackClick('nav_cc_lb')">📊 Closest Call Leaderboard</a>
+        <a href="spelling-bee.html"            onclick="trackClick('nav_spelling_bee')">🐝 Spelling Bee</a>
+        <a href="sudoku.html"                  onclick="trackClick('nav_sudoku')">🧩 Sudoku</a>
+        <a href="index.html"                   onclick="trackClick('nav_main_home')">🏠 Main Home</a>
+        <a href="contact.html"                 onclick="trackClick('contact_us_menu_click')">✉️ Contact Us</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero-section">
+    <div class="hero-eyebrow">🎯 New Game</div>
+    <h1 class="hero-title">Closest Call Cricket</h1>
+    <p class="hero-subtitle">Predict the runs and wickets for upcoming IPL matches. The closer your call, the higher you climb.</p>
+    <div class="hero-actions">
+      <a href="closest-call-leaderboard.html" class="btn-ghost" onclick="trackClick('hero_lb_btn')">📊 View Leaderboard</a>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="content-section">
+    <div class="section-header">
+      <span class="section-label">How It Works</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="how-it-works-grid">
+      <div class="how-card">
+        <div class="how-icon">🏏</div>
+        <div class="how-title">Predict Numbers</div>
+        <div class="how-desc">Enter numerical predictions — 6-over scores, final innings, player runs, wickets and more.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-icon">🎯</div>
+        <div class="how-title">Closer = More Points</div>
+        <div class="how-desc">The closer your prediction is to the actual result, the more points you earn. Exact = max points!</div>
+      </div>
+      <div class="how-card">
+        <div class="how-icon">🔓</div>
+        <div class="how-title">Live Questions</div>
+        <div class="how-desc">Some questions unlock during the match. Come back after the powerplay for bonus predictions.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-icon">📊</div>
+        <div class="how-title">Climb the Board</div>
+        <div class="how-desc">Points stack across matches. Check the leaderboard to see where you stand.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Matches -->
+  <section class="content-section" id="matchesSection">
+    <div class="section-header">
+      <span class="section-label">Upcoming Matches</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="match-grid" id="matchGrid">
+      <div class="match-empty">Loading matches…</div>
+    </div>
+  </section>
+
+</div><!-- end page-wrap -->
+
+<script>
+  const USER_ID_KEY   = 'mtgames_user_id';
+  const USER_NAME_KEY = 'mtgames_user_name';
+
+  let allMatches    = [];
+  let currentMatchId = null;
+  let currentMatchStatus = 'open';
+  let currentQuestions   = [];
+  let pendingMatchId     = null; // match we want to open after username
+
+  const TEAM_COLOR = {
+    DC:'#004C8A', CSK:'#C8A400', SRH:'#E65100', PBKS:'#B71C1C',
+    MI:'#005DA0', RCB:'#9B1B30', KKR:'#4A148C', RR:'#AD1457',
+    GT:'#1A237E', LSG:'#0288D1'
+  };
+
+  const PHASE_LABEL = {
+    pre_match:   'Pre-Match',
+    powerplay:   'Powerplay (6 Overs)',
+    mid_innings: 'Mid Innings (12 Overs)',
+    final:       'Final / Innings End',
+  };
+
+  /* ── utils ── */
+  function getCurrentUser() {
+    return {
+      id:   localStorage.getItem(USER_ID_KEY),
+      name: localStorage.getItem(USER_NAME_KEY),
+    };
+  }
+  function sanitizeUsername(n) {
+    return String(n || '').trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+  }
+  function escapeHTML(v) {
+    return String(v || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+  function teamColor(code) {
+    return TEAM_COLOR[String(code||'').toUpperCase()] || '#334155';
+  }
+  function formatDate(d) {
+    if (!d) return '';
+    const dt = new Date(d);
+    return dt.toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+  }
+
+  /* ── Hamburger ── */
+  function toggleHamburgerMenu() {
+    document.getElementById('hamburgerDropdown').classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    const btn = document.getElementById('hamburgerMenuBtn');
+    const dd  = document.getElementById('hamburgerDropdown');
+    if (dd && btn && !btn.contains(e.target) && !dd.contains(e.target)) {
+      dd.classList.remove('open');
+    }
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.getElementById('hamburgerDropdown')?.classList.remove('open');
+      closePredModal();
+    }
+  });
+
+  /* ── Click tracking ── */
+  function trackClick(buttonName, metadata = {}) {
+    const u = getCurrentUser();
+    fetch('/api/track-click', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
+      body: JSON.stringify({
+        user_id: u.id ? Number(u.id) : null, user_name: u.name || null,
+        event_name: 'button_click', button_name: buttonName,
+        page_name: 'closest-call.html', page_url: window.location.pathname,
+        event_metadata: metadata,
+      }),
+    }).catch(() => {});
+  }
+
+  /* ── Username modal ── */
+  function showUsernameModal() {
+    const modal = document.getElementById('userModal');
+    const input = document.getElementById('usernameInput');
+    const err   = document.getElementById('usernameError');
+    if (err)   err.textContent = '';
+    if (input) input.value = '';
+    modal.classList.add('show');
+    setTimeout(() => input && input.focus(), 50);
+  }
+  function hideUsernameModal() {
+    document.getElementById('userModal').classList.remove('show');
+  }
+
+  async function handleUsernameSubmit() {
+    const input = document.getElementById('usernameInput');
+    const err   = document.getElementById('usernameError');
+    const btn   = document.getElementById('usernameBtn');
+    const cleanName = sanitizeUsername(input ? input.value : '');
+    if (!cleanName || cleanName.length < 3) {
+      if (err) err.textContent = 'Please enter at least 3 characters. Letters, numbers, underscore only.';
+      if (input) input.focus();
+      return;
+    }
+    try {
+      if (err) err.textContent = '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      const res  = await fetch('/api/create-ipl-user', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_name: cleanName }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not save username.');
+      localStorage.setItem(USER_ID_KEY,   data.user.id);
+      localStorage.setItem(USER_NAME_KEY, data.user.user_name);
+      hideUsernameModal();
+      // If they clicked Make Predictions for a specific match, open that now
+      if (pendingMatchId !== null) {
+        openPredModal(pendingMatchId);
+        pendingMatchId = null;
+      }
+    } catch (err2) {
+      if (err) err.textContent = err2.message || 'Something went wrong. Try again.';
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Continue →'; }
+    }
+  }
+  document.getElementById('usernameInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleUsernameSubmit();
+  });
+
+  /* ── Load matches ── */
+  async function loadMatches() {
+    try {
+      const res  = await fetch('/api/get-closest-call-matches');
+      const data = await res.json();
+      allMatches = data.matches || [];
+      renderMatches();
+    } catch {
+      document.getElementById('matchGrid').innerHTML =
+        '<div class="match-empty">Could not load matches. Please refresh.</div>';
+    }
+  }
+
+  function renderMatches() {
+    const grid = document.getElementById('matchGrid');
+    if (!allMatches.length) {
+      grid.innerHTML = '<div class="match-empty">No prediction contests available right now. Check back soon!</div>';
+      return;
+    }
+    grid.innerHTML = allMatches.map(m => {
+      const s  = m.status;
+      const tc = TEAM_COLOR[m.team_1] || '#334155';
+      let pillClass = 'status-open', pillLabel = '● Open';
+      let btnClass  = 'btn-open',   btnLabel  = 'Make Predictions';
+      if (s === 'locked') { pillClass = 'status-locked'; pillLabel = '⏱ Locked';    btnClass = 'btn-locked';  btnLabel = 'View Predictions'; }
+      if (s === 'closed') { pillClass = 'status-closed'; pillLabel = '✓ Results';   btnClass = 'btn-results'; btnLabel = 'View Results'; }
+      return `
+        <div class="match-card">
+          <div class="match-card-info">
+            <div class="match-teams">${escapeHTML(m.match_title || m.team_1 + ' vs ' + m.team_2)}</div>
+            <div class="match-date-label">${formatDate(m.match_date)}</div>
+          </div>
+          <span class="status-pill ${pillClass}">${pillLabel}</span>
+          <button class="match-card-btn ${btnClass}" onclick="onMatchCardClick(${m.id})">${btnLabel}</button>
+        </div>`;
+    }).join('');
+  }
+
+  function onMatchCardClick(matchId) {
+    trackClick('cc_match_card_click', { cc_match_id: matchId });
+    const u = getCurrentUser();
+    if (!u.name) {
+      pendingMatchId = matchId;
+      showUsernameModal();
+    } else {
+      openPredModal(matchId);
+    }
+  }
+
+  /* ── Prediction modal ── */
+  async function openPredModal(matchId) {
+    currentMatchId = matchId;
+    const u = getCurrentUser();
+
+    // Show modal with loading state
+    document.getElementById('predModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('predModalBody').innerHTML = '<div class="pred-loading">Loading questions…</div>';
+    document.getElementById('predModalFooter').style.display = 'none';
+    document.getElementById('predSummaryBar').innerHTML = '';
+
+    try {
+      const url = `/api/get-closest-call-questions?closest_call_match_id=${matchId}` +
+        (u.name ? `&user_name=${encodeURIComponent(u.name)}` : '');
+      const res  = await fetch(url);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not load questions.');
+
+      currentMatchStatus  = data.match.status;
+      currentQuestions    = data.questions || [];
+
+      // Update header
+      const hdr = document.getElementById('predModalHeader');
+      hdr.className = 'pred-modal-header' +
+        (currentMatchStatus === 'locked' ? ' locked-header' : '') +
+        (currentMatchStatus === 'closed' ? ' closed-header' : '');
+      document.getElementById('predModalTitle').textContent =
+        data.match.match_title || `${data.match.team_1} vs ${data.match.team_2}`;
+      document.getElementById('predModalSubtitle').textContent =
+        currentMatchStatus === 'closed' ? 'Results are in! See how you did.' :
+        currentMatchStatus === 'locked' ? 'Match in progress — some questions may be open.' :
+        'Enter your predictions below';
+
+      // Summary bar
+      const qs = currentQuestions;
+      const openCount   = qs.filter(q => q.is_editable).length;
+      const scoredCount = qs.filter(q => q.status === 'scored').length;
+      const predCount   = qs.filter(q => q.user_prediction !== null).length;
+      const totalPts    = qs.reduce((s, q) => s + Number(q.user_points || 0), 0);
+
+      document.getElementById('predSummaryBar').innerHTML = `
+        <div class="pred-summary-stat">
+          <div class="pred-summary-val">${qs.length}</div>
+          <div class="pred-summary-label">Total Qs</div>
+        </div>
+        <div class="pred-summary-stat">
+          <div class="pred-summary-val ${openCount > 0 ? 'good' : ''}">${openCount}</div>
+          <div class="pred-summary-label">Open</div>
+        </div>
+        <div class="pred-summary-stat">
+          <div class="pred-summary-val">${predCount}</div>
+          <div class="pred-summary-label">Predicted</div>
+        </div>
+        ${scoredCount > 0 ? `
+        <div class="pred-summary-stat">
+          <div class="pred-summary-val good">${Math.round(totalPts)}</div>
+          <div class="pred-summary-label">Your Pts</div>
+        </div>` : ''}
+      `;
+
+      // Render questions
+      renderQuestions(currentQuestions);
+
+      // Show footer only if any question is editable
+      const hasEditable = currentQuestions.some(q => q.is_editable);
+      const footer = document.getElementById('predModalFooter');
+      footer.style.display = hasEditable ? 'block' : 'none';
+      if (hasEditable) {
+        document.getElementById('predSubmitStatus').textContent = '';
+      }
+
+    } catch (err) {
+      document.getElementById('predModalBody').innerHTML =
+        `<div class="pred-loading" style="color:#dc2626;">Could not load questions: ${escapeHTML(err.message)}</div>`;
+    }
+  }
+
+  function closePredModal() {
+    document.getElementById('predModal').classList.remove('show');
+    document.body.style.overflow = '';
+    currentMatchId    = null;
+    currentQuestions  = [];
+  }
+
+  function renderQuestions(questions) {
+    if (!questions.length) {
+      document.getElementById('predModalBody').innerHTML =
+        '<div class="pred-loading">No questions found for this match.</div>';
+      return;
+    }
+
+    // Group by phase
+    const phaseOrder = ['pre_match', 'powerplay', 'mid_innings', 'final'];
+    const byPhase = {};
+    for (const q of questions) {
+      if (!byPhase[q.phase]) byPhase[q.phase] = [];
+      byPhase[q.phase].push(q);
+    }
+
+    const phases = phaseOrder.filter(p => byPhase[p]);
+    // Also catch any unexpected phases
+    for (const p of Object.keys(byPhase)) {
+      if (!phases.includes(p)) phases.push(p);
+    }
+
+    let html = '';
+    for (const phase of phases) {
+      const qs = byPhase[phase];
+      const phaseTitle = PHASE_LABEL[phase] || phase;
+      // Determine phase badge class
+      const openInPhase = qs.some(q => q.is_editable);
+      html += `
+        <div class="phase-section">
+          <div class="phase-header">
+            <span class="phase-label-badge phase-${phase}">${phaseTitle}</span>
+            ${openInPhase ? '<span style="font-size:0.72rem;color:#059669;font-weight:700;">● Open for predictions</span>' : ''}
+          </div>
+          ${qs.map(q => renderQuestionCard(q)).join('')}
+        </div>`;
+    }
+    document.getElementById('predModalBody').innerHTML = html;
+  }
+
+  function renderQuestionCard(q) {
+    const isScored = q.status === 'scored';
+    const isEditable = q.is_editable;
+    const hasExisting = q.user_prediction !== null;
+
+    let cardClass = 'question-card';
+    if (isScored)    cardClass += ' is-scored';
+    else if (isEditable) cardClass += ' is-open';
+    else             cardClass += ' is-locked';
+
+    const teamDot = q.team_code
+      ? `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${escapeHTML(teamColor(q.team_code))};margin-right:4px;"></span>`
+      : '';
+
+    let inputHtml = '';
+    if (isScored) {
+      // Show result breakdown
+      const diff = q.user_prediction !== null ? q.user_difference : null;
+      const pts  = q.user_prediction !== null ? Math.round(Number(q.user_points || 0)) : null;
+      const isExact = diff === 0;
+      inputHtml = `
+        <div class="scored-result-grid">
+          <div class="scored-stat">
+            <div class="scored-stat-val">${q.user_prediction !== null ? q.user_prediction : '—'}</div>
+            <div class="scored-stat-label">Your Pick</div>
+          </div>
+          <div class="scored-stat">
+            <div class="scored-stat-val">${q.actual_value !== null ? q.actual_value : '—'}</div>
+            <div class="scored-stat-label">Actual</div>
+          </div>
+          <div class="scored-stat ${isExact ? 'exact-call' : ''}">
+            <div class="scored-pts-val">${pts !== null ? pts : '—'} pts</div>
+            <div class="scored-stat-label">${diff !== null ? (isExact ? '✓ Exact!' : `Off by ${diff}`) : 'No pick'}</div>
+          </div>
+        </div>`;
+    } else if (isEditable) {
+      inputHtml = `
+        <div class="question-input-row">
+          <input
+            type="number" min="0" max="999"
+            class="pred-number-input"
+            id="qinput_${q.id}"
+            data-question-id="${q.id}"
+            value="${hasExisting ? q.user_prediction : ''}"
+            placeholder="Runs..."
+          />
+          ${hasExisting ? `<span class="existing-pred-badge">Saved: ${q.user_prediction}</span>` : ''}
+        </div>`;
+    } else {
+      // Locked question
+      inputHtml = `
+        <div class="lock-reason-badge">
+          🔒 ${escapeHTML(q.lock_reason || 'Locked')}
+        </div>`;
+    }
+
+    return `
+      <div class="${cardClass}">
+        <div class="question-text">${teamDot}${escapeHTML(q.question_text)}</div>
+        <div class="question-meta">
+          <span class="q-max-pts">Max <span>${q.max_points} pts</span></span>
+        </div>
+        ${inputHtml}
+      </div>`;
+  }
+
+  /* ── Submit predictions ── */
+  async function submitPredictions() {
+    const u = getCurrentUser();
+    if (!u.name) { showUsernameModal(); return; }
+
+    const btn    = document.getElementById('predSubmitBtn');
+    const status = document.getElementById('predSubmitStatus');
+
+    // Collect all filled inputs
+    const inputs = document.querySelectorAll('.pred-number-input');
+    const preds  = [];
+    for (const input of inputs) {
+      const val = input.value.trim();
+      if (val === '') continue;
+      const numVal = parseInt(val, 10);
+      if (isNaN(numVal) || numVal < 0) {
+        status.textContent = 'Please enter valid non-negative numbers.';
+        status.className   = 'pred-submit-status error';
+        input.focus();
+        return;
+      }
+      preds.push({ question_id: Number(input.dataset.questionId), predicted_value: numVal });
+    }
+
+    if (!preds.length) {
+      status.textContent = 'Enter at least one prediction before saving.';
+      status.className   = 'pred-submit-status error';
+      return;
+    }
+
+    try {
+      btn.disabled      = true;
+      btn.textContent   = 'Saving…';
+      status.textContent = '';
+      status.className   = 'pred-submit-status';
+
+      const res  = await fetch('/api/submit-closest-call-predictions', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_name: u.name,
+          closest_call_match_id: currentMatchId,
+          predictions: preds,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not save predictions.');
+
+      trackClick('cc_submit_predictions', { cc_match_id: currentMatchId, count: preds.length });
+
+      const errCount = data.errors ? data.errors.length : 0;
+      status.textContent = errCount
+        ? `Saved ${data.saved.length} prediction${data.saved.length !== 1 ? 's' : ''}. ${errCount} question(s) could not be saved.`
+        : `✓ ${data.saved.length} prediction${data.saved.length !== 1 ? 's' : ''} saved!`;
+      status.className = 'pred-submit-status success';
+
+      // Refresh questions to show updated saved values
+      setTimeout(() => openPredModal(currentMatchId), 1000);
+
+    } catch (err) {
+      status.textContent = err.message || 'Something went wrong. Please try again.';
+      status.className   = 'pred-submit-status error';
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = 'Save Predictions';
+    }
+  }
+
+  /* ── Init ── */
+  loadMatches();
+</script>
+</body>
+</html>
