@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NGH76BBT');</script>
+<!-- End Google Tag Manager -->
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Closest Call Cricket | MTGames</title>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: #f8fafc;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #111827;
+    padding: 28px 20px 64px;
+  }
+
+  .page-wrap { max-width: 960px; margin: 0 auto; }
+
+  /* ── Page Header ── */
+  .page-header {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 40px;
+  }
+  .logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-img  { height: 40px; width: auto; object-fit: contain; }
+  .logo-text {
+    font-size: 1.15rem; font-weight: 800; letter-spacing: 0.5px;
+    background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; line-height: 1;
+  }
+
+  /* ── Hamburger ── */
+  .hamburger-wrapper { position: relative; flex-shrink: 0; }
+  .hamburger-menu-btn {
+    display: flex; flex-direction: column; justify-content: center; gap: 5px;
+    width: 38px; height: 38px; background: #ffffff;
+    border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; padding: 8px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .hamburger-menu-btn:hover { background: #f3f4f6; border-color: #d1d5db; }
+  .hamburger-menu-btn span { display: block; width: 100%; height: 2px; background: #374151; border-radius: 2px; }
+  .hamburger-dropdown {
+    display: none; position: absolute; top: calc(100% + 8px); right: 0;
+    min-width: 210px; background: #ffffff; border: 1px solid #e5e7eb;
+    border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); z-index: 200; overflow: hidden;
+  }
+  .hamburger-dropdown.open { display: block; }
+  .hamburger-dropdown a {
+    display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+    text-decoration: none; font-size: 0.88rem; font-weight: 600; color: #374151;
+    border-bottom: 1px solid #f3f4f6; transition: background 0.12s, color 0.12s;
+  }
+  .hamburger-dropdown a:last-child { border-bottom: none; }
+  .hamburger-dropdown a:hover { background: #f8fafc; color: #2563eb; }
+  .hamburger-dropdown a.active-page { color: #2563eb; background: #eff6ff; font-weight: 700; }
+
+  /* ── Hero ── */
+  .hero-section { text-align: center; margin-bottom: 36px; }
+  .hero-title {
+    font-size: clamp(2rem, 6vw, 3.2rem); font-weight: 800; letter-spacing: 1.5px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; line-height: 1.15;
+  }
+  .hero-subtitle {
+    font-size: 1rem; color: #6b7280; line-height: 1.75;
+    max-width: 540px; margin: 0 auto 20px;
+  }
+  .hero-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  /* ── Info bar (How to Play + Scoring + Leaderboard) ── */
+  .info-bar {
+    display: flex; gap: 8px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 36px;
+  }
+  .info-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 999px;
+    font-size: 0.82rem; font-weight: 700; cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    text-decoration: none; border: 1.5px solid;
+    letter-spacing: 0.2px;
+  }
+  .info-btn-play  { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+  .info-btn-play:hover  { background: #dbeafe; }
+  .info-btn-score { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+  .info-btn-score:hover { background: #dcfce7; }
+  .info-btn-lb    { background: #f8fafc; border-color: #e5e7eb; color: #374151; }
+  .info-btn-lb:hover    { background: #f3f4f6; }
+
+  /* ── How to Play modal ── */
+  .info-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 2500;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .info-modal-overlay.show { display: flex; }
+  .info-modal-box {
+    width: 100%; max-width: 440px;
+    background: #ffffff; border: 1px solid #e5e7eb;
+    border-radius: 20px; box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+    overflow: hidden;
+  }
+  .info-modal-header {
+    background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+    padding: 16px 20px; display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  .info-modal-header-title { font-size: 1rem; font-weight: 800; color: #fff; }
+  .info-modal-close-btn {
+    background: rgba(255,255,255,0.15); border: none; color: #fff;
+    width: 32px; height: 32px; border-radius: 50%; font-size: 17px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    line-height: 1; transition: background 0.15s;
+  }
+  .info-modal-close-btn:hover { background: rgba(255,255,255,0.28); }
+  .info-modal-body { padding: 20px; }
+  .how-to-list {
+    list-style: none; display: flex; flex-direction: column; gap: 12px;
+  }
+  .how-to-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 0.9rem; color: #374151; line-height: 1.5;
+  }
+  .how-to-list li .htl-icon {
+    font-size: 1.1rem; flex-shrink: 0; margin-top: 1px;
+  }
+
+  /* ── Scoring modal ── */
+  .scoring-table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+  .scoring-table th {
+    font-size: 0.68rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 1.5px; color: #6b7280;
+    padding: 8px 12px; background: #f8fafc;
+    border-bottom: 2px solid #e5e7eb; text-align: left;
+  }
+  .scoring-table td {
+    padding: 10px 12px; font-size: 0.82rem; color: #374151;
+    border-bottom: 1px solid #f3f4f6; vertical-align: top;
+    line-height: 1.6;
+  }
+  .scoring-table tr:last-child td { border-bottom: none; }
+  .scoring-table tr:hover td { background: #f8fafc; }
+  .scoring-type-label {
+    font-weight: 700; color: #111827; font-size: 0.85rem;
+    display: block; margin-bottom: 2px;
+  }
+  .scoring-pts-list { color: #6b7280; font-size: 0.78rem; }
+  .pts-exact { color: #059669; font-weight: 700; }
+
+  /* ── Section headers ── */
+  .content-section { margin-bottom: 52px; }
+  .section-header  { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .section-label   { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #2563eb; white-space: nowrap; }
+  .section-line    { flex: 1; height: 1px; background: linear-gradient(90deg, #d1d5db, transparent); }
+
+  /* ── Match cards ── */
+  .match-grid { display: flex; flex-direction: column; gap: 10px; }
+  .match-card {
+    background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px;
+    padding: 14px 16px; transition: transform 0.18s, border-color 0.18s;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .match-card:hover { transform: translateY(-2px); border-color: #93c5fd; }
+  .match-card-info { flex: 1; min-width: 0; }
+  .match-teams { font-size: 1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #111827; }
+  .match-date-label { font-size: 0.75rem; color: #6b7280; margin-top: 3px; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 999px;
+    font-size: 0.65rem; font-weight: 900;
+    letter-spacing: 0.8px; text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
+  }
+  .status-open   { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+  .status-locked { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+  .status-closed { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+  .match-card-btn {
+    padding: 8px 16px; border: none; border-radius: 10px;
+    font-size: 0.82rem; font-weight: 700; cursor: pointer;
+    transition: transform 0.12s, background 0.15s;
+    letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0;
+  }
+  .match-card-btn:active { transform: scale(0.97); }
+  .btn-open    { background: #2563eb; color: #fff; box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
+  .btn-open:hover { background: #1d4ed8; }
+  .btn-locked  { background: #fef3c7; color: #d97706; border: 1.5px solid #fde68a; }
+  .btn-locked:hover { background: #fde68a; }
+  .btn-results { background: #f0fdf4; color: #15803d; border: 1.5px solid #bbf7d0; }
+  .btn-results:hover { background: #dcfce7; }
+  .match-empty {
+    padding: 36px 20px; text-align: center;
+    color: #9ca3af; font-size: 0.9rem;
+    background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px;
+  }
+
+  /* ── USERNAME MODAL ── */
+  .user-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 3000;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .user-modal-overlay.show { display: flex; }
+  .user-modal-card {
+    width: 100%; max-width: 460px; background: #ffffff;
+    border: 1px solid #e5e7eb; border-radius: 24px;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.15); padding: 32px; text-align: center;
+  }
+  .user-modal-title { font-size: 1.7rem; font-weight: 800; margin-bottom: 8px; color: #111827; }
+  .user-modal-copy  { color: #374151; font-size: 0.94rem; line-height: 1.6; margin-bottom: 18px; }
+  .username-input {
+    width: 100%; background: #ffffff; border: 1px solid #d1d5db;
+    border-radius: 14px; padding: 14px 16px; color: #111827;
+    font-size: 1rem; font-family: inherit; outline: none; margin-bottom: 10px;
+  }
+  .username-input::placeholder { color: #9ca3af; }
+  .username-input:focus { border-color: #2563eb; }
+  .user-modal-error { min-height: 20px; color: #dc2626; font-size: 0.85rem; margin-bottom: 12px; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 28px; border: none; border-radius: 50px;
+    font-size: 0.92rem; font-weight: 700; letter-spacing: 0.4px;
+    cursor: pointer; background: #2563eb; color: #fff;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+    transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+    text-decoration: none;
+  }
+  .btn-primary:hover { background: #1d4ed8; transform: translateY(-2px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  /* ── PREDICTION MODAL ── */
+  .pred-modal {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.5); align-items: center; justify-content: center;
+  }
+  .pred-modal.show { display: flex; }
+
+  .pred-modal-wrapper {
+    position: relative; width: 100%;
+    max-width: 480px; height: 100%; max-height: 100dvh;
+    background: #ffffff; display: flex; flex-direction: column; overflow: hidden;
+  }
+  @media (min-width: 520px) {
+    .pred-modal-wrapper { max-height: 95dvh; border-radius: 20px; box-shadow: 0 16px 48px rgba(0,0,0,0.12); }
+  }
+
+  /* Modal header */
+  .pred-modal-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+    padding: 14px 16px 14px; flex-shrink: 0;
+  }
+  .pred-modal-header.locked-header { background: linear-gradient(135deg, #92400e, #d97706); }
+  .pred-modal-header.closed-header  { background: linear-gradient(135deg, #374151, #6b7280); }
+
+  .pred-modal-header-top {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
+  }
+  .pred-modal-back-btn {
+    background: rgba(255,255,255,0.15); border: none; color: white;
+    width: 34px; height: 34px; border-radius: 50%; font-size: 16px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .pred-modal-back-btn:hover { background: rgba(255,255,255,0.25); }
+  .pred-modal-title-wrap  { text-align: center; flex: 1; margin: 0 8px; }
+  .pred-modal-title-wrap h3 { margin: 0; font-size: 16px; font-weight: 700; color: white; }
+  .pred-modal-subtitle    { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+  .pred-modal-close-btn {
+    background: rgba(255,255,255,0.15); border: none; color: white;
+    width: 34px; height: 34px; border-radius: 50%; font-size: 18px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1;
+  }
+  .pred-modal-close-btn:hover { background: rgba(255,255,255,0.25); }
+
+  /* Timer (create-team.html style) */
+  .pred-timer-wrap { display: flex; justify-content: center; }
+  .pred-timer {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(0,0,0,0.2); border-radius: 8px; padding: 5px 12px;
+    font-size: 12px; color: rgba(255,255,255,0.9);
+  }
+  .pred-timer .timer-icon { font-size: 11px; }
+  .pred-timer .timer-val  { font-weight: 700; font-size: 13px; letter-spacing: 0.8px; }
+  .pred-timer.urgent .timer-val { color: #fca5a5; }
+
+  /* Tab selector row */
+  .pred-tab-row {
+    display: flex; gap: 0; flex-shrink: 0;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+  }
+  .pred-tab-btn {
+    flex: 1; padding: 11px 8px; border: none; background: #f8fafc;
+    font-size: 0.82rem; font-weight: 700; color: #6b7280; cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    border-bottom: 3px solid transparent; letter-spacing: 0.2px;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .pred-tab-btn:first-child { border-right: 1px solid #e5e7eb; }
+  .pred-tab-btn:hover { background: #f3f4f6; color: #374151; }
+  .pred-tab-btn.active { background: #ffffff; color: #2563eb; border-bottom-color: #2563eb; }
+  .pred-tab-btn.tab-locked { color: #9ca3af; cursor: default; }
+  .pred-tab-btn.tab-locked:hover { background: #f8fafc; color: #9ca3af; }
+  .pred-tab-count {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #e5e7eb; color: #6b7280; border-radius: 999px;
+    font-size: 0.65rem; font-weight: 800; min-width: 18px; height: 18px; padding: 0 5px;
+  }
+  .pred-tab-btn.active .pred-tab-count { background: #dbeafe; color: #2563eb; }
+
+  /* Modal body */
+  .pred-modal-body {
+    flex: 1; overflow-y: auto;
+    padding: 16px 14px 8px; scroll-behavior: smooth;
+  }
+  .pred-modal-body::-webkit-scrollbar { width: 4px; }
+  .pred-modal-body::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+
+  /* During-game empty state */
+  .during-game-notice {
+    margin: 24px 0; padding: 20px 18px;
+    background: #fffbeb; border: 1px solid #fde68a;
+    border-radius: 14px; text-align: center;
+  }
+  .during-game-notice .dgn-icon { font-size: 1.8rem; margin-bottom: 8px; }
+  .during-game-notice .dgn-title { font-size: 0.95rem; font-weight: 700; color: #92400e; margin-bottom: 4px; }
+  .during-game-notice .dgn-sub   { font-size: 0.82rem; color: #b45309; line-height: 1.5; }
+
+  /* Question cards */
+  .question-card {
+    background: #f9fafb; border: 1.5px solid #e5e7eb;
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+  .question-card.is-open   { border-color: #93c5fd; background: #f0f9ff; }
+  .question-card.is-scored { border-color: #bbf7d0; background: #f0fdf4; }
+  .question-card.is-locked { opacity: 0.7; }
+
+  .question-text {
+    font-size: 0.92rem; font-weight: 700; color: #111827;
+    margin-bottom: 10px; line-height: 1.4;
+  }
+
+  /* Input row */
+  .question-input-row { display: flex; align-items: center; gap: 10px; }
+  .pred-number-input {
+    width: 90px; padding: 10px 12px;
+    border: 1.5px solid #d1d5db; border-radius: 10px;
+    font-size: 1rem; font-weight: 700; color: #111827;
+    background: #ffffff; outline: none; transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+  .pred-number-input::-webkit-inner-spin-button,
+  .pred-number-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .pred-number-input:focus { border-color: #2563eb; }
+  .pred-number-input:disabled { background: #f9fafb; color: #9ca3af; cursor: not-allowed; }
+  .existing-pred-badge {
+    font-size: 0.78rem; font-weight: 600; color: #2563eb;
+    background: #dbeafe; border-radius: 8px; padding: 4px 10px;
+  }
+
+  /* Lock reason */
+  .lock-reason-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.72rem; font-weight: 700; color: #6b7280;
+    background: #f3f4f6; border: 1px solid #e5e7eb;
+    border-radius: 8px; padding: 5px 10px; margin-top: 8px;
+  }
+
+  /* Scored result */
+  .scored-result-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 8px; }
+  .scored-stat {
+    background: #ffffff; border: 1px solid #e5e7eb;
+    border-radius: 10px; padding: 8px 10px; text-align: center;
+  }
+  .scored-stat-val   { font-size: 1.1rem; font-weight: 800; color: #111827; }
+  .scored-stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; margin-top: 3px; }
+  .scored-stat.exact-call .scored-stat-val { color: #059669; }
+  .scored-pts-val { font-size: 1.1rem; font-weight: 800; color: #2563eb; }
+
+  /* Modal footer */
+  .pred-modal-footer {
+    padding: 12px 14px; border-top: 1px solid #e5e7eb;
+    flex-shrink: 0; background: #ffffff;
+  }
+  .pred-submit-btn {
+    display: block; width: 100%; padding: 14px; border: none; border-radius: 12px;
+    background: #2563eb; color: #fff; font-size: 0.95rem; font-weight: 800;
+    cursor: pointer; transition: background 0.2s; letter-spacing: 0.3px;
+  }
+  .pred-submit-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .pred-submit-btn:not(:disabled):hover { background: #1d4ed8; }
+  .pred-submit-status {
+    min-height: 18px; text-align: center;
+    font-size: 0.82rem; font-weight: 600; margin-top: 8px;
+  }
+  .pred-submit-status.error { color: #dc2626; }
+
+  .pred-loading { text-align: center; padding: 48px 16px; color: #6b7280; font-size: 0.9rem; }
+
+  /* ── SUCCESS TOAST OVERLAY ── */
+  .success-toast {
+    display: none; position: absolute; inset: 0; z-index: 10;
+    background: rgba(255,255,255,0.97);
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 12px;
+    border-radius: inherit;
+  }
+  .success-toast.show { display: flex; }
+  .success-toast-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: #dcfce7; display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  .success-toast-title {
+    font-size: 1.15rem; font-weight: 800; color: #15803d;
+    animation: fadeUp 0.3s 0.1s ease both;
+  }
+  .success-toast-sub {
+    font-size: 0.82rem; color: #6b7280;
+    animation: fadeUp 0.3s 0.2s ease both;
+  }
+  @keyframes popIn  { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes fadeUp { from { transform: translateY(6px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  /* ── Responsive ── */
+  @media (max-width: 500px) {
+    body { padding: 18px 14px 52px; }
+    .hero-title { letter-spacing: 0.5px; }
+    .info-bar { gap: 6px; }
+    .info-btn { padding: 7px 13px; font-size: 0.78rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Username modal ── -->
+<div class="user-modal-overlay" id="userModal">
+  <div class="user-modal-card">
+    <div class="user-modal-title">Enter Your Username</div>
+    <p class="user-modal-copy">Enter your MT Games username to save your predictions and climb the leaderboard.</p>
+    <input id="usernameInput" class="username-input" type="text" maxlength="24" placeholder="e.g. tapo22" autocomplete="off" />
+    <div class="user-modal-error" id="usernameError"></div>
+    <button class="btn-primary" id="usernameBtn" style="width:100%;justify-content:center;" onclick="handleUsernameSubmit()">Continue →</button>
+  </div>
+</div>
+
+<!-- ── How to Play modal ── -->
+<div class="info-modal-overlay" id="howToPlayModal">
+  <div class="info-modal-box">
+    <div class="info-modal-header">
+      <span class="info-modal-header-title">💡 How to Play</span>
+      <button class="info-modal-close-btn" onclick="closeInfoModal('howToPlayModal')">✕</button>
+    </div>
+    <div class="info-modal-body">
+      <ul class="how-to-list">
+        <li><span class="htl-icon">🏏</span><span>Predict team scores, player runs, and wickets for upcoming IPL matches</span></li>
+        <li><span class="htl-icon">🎯</span><span>The closer your prediction is to the actual result, the more points you win. An exact prediction wins the maximum points</span></li>
+        <li><span class="htl-icon">🔓</span><span>Answer pre-match questions before the game starts, then unlock bonus questions during the live match</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ── Scoring modal ── -->
+<div class="info-modal-overlay" id="scoringModal">
+  <div class="info-modal-box">
+    <div class="info-modal-header">
+      <span class="info-modal-header-title">📊 Scoring Guide</span>
+      <button class="info-modal-close-btn" onclick="closeInfoModal('scoringModal')">✕</button>
+    </div>
+    <div class="info-modal-body" style="padding:0;">
+      <table class="scoring-table">
+        <thead>
+          <tr>
+            <th>Scoring Type</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="scoring-type-label">Team Score</span><span style="font-size:0.72rem;color:#9ca3af;">6-over &amp; 12-over phases</span></td>
+            <td class="scoring-pts-list">
+              <span class="pts-exact">Exact = 100 pts</span><br>
+              1–5 away = 90 pts<br>6–10 away = 75 pts<br>
+              11–15 away = 55 pts<br>16–20 away = 35 pts<br>
+              21–30 away = 15 pts<br>31+ away = 0 pts
+            </td>
+          </tr>
+          <tr>
+            <td><span class="scoring-type-label">Team Score</span><span style="font-size:0.72rem;color:#9ca3af;">Final innings total</span></td>
+            <td class="scoring-pts-list">
+              <span class="pts-exact">Exact = 100 pts</span><br>
+              1–5 away = 90 pts<br>6–10 away = 80 pts<br>
+              11–20 away = 60 pts<br>21–30 away = 40 pts<br>
+              31–40 away = 20 pts<br>41+ away = 0 pts
+            </td>
+          </tr>
+          <tr>
+            <td><span class="scoring-type-label">Batter Runs</span></td>
+            <td class="scoring-pts-list">
+              <span class="pts-exact">Exact = 150 pts</span><br>
+              1–5 away = 130 pts<br>6–10 away = 110 pts<br>
+              11–15 away = 90 pts<br>16–20 away = 70 pts<br>
+              21–30 away = 40 pts<br>31–40 away = 20 pts<br>41+ away = 0 pts
+            </td>
+          </tr>
+          <tr>
+            <td><span class="scoring-type-label">Batter Sixes</span></td>
+            <td class="scoring-pts-list">
+              <span class="pts-exact">Exact = 100 pts</span><br>
+              1 away = 75 pts<br>2 away = 45 pts<br>
+              3 away = 20 pts<br>4+ away = 0 pts
+            </td>
+          </tr>
+          <tr>
+            <td><span class="scoring-type-label">Bowler Wickets</span></td>
+            <td class="scoring-pts-list">
+              <span class="pts-exact">Exact = 50 pts</span><br>
+              1 away = 20 pts<br>2 away = 10 pts<br>3+ away = 0 pts
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── Prediction modal ── -->
+<div class="pred-modal" id="predModal">
+  <div class="pred-modal-wrapper">
+
+    <!-- Success toast (sits inside wrapper, overlays everything) -->
+    <div class="success-toast" id="successToast">
+      <div class="success-toast-icon">✓</div>
+      <div class="success-toast-title">All predictions saved</div>
+      <div class="success-toast-sub">Closing…</div>
+    </div>
+
+    <div class="pred-modal-header" id="predModalHeader">
+      <div class="pred-modal-header-top">
+        <button class="pred-modal-back-btn" onclick="closePredModal()">←</button>
+        <div class="pred-modal-title-wrap">
+          <h3 id="predModalTitle">Make Predictions</h3>
+          <div class="pred-modal-subtitle" id="predModalSubtitle">Enter your predictions below</div>
+        </div>
+        <button class="pred-modal-close-btn" onclick="closePredModal()">✕</button>
+      </div>
+      <!-- Timer row — only visible when match is open -->
+      <div class="pred-timer-wrap" id="predTimerWrap" style="display:none;">
+        <div class="pred-timer" id="predTimer">
+          <span class="timer-icon">⏱</span>
+          <span class="timer-val" id="predTimerVal">--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab selector -->
+    <div class="pred-tab-row" id="predTabRow" style="display:none;">
+      <button class="pred-tab-btn active" id="tabPreGame" onclick="switchPredTab('pre')">
+        🏏 Pre-game Questions <span class="pred-tab-count" id="tabPreCount">0</span>
+      </button>
+      <button class="pred-tab-btn" id="tabDuringGame" onclick="switchPredTab('during')">
+        🔓 During Game <span class="pred-tab-count" id="tabDuringCount">0</span>
+      </button>
+    </div>
+
+    <div class="pred-modal-body" id="predModalBody">
+      <div class="pred-loading">Loading questions…</div>
+    </div>
+
+    <div class="pred-modal-footer" id="predModalFooter" style="display:none;">
+      <button class="pred-submit-btn" id="predSubmitBtn" disabled onclick="submitPredictions()">Save Predictions</button>
+      <div class="pred-submit-status" id="predSubmitStatus"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Page ── -->
+<div class="page-wrap">
+  <header class="page-header">
+    <a href="index.html" class="logo-wrap" onclick="trackClick('cc_logo_click')">
+      <img src="mtgames_logo.png" alt="MT Games logo" class="logo-img" />
+      <span class="logo-text">MT Games</span>
+    </a>
+    <div class="hamburger-wrapper">
+      <button class="hamburger-menu-btn" id="hamburgerMenuBtn" aria-label="Open navigation menu" onclick="toggleHamburgerMenu()">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="hamburger-dropdown" id="hamburgerDropdown">
+        <a href="fantasy.html"                  onclick="trackClick('nav_fantasy_home')">⚾ Fantasy Cricket</a>
+        <a href="create-team.html"              onclick="trackClick('nav_create_team')">🏏 Fantasy 11</a>
+        <a href="closest-call.html" class="active-page">🎯 Closest Call Cricket</a>
+        <a href="fantasy_leaderboard.html"      onclick="trackClick('nav_fantasy_lb')">🏆 Fantasy Leaderboard</a>
+        <a href="closest-call-leaderboard.html" onclick="trackClick('nav_cc_lb')">📊 Closest Call Leaderboard</a>
+        <a href="spelling-bee.html"             onclick="trackClick('nav_spelling_bee')">🐝 Spelling Bee</a>
+        <a href="sudoku.html"                   onclick="trackClick('nav_sudoku')">🧩 Sudoku</a>
+        <a href="index.html"                    onclick="trackClick('nav_main_home')">🏠 Main Home</a>
+        <a href="contact.html"                  onclick="trackClick('contact_us_menu_click')">✉️ Contact Us</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero-section">
+    <h1 class="hero-title">Closest Call Cricket</h1>
+    <p class="hero-subtitle">Predict the runs and wickets for upcoming IPL matches. The closer your call, the higher you climb.</p>
+  </section>
+
+  <!-- Info bar -->
+  <div class="info-bar">
+    <button class="info-btn info-btn-play" onclick="openInfoModal('howToPlayModal'); trackClick('cc_how_to_play')">💡 How to Play</button>
+    <button class="info-btn info-btn-score" onclick="openInfoModal('scoringModal'); trackClick('cc_scoring')">📊 Scoring</button>
+    <a href="closest-call-leaderboard.html" class="info-btn info-btn-lb" onclick="trackClick('hero_lb_btn')">🏆 Leaderboard</a>
+  </div>
+
+  <!-- Matches -->
+  <section class="content-section" id="matchesSection">
+    <div class="section-header">
+      <span class="section-label">Upcoming Matches</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="match-grid" id="matchGrid">
+      <div class="match-empty">Loading matches…</div>
+    </div>
+  </section>
+
+</div><!-- end page-wrap -->
+
+<script>
+  const USER_ID_KEY   = 'mtgames_user_id';
+  const USER_NAME_KEY = 'mtgames_user_name';
+
+  let allMatches         = [];
+  let currentMatchId     = null;
+  let currentMatchStatus = 'open';
+  let currentQuestions   = [];
+  let pendingMatchId     = null;
+  let activePredTab      = 'pre';  // 'pre' | 'during'
+  let timerInterval      = null;
+
+  const TEAM_COLOR = {
+    DC:'#004C8A', CSK:'#C8A400', SRH:'#E65100', PBKS:'#B71C1C',
+    MI:'#005DA0', RCB:'#9B1B30', KKR:'#4A148C', RR:'#AD1457',
+    GT:'#1A237E', LSG:'#0288D1'
+  };
+
+  /* ── utils ── */
+  function getCurrentUser() {
+    return { id: localStorage.getItem(USER_ID_KEY), name: localStorage.getItem(USER_NAME_KEY) };
+  }
+  function sanitizeUsername(n) {
+    return String(n||'').trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
+  }
+  function escapeHTML(v) {
+    return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+  function teamColor(code) { return TEAM_COLOR[String(code||'').toUpperCase()]||'#334155'; }
+  function formatDate(d) {
+    if (!d) return '';
+    const dt = new Date(d);
+    return dt.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  }
+
+  /* ── Hamburger ── */
+  function toggleHamburgerMenu() { document.getElementById('hamburgerDropdown').classList.toggle('open'); }
+  document.addEventListener('click', function(e) {
+    const btn = document.getElementById('hamburgerMenuBtn');
+    const dd  = document.getElementById('hamburgerDropdown');
+    if (dd && btn && !btn.contains(e.target) && !dd.contains(e.target)) dd.classList.remove('open');
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.getElementById('hamburgerDropdown')?.classList.remove('open');
+      // Close any info modal
+      document.querySelectorAll('.info-modal-overlay.show').forEach(m => m.classList.remove('show'));
+      closePredModal();
+    }
+  });
+
+  /* ── Click tracking ── */
+  function trackClick(buttonName, metadata = {}) {
+    const u = getCurrentUser();
+    fetch('/api/track-click', {
+      method:'POST', headers:{'Content-Type':'application/json'}, keepalive:true,
+      body: JSON.stringify({
+        user_id: u.id ? Number(u.id) : null, user_name: u.name||null,
+        event_name:'button_click', button_name: buttonName,
+        page_name:'closest-call.html', page_url: window.location.pathname,
+        event_metadata: metadata,
+      }),
+    }).catch(()=>{});
+  }
+
+  /* ── Info modals ── */
+  function openInfoModal(id) { document.getElementById(id).classList.add('show'); }
+  function closeInfoModal(id) { document.getElementById(id).classList.remove('show'); }
+  document.querySelectorAll('.info-modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.classList.remove('show');
+    });
+  });
+
+  /* ── Username modal ── */
+  function showUsernameModal() {
+    const modal = document.getElementById('userModal');
+    const input = document.getElementById('usernameInput');
+    const err   = document.getElementById('usernameError');
+    if (err) err.textContent = '';
+    if (input) input.value = '';
+    modal.classList.add('show');
+    setTimeout(() => input && input.focus(), 50);
+  }
+  function hideUsernameModal() { document.getElementById('userModal').classList.remove('show'); }
+
+  async function handleUsernameSubmit() {
+    const input = document.getElementById('usernameInput');
+    const err   = document.getElementById('usernameError');
+    const btn   = document.getElementById('usernameBtn');
+    const cleanName = sanitizeUsername(input ? input.value : '');
+    if (!cleanName || cleanName.length < 3) {
+      if (err) err.textContent = 'Please enter at least 3 characters. Letters, numbers, underscore only.';
+      if (input) input.focus();
+      return;
+    }
+    try {
+      if (err) err.textContent = '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      const res  = await fetch('/api/create-ipl-user', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ user_name: cleanName }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not save username.');
+      localStorage.setItem(USER_ID_KEY,   data.user.id);
+      localStorage.setItem(USER_NAME_KEY, data.user.user_name);
+      hideUsernameModal();
+      if (pendingMatchId !== null) { openPredModal(pendingMatchId); pendingMatchId = null; }
+    } catch (err2) {
+      if (err) err.textContent = err2.message || 'Something went wrong. Try again.';
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Continue →'; }
+    }
+  }
+  document.getElementById('usernameInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleUsernameSubmit();
+  });
+
+  /* ── Load matches ── */
+  async function loadMatches() {
+    try {
+      const res  = await fetch('/api/get-closest-call-matches');
+      const data = await res.json();
+      allMatches = data.matches || [];
+      renderMatches();
+    } catch {
+      document.getElementById('matchGrid').innerHTML =
+        '<div class="match-empty">Could not load matches. Please refresh.</div>';
+    }
+  }
+
+  function renderMatches() {
+    const grid = document.getElementById('matchGrid');
+    if (!allMatches.length) {
+      grid.innerHTML = '<div class="match-empty">No prediction contests available right now. Check back soon!</div>';
+      return;
+    }
+    grid.innerHTML = allMatches.map(m => {
+      const s = m.status;
+      let pillClass = 'status-open',  pillLabel = '● Open';
+      let btnClass  = 'btn-open',     btnLabel  = 'Make Predictions';
+      if (s === 'locked') { pillClass='status-locked'; pillLabel='⏱ Locked';   btnClass='btn-locked';  btnLabel='View Predictions'; }
+      if (s === 'closed') { pillClass='status-closed'; pillLabel='✓ Results';  btnClass='btn-results'; btnLabel='View Results'; }
+      return `
+        <div class="match-card">
+          <div class="match-card-info">
+            <div class="match-teams">${escapeHTML(m.match_title || m.team_1+' vs '+m.team_2)}</div>
+            <div class="match-date-label">${formatDate(m.match_date)}</div>
+          </div>
+          <span class="status-pill ${pillClass}">${pillLabel}</span>
+          <button class="match-card-btn ${btnClass}" onclick="onMatchCardClick(${m.id})">${btnLabel}</button>
+        </div>`;
+    }).join('');
+  }
+
+  function onMatchCardClick(matchId) {
+    trackClick('cc_match_card_click', { cc_match_id: matchId });
+    const u = getCurrentUser();
+    if (!u.name) { pendingMatchId = matchId; showUsernameModal(); }
+    else openPredModal(matchId);
+  }
+
+  /* ── Prediction modal ── */
+  async function openPredModal(matchId) {
+    currentMatchId = matchId;
+    activePredTab  = 'pre';
+    const u = getCurrentUser();
+
+    document.getElementById('predModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('predModalBody').innerHTML = '<div class="pred-loading">Loading questions…</div>';
+    document.getElementById('predModalFooter').style.display = 'none';
+    document.getElementById('predTabRow').style.display = 'none';
+    document.getElementById('predTimerWrap').style.display = 'none';
+    document.getElementById('successToast').classList.remove('show');
+    stopTimer();
+
+    try {
+      const url = `/api/get-closest-call-questions?closest_call_match_id=${matchId}` +
+        (u.name ? `&user_name=${encodeURIComponent(u.name)}` : '');
+      const res  = await fetch(url);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not load questions.');
+
+      currentMatchStatus = data.match.status;
+      currentQuestions   = data.questions || [];
+
+      // Header style
+      const hdr = document.getElementById('predModalHeader');
+      hdr.className = 'pred-modal-header' +
+        (currentMatchStatus === 'locked' ? ' locked-header' : '') +
+        (currentMatchStatus === 'closed' ? ' closed-header' : '');
+      document.getElementById('predModalTitle').textContent =
+        data.match.match_title || `${data.match.team_1} vs ${data.match.team_2}`;
+      document.getElementById('predModalSubtitle').textContent =
+        currentMatchStatus === 'closed' ? 'Results are in! See how you did.' :
+        currentMatchStatus === 'locked' ? 'Match in progress — bonus questions may be open.' :
+        'Enter your predictions below';
+
+      // Split questions into pre-game and during-game
+      // Pre-game  = open_time is null (immediately available) or open_time has passed
+      // During-game = open_time is in the future (not yet unlocked)
+      const now = Date.now();
+      const preGameQs    = currentQuestions.filter(q => !q.open_time || new Date(q.open_time).getTime() <= now);
+      const duringGameQs = currentQuestions.filter(q => q.open_time  && new Date(q.open_time).getTime()  > now);
+
+      // Tab counts
+      document.getElementById('tabPreCount').textContent    = preGameQs.length;
+      document.getElementById('tabDuringCount').textContent = duringGameQs.length;
+      document.getElementById('predTabRow').style.display   = 'flex';
+
+      // Set tab active states
+      document.getElementById('tabPreGame').classList.add('active');
+      document.getElementById('tabDuringGame').classList.remove('active');
+
+      // Mark during-game tab as locked if no questions there
+      if (!duringGameQs.length) {
+        document.getElementById('tabDuringGame').classList.add('tab-locked');
+      } else {
+        document.getElementById('tabDuringGame').classList.remove('tab-locked');
+      }
+
+      // Timer: find earliest lock_time among editable pre-game questions
+      if (currentMatchStatus === 'open' || currentMatchStatus === 'locked') {
+        const editableQs = preGameQs.filter(q => q.is_editable && q.lock_time);
+        if (editableQs.length) {
+          const earliest = Math.min(...editableQs.map(q => new Date(q.lock_time).getTime()));
+          startTimer(new Date(earliest));
+        } else if (data.match.match_date) {
+          startTimer(new Date(data.match.match_date));
+        }
+      }
+
+      // Render pre-game questions by default
+      renderTabQuestions(preGameQs, duringGameQs);
+
+    } catch (err) {
+      document.getElementById('predModalBody').innerHTML =
+        `<div class="pred-loading" style="color:#dc2626;">Could not load questions: ${escapeHTML(err.message)}</div>`;
+    }
+  }
+
+  function closePredModal() {
+    document.getElementById('predModal').classList.remove('show');
+    document.body.style.overflow = '';
+    stopTimer();
+    currentMatchId   = null;
+    currentQuestions = [];
+    activePredTab    = 'pre';
+  }
+
+  /* ── Tab switching ── */
+  function switchPredTab(tab) {
+    const now = Date.now();
+    const preGameQs    = currentQuestions.filter(q => !q.open_time || new Date(q.open_time).getTime() <= now);
+    const duringGameQs = currentQuestions.filter(q => q.open_time  && new Date(q.open_time).getTime()  > now);
+
+    // If during-game tab has no questions yet, show notice popup instead of switching
+    if (tab === 'during' && !duringGameQs.length) {
+      showDuringGameNotice();
+      return;
+    }
+
+    activePredTab = tab;
+    document.getElementById('tabPreGame').classList.toggle('active',    tab === 'pre');
+    document.getElementById('tabDuringGame').classList.toggle('active', tab === 'during');
+    renderTabQuestions(preGameQs, duringGameQs);
+  }
+
+  function showDuringGameNotice() {
+    const body = document.getElementById('predModalBody');
+    // Briefly show notice in a small overlay-style message then snap back
+    const existing = document.getElementById('duringGameNotice');
+    if (existing) { existing.remove(); }
+    const notice = document.createElement('div');
+    notice.id = 'duringGameNotice';
+    notice.style.cssText = 'position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:20px;pointer-events:none;';
+    notice.innerHTML = `
+      <div class="during-game-notice" style="pointer-events:all;max-width:320px;">
+        <div class="dgn-icon">🔒</div>
+        <div class="dgn-title">These questions become live during the game</div>
+        <div class="dgn-sub">Come back once the match starts to answer bonus powerplay and innings questions</div>
+      </div>`;
+    document.getElementById('predModal').querySelector('.pred-modal-wrapper').appendChild(notice);
+    setTimeout(() => notice.remove(), 2800);
+  }
+
+  function renderTabQuestions(preGameQs, duringGameQs) {
+    const qs = activePredTab === 'pre' ? preGameQs : duringGameQs;
+
+    if (!qs.length) {
+      document.getElementById('predModalBody').innerHTML =
+        '<div class="pred-loading">No questions available in this section.</div>';
+      document.getElementById('predModalFooter').style.display = 'none';
+      return;
+    }
+
+    document.getElementById('predModalBody').innerHTML = qs.map(q => renderQuestionCard(q)).join('');
+
+    // Attach input listeners for save-button gating
+    document.querySelectorAll('.pred-number-input').forEach(inp => {
+      inp.addEventListener('input', checkAllFilled);
+    });
+
+    // Show footer only if there are editable questions in this tab
+    const hasEditable = qs.some(q => q.is_editable);
+    const footer = document.getElementById('predModalFooter');
+    if (hasEditable) {
+      footer.style.display = 'block';
+      document.getElementById('predSubmitStatus').textContent = '';
+      checkAllFilled(); // set initial button state
+    } else {
+      footer.style.display = 'none';
+    }
+  }
+
+  /* ── Check all editable inputs are filled ── */
+  function checkAllFilled() {
+    const inputs = document.querySelectorAll('.pred-number-input');
+    const editableInputs = Array.from(inputs).filter(i => !i.disabled);
+    const allFilled = editableInputs.length > 0 && editableInputs.every(i => i.value.trim() !== '');
+    const btn = document.getElementById('predSubmitBtn');
+    btn.disabled = !allFilled;
+  }
+
+  function renderQuestionCard(q) {
+    const isScored   = q.status === 'scored';
+    const isEditable = q.is_editable;
+    const hasExisting = q.user_prediction !== null;
+
+    let cardClass = 'question-card';
+    if (isScored)        cardClass += ' is-scored';
+    else if (isEditable) cardClass += ' is-open';
+    else                 cardClass += ' is-locked';
+
+    const teamDot = q.team_code
+      ? `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${escapeHTML(teamColor(q.team_code))};margin-right:5px;flex-shrink:0;"></span>`
+      : '';
+
+    let inputHtml = '';
+    if (isScored) {
+      const diff    = q.user_prediction !== null ? q.user_difference : null;
+      const pts     = q.user_prediction !== null ? Math.round(Number(q.user_points || 0)) : null;
+      const isExact = diff === 0;
+      inputHtml = `
+        <div class="scored-result-grid">
+          <div class="scored-stat">
+            <div class="scored-stat-val">${q.user_prediction !== null ? q.user_prediction : '—'}</div>
+            <div class="scored-stat-label">Your Pick</div>
+          </div>
+          <div class="scored-stat">
+            <div class="scored-stat-val">${q.actual_value !== null ? q.actual_value : '—'}</div>
+            <div class="scored-stat-label">Actual</div>
+          </div>
+          <div class="scored-stat ${isExact ? 'exact-call' : ''}">
+            <div class="scored-pts-val">${pts !== null ? pts : '—'} pts</div>
+            <div class="scored-stat-label">${diff !== null ? (isExact ? '✓ Exact!' : `Off by ${diff}`) : 'No pick'}</div>
+          </div>
+        </div>`;
+    } else if (isEditable) {
+      inputHtml = `
+        <div class="question-input-row">
+          <input
+            type="number" min="0" max="999"
+            class="pred-number-input"
+            id="qinput_${q.id}"
+            data-question-id="${q.id}"
+            value="${hasExisting ? q.user_prediction : ''}"
+            placeholder="Enter number…"
+          />
+          ${hasExisting ? `<span class="existing-pred-badge">Saved: ${q.user_prediction}</span>` : ''}
+        </div>`;
+    } else {
+      inputHtml = `<div class="lock-reason-badge">🔒 ${escapeHTML(q.lock_reason || 'Locked')}</div>`;
+    }
+
+    return `
+      <div class="${cardClass}">
+        <div class="question-text" style="display:flex;align-items:flex-start;">
+          ${teamDot}<span>${escapeHTML(q.question_text)}</span>
+        </div>
+        ${inputHtml}
+      </div>`;
+  }
+
+  /* ── Timer ── */
+  function startTimer(deadline) {
+    const wrap   = document.getElementById('predTimerWrap');
+    const valEl  = document.getElementById('predTimerVal');
+    const timerEl = document.getElementById('predTimer');
+
+    function tick() {
+      const diff = deadline.getTime() - Date.now();
+      if (diff <= 0) {
+        valEl.textContent = 'Predictions closed';
+        timerEl.classList.remove('urgent');
+        clearInterval(timerInterval);
+        return;
+      }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      if (h > 0) {
+        valEl.textContent = `Closes in ${h}h ${String(m).padStart(2,'0')}m`;
+      } else if (m > 0) {
+        valEl.textContent = `Closes in ${m}m ${String(s).padStart(2,'0')}s`;
+      } else {
+        valEl.textContent = `Closes in ${s}s`;
+      }
+      timerEl.classList.toggle('urgent', diff < 10 * 60 * 1000);
+    }
+    wrap.style.display = '';
+    tick();
+    timerInterval = setInterval(tick, 1000);
+  }
+  function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    document.getElementById('predTimerWrap').style.display = 'none';
+  }
+
+  /* ── Submit predictions ── */
+  async function submitPredictions() {
+    const u = getCurrentUser();
+    if (!u.name) { showUsernameModal(); return; }
+
+    const btn    = document.getElementById('predSubmitBtn');
+    const status = document.getElementById('predSubmitStatus');
+
+    const inputs = document.querySelectorAll('.pred-number-input');
+    const preds  = [];
+    for (const input of inputs) {
+      const val    = input.value.trim();
+      if (val === '') continue;
+      const numVal = parseInt(val, 10);
+      if (isNaN(numVal) || numVal < 0) {
+        status.textContent = 'Please enter valid non-negative numbers.';
+        status.className   = 'pred-submit-status error';
+        input.focus();
+        return;
+      }
+      preds.push({ question_id: Number(input.dataset.questionId), predicted_value: numVal });
+    }
+
+    if (!preds.length) {
+      status.textContent = 'Enter at least one prediction before saving.';
+      status.className   = 'pred-submit-status error';
+      return;
+    }
+
+    try {
+      btn.disabled    = true;
+      btn.textContent = 'Saving…';
+      status.textContent = '';
+      status.className   = 'pred-submit-status';
+
+      const res  = await fetch('/api/submit-closest-call-predictions', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          user_name: u.name,
+          closest_call_match_id: currentMatchId,
+          predictions: preds,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not save predictions.');
+
+      trackClick('cc_submit_predictions', { cc_match_id: currentMatchId, count: preds.length });
+
+      // Show success toast then close
+      showSuccessToast();
+
+    } catch (err) {
+      status.textContent = err.message || 'Something went wrong. Please try again.';
+      status.className   = 'pred-submit-status error';
+      btn.disabled    = false;
+      btn.textContent = 'Save Predictions';
+    }
+  }
+
+  function showSuccessToast() {
+    const toast = document.getElementById('successToast');
+    toast.classList.add('show');
+    stopTimer();
+    setTimeout(() => {
+      closePredModal();
+      toast.classList.remove('show');
+    }, 1800);
+  }
+
+  /* ── Init ── */
+  loadMatches();
+</script>
+</body>
+</html>
