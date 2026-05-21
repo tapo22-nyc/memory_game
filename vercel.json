@@ -3,6 +3,10 @@
     {
       "path": "/api/lock-fantasy-match",
       "schedule": "55 9 17 5 *"
+    },
+    {
+      "path": "/api/cron-sync-fantasy-score",
+      "schedule": "*/10 * * * *"
     }
   ]
 }
