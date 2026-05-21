@@ -232,6 +232,30 @@ export default async function handler(req, res) {
       WHERE s.fantasy_match_id = ${fantasyMatchId}
     `;
 
+    await sql`
+      INSERT INTO fantasy_score_sync_snapshots
+      (
+        fantasy_match_id,
+        sync_source,
+        score_update_note,
+        snapshot_json,
+        inserted_players_count,
+        unmapped_players,
+        sync_status
+      )
+      VALUES
+      (
+        ${fantasyMatchId},
+        ${req.query.source || 'manual'},
+        ${cricData.data?.status || cricData.status || 'Scorecard snapshot'},
+        ${JSON.stringify(cricData)},
+        ${insertedPlayers.length},
+        ${JSON.stringify(unmappedPlayers)},
+        'success'
+      )
+    `;
+
+    
     return res.status(200).json({
       message: 'Live CricAPI stats synced successfully',
       fantasy_match_id: fantasyMatchId,
