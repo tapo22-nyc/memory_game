@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   try {
     const data = await resend.emails.send({
       from: 'MT Games <login@playmtgames.com>',
-      to: 'YOUR_PERSONAL_EMAIL@gmail.com',
+      to: 'tapo.nyc@gmail.com',
       subject: 'MT Games Test Email',
       html: `
         <h1>MT Games Email Working 🚀</h1>
