@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@neondatabase/serverless": "latest"
+    "@neondatabase/serverless": "latest",
+    "resend": "^6.12.3"
   }
 }
