@@ -341,7 +341,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   /* Input row */
   .question-input-row { display: flex; align-items: center; gap: 10px; }
   .pred-number-input {
-    width: 90px; padding: 10px 12px;
+    width: 130px; padding: 10px 12px;
     border: 1.5px solid #d1d5db; border-radius: 10px;
     font-size: 1rem; font-weight: 700; color: #111827;
     background: #ffffff; outline: none; transition: border-color 0.2s;
@@ -1177,16 +1177,38 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             '<div class="scored-stat-label">' + (diff !== null ? (isExact ? '✓ Exact!' : 'Off by ' + diff) : 'No pick') + '</div>' +
           '</div>' +
         '</div>';
-    } else if (isEditable) {
-      inputHtml =
-        '<div class="question-input-row">' +
-          '<input type="number" min="0" max="999" class="pred-number-input"' +
-          ' id="qinput_' + q.id + '" data-question-id="' + q.id + '"' +
-          ' value="' + (hasExisting ? q.user_prediction : '') + '"' +
-          ' placeholder="Enter number…" />' +
-          (hasExisting ? '<span class="existing-pred-badge">Saved: ' + q.user_prediction + '</span>' : '') +
-        '</div>';
-    } else {
+    } 
+       else if (isEditable) {
+     
+       let placeholderText = 'Enter prediction';
+     
+       if (
+         q.question_type === 'team_final_score' ||
+         q.question_type === 'team_score_6' ||
+         q.question_type === 'team_score_12' ||
+         q.question_type === 'batter_runs'
+       ) {
+         placeholderText = 'Enter score';
+       }
+     
+       if (q.question_type === 'bowler_wickets') {
+         placeholderText = 'Enter wickets';
+       }
+     
+       inputHtml =
+         '<div class="question-input-row">' +
+           '<input type="number" min="0" max="999" class="pred-number-input"' +
+           ' id="qinput_' + q.id + '" data-question-id="' + q.id + '"' +
+           ' value="' + (hasExisting ? q.user_prediction : '') + '"' +
+           ' placeholder="' + placeholderText + '" />' +
+           (hasExisting
+             ? '<span class="existing-pred-badge">Saved: ' + q.user_prediction + '</span>'
+             : '') +
+         '</div>';
+     
+     }
+   
+    else {
       const lockDisplay = (!q.lock_reason ||
         q.lock_reason === 'Locked' ||
         q.lock_reason === 'Match locked' ||
