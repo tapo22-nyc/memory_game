@@ -52,6 +52,25 @@ export default async function handler(req, res) {
       WHERE id = ${fantasyMatchId}
     `;
 
+      await sql`
+    INSERT INTO fantasy_score_sync_snapshots
+    (
+      fantasy_match_id,
+      sync_source,
+      score_update_note,
+      snapshot_json,
+      sync_status
+    )
+    VALUES
+    (
+      ${fantasyMatchId},
+      ${req.query.source || 'manual'},
+      ${scoreUpdateNote},
+      ${JSON.stringify(match)},
+      'success'
+    )
+  `;
+
     return res.status(200).json({
       message: 'Match score note updated successfully',
       fantasy_match_id: fantasyMatchId,
