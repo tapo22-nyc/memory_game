@@ -70,24 +70,17 @@ export default async function handler(req, res) {
           data.unmapped_players &&
           data.unmapped_players.length > 0
         ) {
-          await sql`
-            UPDATE fantasy_score_sync_control
-            SET
-              is_auto_sync_enabled = FALSE,
-              sync_status = 'manual',
-              stop_reason = ${`Stopped because unmapped players found: ${data.unmapped_players.join(', ')}`},
-              updated_at = CURRENT_TIMESTAMP
-            WHERE fantasy_match_id = ${fantasyMatchId}
-          `;
+          console.log(
+            `Unmapped players for match ${fantasyMatchId}:`,
+            data.unmapped_players
+          );
 
           finalResults.push({
             fantasy_match_id: fantasyMatchId,
-            stopped: true,
-            reason: 'Unmapped players found',
+            warning: true,
+            reason: 'Unmapped players found but automation continued',
             unmapped_players: data.unmapped_players
           });
-
-          continue;
         }
       }
 
@@ -111,10 +104,23 @@ export default async function handler(req, res) {
             updated_at = CURRENT_TIMESTAMP
           WHERE fantasy_match_id = ${fantasyMatchId}
         `;
+
+        finalResults.push({
+          fantasy_match_id: fantasyMatchId,
+          stopped: true,
+          reason: 'Suspicious points jump',
+          beforeMaxPoints,
+          afterMaxPoints,
+          pointsJump,
+          allowedJump
+        });
+
+        continue;
       }
 
       finalResults.push({
         fantasy_match_id: fantasyMatchId,
+        success: true,
         beforeMaxPoints,
         afterMaxPoints,
         pointsJump,
@@ -130,6 +136,9 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('cron-sync-fantasy-score error:', error);
-    return res.status(500).json({ error: error.message });
+
+    return res.status(500).json({
+      error: error.message
+    });
   }
 }
