@@ -981,11 +981,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   function renderMatches() {
     clearCardTimers();
     const grid = document.getElementById('matchGrid');
-    if (!allMatches.length) {
-      grid.innerHTML = '<div class="match-empty">No prediction contests available right now. Check back soon!</div>';
-      return;
-    }
-    grid.innerHTML = allMatches.map(function(m) {
+   
+ const visibleMatches = allMatches.filter(function(m) {
+  return m.status === 'open' || m.status === 'locked';
+});
+
+if (!visibleMatches.length) {
+  grid.innerHTML = '<div class="match-empty">No upcoming or live prediction contests right now. Check back soon!</div>';
+  return;
+}
+   
+    grid.innerHTML = visibleMatches.map(function(m) {
       const s = m.status;
       let btnClass, btnLabel;
       if (s === 'open')        { btnClass = 'btn-open';   btnLabel = 'Make Predictions'; }
