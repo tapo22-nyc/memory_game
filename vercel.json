@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/cron-sync-fantasy-score",
-      "schedule": "*/5 * * * *"
+      "schedule": "*/20 * * * *"
     }
   ]
 }
