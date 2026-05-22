@@ -2198,11 +2198,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="loading-row">Loading matches…</div>
       </div>
 
-      <div class="closed-games-toggle" id="closedFantasyToggleWrap" style="display:none;">
-        <button class="btn-ghost" id="toggleClosedFantasyBtn" onclick="trackClick('view_closed_games'); toggleClosedFantasyMatches()">
-          View Closed Games
-        </button>
-      </div>
+  <div class="closed-games-toggle" id="closedFantasyToggleWrap" style="display:flex;justify-content:center;margin-top:20px;">
+    <button
+      class="btn-primary"
+      onclick="trackClick('go_to_closest_call_predictions'); window.location.href='closest-call.html';"
+      style="
+        font-size:1rem;
+        font-weight:800;
+        padding:16px 34px;
+        border-radius:16px;
+        background:linear-gradient(135deg,#2563eb,#1d4ed8);
+        color:#ffffff;
+        border:none;
+        box-shadow:0 8px 24px rgba(37,99,235,0.28);
+        letter-spacing:0.3px;
+      "
+    >
+      🎯 Make Score Predictions
+    </button>
+  </div>
+      
       
         <!-- PREDICT CONTEST WINNER — hidden until next contest weekend; unhide to re-enable
         <div class="hero-scoring-link poll-action-link">
