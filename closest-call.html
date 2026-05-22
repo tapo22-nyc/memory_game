@@ -982,10 +982,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     clearCardTimers();
     const grid = document.getElementById('matchGrid');
    
- const visibleMatches = allMatches.filter(function(m) {
-  return m.status === 'open' || m.status === 'locked';
-});
-
+const visibleMatches = allMatches
+  .filter(function(m) {
+    return m.status === 'open' || m.status === 'locked';
+  })
+  .sort(function(a, b) {
+    return a.id - b.id;
+  });
+   
 if (!visibleMatches.length) {
   grid.innerHTML = '<div class="match-empty">No upcoming or live prediction contests right now. Check back soon!</div>';
   return;
