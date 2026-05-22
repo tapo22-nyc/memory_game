@@ -2131,7 +2131,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="user-modal-card">
       <div class="user-modal-title">Sign in to MTGames</div>
       <p class="user-modal-copy">
-        Create a cool username or enter your existing username to continue.
+        Create a cool username or enter your existing username, and add your email to continue.
       </p>
       <input
         id="usernameInput"
@@ -2139,6 +2139,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         type="text"
         maxlength="24"
         placeholder="e.g. tapo22"
+      />
+      <input
+        id="emailInput"
+        class="username-input"
+        type="email"
+        placeholder="Email will be used to contact you for awards from contests"
+        autocomplete="email"
+        style="margin-top:10px;"
       />
       <div class="user-modal-error" id="usernameError"></div>
       <button class="btn-primary" id="usernameBtn" onclick="trackClick('sign_in_modal_submit'); createUserAccount()">Continue</button>
@@ -2157,12 +2165,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button class="hamburger-menu-btn" id="hamburgerMenuBtn" aria-label="Open navigation menu" onclick="toggleHamburgerMenu()">
           <span></span><span></span><span></span>
         </button>
-      <nav class="hamburger-dropdown" id="hamburgerDropdown">
-        <a href="create-team.html" class="active-page" onclick="trackClick('nav_create_team')">🏏 Fantasy 11 Cricket</a>
-        <a href="closest-call.html" onclick="trackClick('nav_closest_call')">🎯 Closest Call Cricket</a>
-        <a href="prizes.html" onclick="trackClick('nav_prizes')">🏅 Prizes</a>
-        <a href="contact.html" onclick="trackClick('contact_us_menu_click')">✉️ Contact Us</a>
-      </nav>
+        <nav class="hamburger-dropdown" id="hamburgerDropdown">
+          <a href="fantasy.html" onclick="trackClick('nav_fantasy_home')">⚾ Fantasy Cricket</a>
+          <a href="create-team.html" class="active-page" onclick="trackClick('nav_create_team')">🏏 Fantasy 11</a>
+          <a href="closest-call.html" onclick="trackClick('nav_closest_call')">🎯 Closest Call Cricket</a>
+          <a href="fantasy_leaderboard.html" onclick="trackClick('nav_fantasy_lb')">🏆 Fantasy Leaderboard</a>
+          <a href="closest-call-leaderboard.html" onclick="trackClick('nav_cc_lb')">📊 Closest Call Leaderboard</a>
+          <a href="spelling-bee.html" onclick="trackClick('nav_spelling_bee')">🐝 Spelling Bee</a>
+          <a href="sudoku.html" onclick="trackClick('nav_sudoku')">🧩 Sudoku</a>
+          <a href="earnings.html" onclick="trackClick('nav_earnings')">💰 My Earnings</a>
+          <a href="prizes.html" onclick="trackClick('nav_prizes')">🏅 Prizes</a>
+          <a href="index.html" onclick="trackClick('nav_main_home')">🏠 Main Home</a>
+          <a href="contact.html" onclick="trackClick('contact_us_menu_click')">✉️ Contact Us</a>
+        </nav>
       </div>
     </header>
 
@@ -2585,25 +2600,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     };
 
     /* ── Helpers ── */
-    function getCurrentUserId() { return localStorage.getItem('mtgames_user_id'); }
+    function getCurrentUserId() {
+      if (!localStorage.getItem(USER_EMAIL_KEY)) return null;
+      return localStorage.getItem('mtgames_user_id');
+    }
 
-    const USER_ID_KEY = 'mtgames_user_id';
-    const USER_NAME_KEY = 'mtgames_user_name';
+    const USER_ID_KEY    = 'mtgames_user_id';
+    const USER_NAME_KEY  = 'mtgames_user_name';
+    const USER_EMAIL_KEY = 'mtgames_user_email';
 
     function getCurrentUser() {
       return {
-        id: localStorage.getItem(USER_ID_KEY),
-        name: localStorage.getItem(USER_NAME_KEY)
+        id:    localStorage.getItem(USER_ID_KEY),
+        name:  localStorage.getItem(USER_NAME_KEY),
+        email: localStorage.getItem(USER_EMAIL_KEY)
       };
     }
 
     function showUsernameModal() {
-      const modal = document.getElementById('userModal');
-      const input = document.getElementById('usernameInput');
-      const err = document.getElementById('usernameError');
+      const modal      = document.getElementById('userModal');
+      const input      = document.getElementById('usernameInput');
+      const emailInput = document.getElementById('emailInput');
+      const err        = document.getElementById('usernameError');
 
       if (err) err.textContent = '';
-      if (input) input.value = '';
+      if (input) input.value = localStorage.getItem(USER_NAME_KEY) || '';
+      if (emailInput) emailInput.value = localStorage.getItem(USER_EMAIL_KEY) || '';
 
       if (modal) modal.classList.add('show');
       setTimeout(() => input && input.focus(), 50);
@@ -2619,14 +2641,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     async function createUserAccount() {
-      const input = document.getElementById('usernameInput');
-      const err = document.getElementById('usernameError');
-      const btn = document.getElementById('usernameBtn');
-      const cleanName = sanitizeUsername(input ? input.value : '');
+      const input      = document.getElementById('usernameInput');
+      const emailInput = document.getElementById('emailInput');
+      const err        = document.getElementById('usernameError');
+      const btn        = document.getElementById('usernameBtn');
+      const cleanName  = sanitizeUsername(input ? input.value : '');
 
       if (!cleanName || cleanName.length < 3) {
         if (err) err.textContent = 'Please enter at least 3 characters. Use letters, numbers, or underscore.';
         if (input) input.focus();
+        return;
+      }
+
+      const rawEmail = emailInput ? emailInput.value.trim() : '';
+      if (!rawEmail) {
+        if (err) err.textContent = 'Please enter your email address.';
+        if (emailInput) emailInput.focus();
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail)) {
+        if (err) err.textContent = 'Please enter a valid email address.';
+        if (emailInput) emailInput.focus();
         return;
       }
 
@@ -2640,26 +2675,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         const response = await fetch('/api/create-ipl-user', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user_name: cleanName })
+          body: JSON.stringify({ user_name: cleanName, email: rawEmail })
         });
 
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || 'Could not create user.');
 
-        localStorage.setItem(USER_ID_KEY, data.user.id);
-        localStorage.setItem(USER_NAME_KEY, data.user.user_name);
+        localStorage.setItem(USER_ID_KEY,    data.user.id);
+        localStorage.setItem(USER_NAME_KEY,  data.user.user_name);
+        localStorage.setItem(USER_EMAIL_KEY, data.user.email);
 
           hideUsernameModal();
           await loadUserCoinBalance();
           await loadMatchCards();
           await loadBottomLeaderboard();
-          
+
           if (pendingFantasyMatchId) {
             const matchId = pendingFantasyMatchId;
             pendingFantasyMatchId = null;
             await openFantasyTeam(matchId);
           }
-        
+
       } catch (error) {
         if (err) err.textContent = error.message || 'Something went wrong. Please try again.';
       } finally {
@@ -5439,6 +5475,12 @@ const updateNote = currentMatchData?.score_update_note || '';
       const usernameInput = document.getElementById('usernameInput');
       if (usernameInput) {
         usernameInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') createUserAccount();
+        });
+      }
+      const emailInput = document.getElementById('emailInput');
+      if (emailInput) {
+        emailInput.addEventListener('keydown', function(e) {
           if (e.key === 'Enter') createUserAccount();
         });
       }

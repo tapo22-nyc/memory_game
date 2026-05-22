@@ -962,7 +962,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="modal-overlay" id="username-modal">
   <div class="modal-card">
     <div class="modal-title">Choose a Username</div>
-    <div class="modal-subtitle">Pick a username to save your progress and appear on the leaderboard.</div>
+    <div class="modal-subtitle">Pick a username and add your email to save your progress and appear on the leaderboard.</div>
     <input
       type="text"
       class="modal-input"
@@ -971,6 +971,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       maxlength="20"
       autocomplete="off"
       autocapitalize="none"
+    />
+    <input
+      type="email"
+      class="modal-input"
+      id="email-input"
+      placeholder="Email will be used to contact you for awards from contests"
+      autocomplete="email"
+      style="margin-top:10px;"
     />
     <div class="modal-error" id="username-error"></div>
     <button class="modal-btn" id="username-btn" onclick="saveUsername()">Start Playing</button>
@@ -1036,8 +1044,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <script>
   // ── Constants ──
-  const USER_ID_KEY   = 'mtgames_user_id';
-  const USER_NAME_KEY = 'mtgames_user_name';
+  const USER_ID_KEY    = 'mtgames_user_id';
+  const USER_NAME_KEY  = 'mtgames_user_name';
+  const USER_EMAIL_KEY = 'mtgames_user_email';
   const TIMER_DURATION = 240; // 4 minutes
 
   // ── Game state ──
@@ -1261,9 +1270,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const timerEl = document.getElementById('timer-display');
     if (timerEl) { timerEl.textContent = 'Time Left: 00:00'; timerEl.classList.add('timer-warning'); }
 
-    // Auto-submit if user already has a name, otherwise surface the button
+    // Auto-submit if user already has name+email, otherwise surface the button
     const userName = localStorage.getItem(USER_NAME_KEY);
-    if (userName) {
+    if (userName && !needsLogin()) {
       doSubmitScore(userName);
     } else {
       const submitWrap = document.getElementById('submit-score-wrap');
@@ -1282,7 +1291,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (scoreSubmitted) return;
     stopTimer();
     const userName = localStorage.getItem(USER_NAME_KEY);
-    if (!userName) {
+    if (!userName || needsLogin()) {
       pendingWordBeforeSignup = '__submit_score__';
       openUsernameModal();
       return;
@@ -1485,7 +1494,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const userId   = localStorage.getItem(USER_ID_KEY);
     const userName = localStorage.getItem(USER_NAME_KEY);
 
-    if (!userId && !userName) {
+    if (!userId || !userName || needsLogin()) {
       pendingWordBeforeSignup = word;
       openUsernameModal();
       return;
@@ -1678,9 +1687,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // USERNAME MODAL
   // ════════════════════════════════════════
 
+  function needsLogin() {
+    return !localStorage.getItem(USER_NAME_KEY) || !localStorage.getItem(USER_EMAIL_KEY);
+  }
+
   function openUsernameModal() {
+    const nameInput  = document.getElementById('username-input');
+    const emailInput = document.getElementById('email-input');
     document.getElementById('username-modal').classList.add('open');
-    setTimeout(() => document.getElementById('username-input').focus(), 100);
+    if (nameInput)  nameInput.value  = localStorage.getItem(USER_NAME_KEY)  || '';
+    if (emailInput) emailInput.value = localStorage.getItem(USER_EMAIL_KEY) || '';
+    setTimeout(() => nameInput && nameInput.focus(), 100);
   }
   function closeUsernameModal() {
     document.getElementById('username-modal').classList.remove('open');
@@ -1689,11 +1706,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   document.getElementById('username-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') saveUsername();
   });
+  document.getElementById('email-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveUsername();
+  });
 
   async function saveUsername() {
-    const input = document.getElementById('username-input');
-    const errEl = document.getElementById('username-error');
-    const btn   = document.getElementById('username-btn');
+    const input      = document.getElementById('username-input');
+    const emailInput = document.getElementById('email-input');
+    const errEl      = document.getElementById('username-error');
+    const btn        = document.getElementById('username-btn');
 
     const raw = input.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
     if (raw.length < 3) {
@@ -1701,28 +1722,41 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       return;
     }
 
-    btn.disabled    = true;
-    btn.textContent = 'Saving…';
+    const rawEmail = emailInput ? emailInput.value.trim() : '';
+    if (!rawEmail) {
+      errEl.textContent = 'Please enter your email address.';
+      if (emailInput) emailInput.focus();
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail)) {
+      errEl.textContent = 'Please enter a valid email address.';
+      if (emailInput) emailInput.focus();
+      return;
+    }
+
+    btn.disabled      = true;
+    btn.textContent   = 'Saving…';
     errEl.textContent = '';
 
     try {
       const resp = await fetch('/api/create-ipl-user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_name: raw })
+        body: JSON.stringify({ user_name: raw, email: rawEmail })
       });
       const data = await resp.json();
 
       if (!resp.ok || data.error) {
-        errEl.textContent = data.error || 'Could not save username. Try again.';
+        errEl.textContent = data.error || 'Could not save details. Try again.';
         btn.disabled = false;
         btn.textContent = 'Start Playing';
         return;
       }
 
       const user = data.user;
-      localStorage.setItem(USER_ID_KEY,   user.id);
-      localStorage.setItem(USER_NAME_KEY, user.user_name);
+      localStorage.setItem(USER_ID_KEY,    user.id);
+      localStorage.setItem(USER_NAME_KEY,  user.user_name);
+      localStorage.setItem(USER_EMAIL_KEY, user.email);
       closeUsernameModal();
 
       if (pendingWordBeforeSignup === '__submit_score__') {
