@@ -2291,7 +2291,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="section-line"></div>
 
     <div class="lb-tabs" role="tablist" aria-label="Fantasy leaderboard tabs">
-      <button class="lb-tab-btn" id="weekend1LeaderboardTab" onclick="trackClick('weekend_1_leaderboard_tab'); switchLeaderboardTab('weekend1')">Super Weekend 1</button>
+      <button class="lb-tab-btn" id="weekend1LeaderboardTab" onclick="trackClick('weekend_1_leaderboard_tab'); switchLeaderboardTab('weekend1')">Super Weekend 2</button>
       <button class="lb-tab-btn" id="matchLeaderboardTab" onclick="trackClick('leaderboard_match_wise'); switchLeaderboardTab('match')">Match Wise</button>
       <button class="lb-tab-btn active" id="overallLeaderboardTab" onclick="trackClick('leaderboard_overall'); switchLeaderboardTab('overall')">Overall</button>
     
@@ -3729,7 +3729,7 @@ function renderLeaderboardUpdateNote() {
             <div class="lb-empty">
               <strong style="color:#ffd166;font-size:1rem;">Contest Yet to Begin</strong><br>
               <span style="display:inline-block;margin-top:8px;color:#94a3b8;">
-                Super Weekend 1 leaderboard will appear once these matches start and scores are updated.
+                Super Weekend 2 leaderboard will appear once these matches start and scores are updated.
               </span>
             </div>
           `;
@@ -3737,7 +3737,7 @@ function renderLeaderboardUpdateNote() {
         }
         body.innerHTML = renderLeaderboardRows(combined);
       } catch (err) {
-        body.innerHTML = '<div class="lb-empty" style="color:#f87171;">Could not load Super Weekend 1 leaderboard.</div>';
+        body.innerHTML = '<div class="lb-empty" style="color:#f87171;">Could not load Super Weekend 2 leaderboard.</div>';
       }
     }
 
