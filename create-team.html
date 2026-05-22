@@ -166,10 +166,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       align-items: center;
       gap: 12px;
     }
-    
+
+  
     .poll-action-link {
       margin-top: 24px;
     }    
+    
     .btn-scoring-rules {
       display: inline-flex;
       align-items: center;
@@ -188,6 +190,46 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       max-width: 320px;
       justify-content: center;
     }
+
+.hero-action-row {
+  flex-direction: row;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.hero-action-row .hero-small-btn {
+  width: auto;
+  min-width: 170px;
+  max-width: 190px;
+  padding: 9px 18px;
+}
+
+.leaderboard-scroll-btn {
+  border-color: #d8b4fe;
+  background: #faf5ff;
+  color: #7e22ce;
+}
+
+.leaderboard-scroll-btn:hover {
+  background: #f3e8ff;
+  color: #6b21a8;
+  border-color: #c084fc;
+}
+
+@media (max-width: 520px) {
+  .hero-action-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-action-row .hero-small-btn {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+    
     .btn-scoring-rules:hover {
       background: #f3f4f6;
       color: #374151;
@@ -2175,18 +2217,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </header>
 
     <!-- ── Hero ── -->
-    <section class="hero-section">
-      <h1 class="hero-title">Create Team</h1>
-      <p class="hero-subtitle">
-        Pick a match, build your Fantasy XI, and manage your team before the contest locks.
-      </p>
-        <div class="hero-scoring-link">
-          <button class="btn-scoring-rules" onclick="trackClick('scoring_rules'); openScoringModal()">
-            📋 Scoring Rules
-          </button>
-        </div>      
-    </section>
+<div class="hero-scoring-link hero-action-row">
+  <button class="btn-scoring-rules hero-small-btn" onclick="trackClick('scoring_rules'); openScoringModal()">
+    📋 Scoring Rules
+  </button>
 
+  <button class="btn-scoring-rules hero-small-btn leaderboard-scroll-btn" onclick="trackClick('scroll_to_leaderboard'); scrollToSection('leaderboardSection')">
+    🏆 Leaderboard
+  </button>
+</div>
+    
 
     <!-- ── Live / Open / Final Matches (middle) ── -->
     <section class="content-section" id="matchesSection">
