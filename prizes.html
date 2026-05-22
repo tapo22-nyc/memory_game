@@ -247,6 +247,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       color: #06d6a0;
     }
 
+    .hidden-contest {
+  display: none;
+  }
+
     /* Info rows */
     .info-grid {
       display: flex;
@@ -400,7 +404,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
 
       <!-- B. Weekend 1 Leaderboard -->
-      <div class="contest-card" id="card-weekend1">
+      <div class="contest-card hidden-contest" id="card-weekend1">
         <div class="contest-card-header" onclick="toggleContest('card-weekend1'); trackClick('prize_contest_expand', {contest:'Weekend 1 Leaderboard'})">
           <div class="contest-icon">⚡</div>
           <div class="contest-title-group">
