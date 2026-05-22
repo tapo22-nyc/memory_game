@@ -162,9 +162,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .hero-scoring-link {
       margin-top: 10px;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
-      gap: 12px;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
   
@@ -176,7 +178,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: 8px 32px;
+      padding: 8px 16px;
       border: 1.5px solid #d1d5db;
       border-radius: 8px;
       font-size: 0.8rem;
@@ -186,15 +188,52 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       color: #6b7280;
       letter-spacing: 0.4px;
       transition: background 0.2s, color 0.2s, border-color 0.2s;
-      width: 100%;
-      max-width: 320px;
       justify-content: center;
+      white-space: nowrap;
     }
-    
+
     .btn-scoring-rules:hover {
       background: #f3f4f6;
       color: #374151;
       border-color: #9ca3af;
+    }
+
+    .btn-prizes-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border: 1.5px solid #fecaca;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: #fee2e2;
+      color: #dc2626;
+      letter-spacing: 0.4px;
+      transition: background 0.2s, border-color 0.2s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-prizes-link:hover {
+      background: #fecaca;
+      border-color: #fca5a5;
+    }
+
+    .sw2-badge {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 4px;
+      padding: 2px 8px;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      font-size: 0.6rem;
+      font-weight: 800;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .prize-table {
@@ -2189,6 +2228,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button class="btn-scoring-rules" onclick="trackClick('scoring_rules'); openScoringModal()">
       📋 Scoring Rules
     </button>
+    <a class="btn-prizes-link" href="prizes.html" onclick="trackClick('super_weekend_2_contest_prizes')">
+      🔥 Super Weekend 2 Contest
+    </a>
   </div>
 </section>
     
@@ -2219,7 +2261,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         letter-spacing:0.2px;
       "
     >
-      🔥Can You Predict The Score?
+      🎯 Play Closest Call for Extra Leaderboard Points
     </button>
   </div>
       
@@ -3424,11 +3466,17 @@ function renderSubstituteBoosterCard() {
             statusIndicator = `<div class="status-pill ${escapeHTML(cfg.pillClass)}">${escapeHTML(cfg.label)}</div>`;
           }
 
+          const isSuperWeekend2 = [72, 73, 74].includes(Number(match.id));
+          const sw2BadgeHtml = isSuperWeekend2
+            ? `<span class="sw2-badge">🔥 Super Weekend 2 Contest</span>`
+            : '';
+
           return `
             <div class="match-card" ${deadlineAttr}>
               ${statusIndicator}
               <div class="match-card-info">
                 <div class="match-teams">${escapeHTML(match.team_1)} vs ${escapeHTML(match.team_2)}</div>
+                ${sw2BadgeHtml}
                 ${timerHtml}
               </div>
               <button class="match-card-btn ${escapeHTML(cfg.btnClass)}" onclick="trackClick('${buttonKey}', { fantasy_match_id: ${Number(match.id)}, match_status: '${escapeHTML(status)}', match_title: '${escapeHTML(match.match_title || '')}', team_1: '${escapeHTML(match.team_1 || '')}', team_2: '${escapeHTML(match.team_2 || '')}' }); openFantasyTeam(${Number(match.id)})">${escapeHTML(buttonText)}</button>

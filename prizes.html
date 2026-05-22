@@ -35,46 +35,71 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       justify-content: space-between;
       gap: 12px;
       margin-bottom: 40px;
-      flex-wrap: wrap;
     }
 
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #6b7280;
-      text-decoration: none;
-      font-size: 0.88rem;
-      font-weight: 600;
-      letter-spacing: 0.4px;
-      transition: color 0.2s;
-    }
-    .back-link:hover { color: #2563eb; }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .page-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #dbeafe;
-      border: 1px solid #bfdbfe;
-      color: #2563eb;
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 0.74rem;
-      text-transform: uppercase;
-      letter-spacing: 1.8px;
+    .logo-text {
+      font-size: 1.15rem;
       font-weight: 800;
+      letter-spacing: 0.5px;
+      background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
       text-decoration: none;
-      white-space: nowrap;
     }
+
+    .hamburger-wrapper { position: relative; }
+    .hamburger-menu-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .hamburger-menu-btn span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: #374151;
+      border-radius: 2px;
+      transition: background 0.2s;
+    }
+    .hamburger-menu-btn:hover span { background: #1f2937; }
+
+    .hamburger-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      min-width: 160px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      margin-top: 8px;
+    }
+    .hamburger-dropdown.open { display: flex; }
+    .hamburger-dropdown a {
+      padding: 12px 16px;
+      text-align: left;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #374151;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    .hamburger-dropdown a:hover { background: #f3f4f6; }
+    .hamburger-dropdown a:first-child { border-radius: 10px 10px 0 0; }
+    .hamburger-dropdown a:last-child { border-radius: 0 0 10px 10px; }
 
     /* ── Hero ── */
     .hero-section { text-align: center; margin-bottom: 48px; }
@@ -294,9 +319,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     /* ── Responsive ── */
     @media (max-width: 700px) {
-      .page-header { align-items: flex-start; }
-      .header-actions { gap: 6px; }
-      .page-eyebrow { font-size: 0.66rem; padding: 6px 10px; letter-spacing: 1px; }
+      .page-header { align-items: center; }
     }
 
     @media (max-width: 500px) {
@@ -317,10 +340,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="page-wrap">
 
     <header class="page-header">
-      <a href="fantasy.html" class="back-link" onclick="trackClick('prizes_back_to_fantasy')">&#8592; Fantasy Arena</a>
-      <div class="header-actions">
-        <a href="fantasy_leaderboard.html" class="page-eyebrow" onclick="trackClick('prizes_leaderboard')">🏆 Leaderboard</a>
-        <a href="create-team.html" class="page-eyebrow" onclick="trackClick('prizes_create_team')">🏏 Create Team</a>
+      <a href="index.html" class="logo-text">MTGames</a>
+      <div class="hamburger-wrapper">
+        <button class="hamburger-menu-btn" id="hamburgerMenuBtn" onclick="toggleHamburgerMenu()" title="Menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="hamburger-dropdown" id="hamburgerDropdown">
+          <a href="create-team.html" onclick="trackClick('prizes_nav_create_team')">🏏 Create Team</a>
+          <a href="closest-call.html" onclick="trackClick('prizes_nav_closest_call')">🎯 Closest Call</a>
+        </div>
       </div>
     </header>
 
@@ -503,6 +531,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const card = document.getElementById(cardId);
       if (card) card.classList.toggle('open');
     }
+
+    function toggleHamburgerMenu() {
+      const dropdown = document.getElementById('hamburgerDropdown');
+      if (dropdown) dropdown.classList.toggle('open');
+    }
+
+    document.addEventListener('click', function(e) {
+      const wrapper = document.querySelector('.hamburger-wrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        const dropdown = document.getElementById('hamburgerDropdown');
+        if (dropdown) dropdown.classList.remove('open');
+      }
+    });
   </script>
 </body>
 </html>
