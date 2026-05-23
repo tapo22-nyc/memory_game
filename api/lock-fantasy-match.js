@@ -10,13 +10,13 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const matchId = 64; // replace if different
+    const matchId = 72; // replace if different
 
     await sql`
       UPDATE fantasy_matches
       SET
         status = 'locked',
-        score_update_note = 'Locked automatically by cron job'
+        score_update_note = 'Game automatically locked'
       WHERE id = ${matchId}
     `;
 
