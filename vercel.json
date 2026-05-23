@@ -5,8 +5,8 @@
       "schedule": "59 13 23 5 *"
     },
     {
-      "path": "/api/cron-sync-fantasy-score",
-      "schedule": "*/55 * * * *"
+          "path": "/api/cron-sync-fantasy-score",
+            "schedule": "0 */2 * * *"
     }
   ]
 }
