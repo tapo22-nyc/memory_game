@@ -2,12 +2,12 @@
   "crons": [
     {
       "path": "/api/lock-fantasy-match",
-      "schedule": "51 4 24 5 *"
+      "schedule": "59 9 24 5 *"
     },
 
     {
       "path": "/api/lock-closest-call-match",
-      "schedule": "51 4 24 5 *"
+      "schedule": "59 9 24 5 *"
     },
 
     {
