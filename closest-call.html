@@ -206,6 +206,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px;
   }
 
+  /* Contest badge */
+  .contest-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 0.68rem; font-weight: 800; letter-spacing: 0.3px;
+    border-radius: 6px; padding: 2px 8px; margin-top: 4px;
+  }
+  .contest-badge-tournament { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  .contest-badge-match      { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+
   /* ── USERNAME MODAL ── */
   .user-modal-overlay {
     display: none; position: fixed; inset: 0;
@@ -297,16 +306,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     background: #f9fafb; border: 1.5px solid #e5e7eb; border-radius: 16px;
     padding: 18px 20px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
   }
-  .match-cat-pregame { border-color: #93c5fd; background: #f0f9ff; }
-  .match-cat-pregame:hover { background: #dbeafe; border-color: #60a5fa; }
-  .match-cat-bonus { border-color: #fde68a; background: #fffbeb; }
-  .match-cat-bonus:hover { background: #fef3c7; border-color: #fbbf24; }
+  .match-cat-pregame  { border-color: #93c5fd; background: #f0f9ff; }
+  .match-cat-pregame:hover  { background: #dbeafe; border-color: #60a5fa; }
+  .match-cat-midgame  { border-color: #fde68a; background: #fffbeb; }
+  .match-cat-midgame:hover  { background: #fef3c7; border-color: #fbbf24; }
+  .match-cat-contest  { border-color: #d8b4fe; background: #faf5ff; }
+  .match-cat-contest:hover  { background: #f3e8ff; border-color: #a855f7; }
   .cat-disabled { opacity: 0.55; cursor: not-allowed; }
-  .cat-disabled:hover { background: #fffbeb !important; border-color: #fde68a !important; }
+  .cat-disabled:hover { background: inherit !important; border-color: inherit !important; }
   .cat-card-left { flex: 1; }
   .cat-card-title { font-size: 1rem; font-weight: 800; color: #111827; margin-bottom: 4px; }
   .cat-card-sub   { font-size: 0.82rem; color: #6b7280; }
   .cat-card-arrow { font-size: 1.5rem; color: #9ca3af; font-weight: 700; margin-left: 12px; flex-shrink: 0; }
+  .cat-timer-hint { font-size: 0.75rem; color: #d97706; font-weight: 700; margin-top: 4px; }
 
   /* Modal body */
   .pred-modal-body {
@@ -341,7 +353,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
 
   /* Input row */
-  .question-input-row { display: flex; align-items: center; gap: 10px; }
+  .question-input-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .pred-number-input {
     width: 130px; padding: 10px 12px;
     border: 1.5px solid #d1d5db; border-radius: 10px;
@@ -353,6 +365,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .pred-number-input::-webkit-outer-spin-button { -webkit-appearance: none; }
   .pred-number-input:focus { border-color: #2563eb; }
   .pred-number-input:disabled { background: #f9fafb; color: #9ca3af; cursor: not-allowed; }
+
+  /* Dual input (runs + wickets) */
+  .dual-input-wrap { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .dual-input-field { display: flex; flex-direction: column; gap: 4px; }
+  .dual-input-label { font-size: 0.7rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.8px; }
+  .dual-input-field .pred-number-input { width: 110px; }
+
+  /* Categorical pills */
+  .cat-pills-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .cat-pill {
+    padding: 7px 14px; border-radius: 999px; border: 1.5px solid #d1d5db;
+    background: #fff; font-size: 0.82rem; font-weight: 700; color: #374151;
+    cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s;
+    user-select: none;
+  }
+  .cat-pill:hover { background: #f0f9ff; border-color: #93c5fd; color: #1d4ed8; }
+  .cat-pill.selected { background: #2563eb; border-color: #2563eb; color: #fff; }
+  .cat-pill:disabled, .cat-pill.pill-disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
   .existing-pred-badge {
     font-size: 0.78rem; font-weight: 600; color: #2563eb;
     background: #dbeafe; border-radius: 8px; padding: 4px 10px;
@@ -368,6 +399,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   /* Scored result */
   .scored-result-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 8px; }
+  .scored-result-grid.wide { grid-template-columns: repeat(4,1fr); }
   .scored-stat {
     background: #ffffff; border: 1px solid #e5e7eb;
     border-radius: 10px; padding: 8px 10px; text-align: center;
@@ -595,6 +627,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <ul class="how-to-list">
         <li><span class="htl-icon">🏏</span><span>Predict team scores, player runs, and wickets for upcoming IPL matches</span></li>
         <li><span class="htl-icon">🎯</span><span>The closer your prediction is to the actual result, the more points you win</span></li>
+        <li><span class="htl-icon">🏆</span><span>Compete in tournament-level contests like the IPL Playoffs for big prizes</span></li>
       </ul>
     </div>
   </div>
@@ -609,17 +642,49 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
     <div class="scoring-modal-body">
       <div class="scoring-section">
-        <div class="scoring-section-title">🏏 Team Score</div>
+        <div class="scoring-section-title">🏏 Team Score (Split: 75+25)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact runs (75 pts) + Exact wickets (25 pts)</span><span class="s-pts">100 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Runs: max 75 − |diff|; Wickets off by 1</span><span class="s-pts">up to 95 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Wickets exact (25), off by 1 → 20, by 2 → 10, by 3 → 5</span><span class="s-pts">wickets part</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">Runs diff ≥ 75</span><span class="s-pts">0 runs pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">🧢 Batter Runs (50 pts)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">50 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by N runs</span><span class="s-pts">max(50 − N, 0) pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">50+ runs away</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">💥 Batter Sixes (20 pts)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">20 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by 1</span><span class="s-pts">15 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by 2</span><span class="s-pts">10 pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">Off by 3+</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">🎳 Bowler Wickets (30 pts)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">30 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by 1</span><span class="s-pts">20 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by 2</span><span class="s-pts">10 pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">Off by 3+</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">🏆 Playoffs / Categorical</div>
+        <div class="scoring-row s-exact"><span class="s-label">Correct choice</span><span class="s-pts">100 pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">Wrong choice</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">🏏 Legacy: Team Score</div>
         <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">100 pts</span></div>
         <div class="scoring-row"><span class="s-label">Within ±5 runs</span><span class="s-pts">90 pts</span></div>
         <div class="scoring-row"><span class="s-label">Within ±10 runs</span><span class="s-pts">80 pts</span></div>
         <div class="scoring-row"><span class="s-label">Within ±20 runs</span><span class="s-pts">60 pts</span></div>
         <div class="scoring-row"><span class="s-label">Within ±30 runs</span><span class="s-pts">40 pts</span></div>
         <div class="scoring-row"><span class="s-label">Within ±40 runs</span><span class="s-pts">20 pts</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">±41 runs away</span><span class="s-pts">0 pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">±41+ runs away</span><span class="s-pts">0 pts</span></div>
       </div>
       <div class="scoring-section">
-        <div class="scoring-section-title">🧢 Batter Runs</div>
+        <div class="scoring-section-title">🧢 Legacy: Batter Runs</div>
         <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">150 pts</span></div>
         <div class="scoring-row"><span class="s-label">Within ±5 runs</span><span class="s-pts">130 pts</span></div>
         <div class="scoring-row"><span class="s-label">Within ±10 runs</span><span class="s-pts">110 pts</span></div>
@@ -627,22 +692,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <div class="scoring-row"><span class="s-label">Within ±20 runs</span><span class="s-pts">70 pts</span></div>
         <div class="scoring-row"><span class="s-label">Within ±30 runs</span><span class="s-pts">40 pts</span></div>
         <div class="scoring-row"><span class="s-label">Within ±40 runs</span><span class="s-pts">20 pts</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">±41 runs away</span><span class="s-pts">0 pts</span></div>
-      </div>
-      <div class="scoring-section">
-        <div class="scoring-section-title">💥 Batter Sixes</div>
-        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">100 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±1 sixes</span><span class="s-pts">75 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±2 sixes</span><span class="s-pts">45 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±3 sixes</span><span class="s-pts">20 pts</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">±4 sixes away</span><span class="s-pts">0 pts</span></div>
-      </div>
-      <div class="scoring-section">
-        <div class="scoring-section-title">🎳 Bowler Wickets</div>
-        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">50 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±1 wickets</span><span class="s-pts">20 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±2 wickets</span><span class="s-pts">10 pts</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">±3 wickets away</span><span class="s-pts">0 pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">±41+ runs away</span><span class="s-pts">0 pts</span></div>
       </div>
     </div>
   </div>
@@ -780,17 +830,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   const USER_NAME_KEY  = 'mtgames_user_name';
   const USER_EMAIL_KEY = 'mtgames_user_email';
 
-  let allMatches         = [];
-  let currentMatchId     = null;
-  let currentMatchStatus = 'open';
-  let currentQuestions   = [];
-  let currentPreGameQs   = [];
-  let currentDuringGameQs = [];
-  let predViewMode       = 'categories'; // 'categories' | 'questions'
-  let predCurrentCategory = 'pre';
-  let pendingMatchId     = null;
+  let allMatches          = [];
+  let currentMatchId      = null;
+  let currentMatchStatus  = 'open';
+  let currentMatchData    = null; // full match object from API
+  let currentQuestions    = [];
+  let currentPregameQs    = [];
+  let currentMidgameQs    = [];
+  let currentContestQs    = [];
+  let predViewMode        = 'categories'; // 'categories' | 'questions'
+  let predCurrentCategory = 'pregame';
+  let pendingMatchId      = null;
   let successToastTimeout = null;
-  let cardTimerIntervals = {};
+  let cardTimerIntervals  = {};
+  // Map of questionId -> selected pill value (for categorical questions)
+  let categoricalSelections = {};
 
   // Leaderboard state
   let lbActiveTab       = 'overall';
@@ -981,32 +1035,39 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   function renderMatches() {
     clearCardTimers();
     const grid = document.getElementById('matchGrid');
-   
-const visibleMatches = allMatches
-  .filter(function(m) {
-    return m.status === 'open' || m.status === 'locked';
-  })
-  .sort(function(a, b) {
-    return a.id - b.id;
-  });
-   
-if (!visibleMatches.length) {
-  grid.innerHTML = '<div class="match-empty">No upcoming or live prediction contests right now. Check back soon!</div>';
-  return;
-}
-   
+
+    const visibleMatches = allMatches
+      .filter(function(m) { return m.status === 'open' || m.status === 'locked'; })
+      .sort(function(a, b) { return a.id - b.id; });
+
+    if (!visibleMatches.length) {
+      grid.innerHTML = '<div class="match-empty">No upcoming or live prediction contests right now. Check back soon!</div>';
+      return;
+    }
+
     grid.innerHTML = visibleMatches.map(function(m) {
       const s = m.status;
       let btnClass, btnLabel;
       if (s === 'open')        { btnClass = 'btn-open';   btnLabel = 'Make Predictions'; }
       else if (s === 'locked') { btnClass = 'btn-locked'; btnLabel = 'View Live Score'; }
       else                     { btnClass = 'btn-closed'; btnLabel = 'View Final Score'; }
+
       const timerHtml = (s === 'open' && m.match_date)
         ? '<div><span class="card-timer-val" id="card-timer-' + m.id + '"></span></div>'
         : '';
+
+      // Contest badge
+      let badgeHtml = '';
+      if (m.contest_name) {
+        const badgeClass = m.contest_type === 'tournament' ? 'contest-badge-tournament' : 'contest-badge-match';
+        const badgeIcon  = m.contest_type === 'tournament' ? '🏆' : '🎯';
+        badgeHtml = '<div><span class="contest-badge ' + badgeClass + '">' + badgeIcon + ' ' + escapeHTML(m.contest_name) + '</span></div>';
+      }
+
       return '<div class="match-card">' +
         '<div class="match-card-info">' +
           '<div class="match-teams">' + escapeHTML(m.match_title || m.team_1 + ' vs ' + m.team_2) + '</div>' +
+          badgeHtml +
           timerHtml +
         '</div>' +
         '<button class="match-card-btn ' + btnClass + '" onclick="onMatchCardClick(' + m.id + ')">' + btnLabel + '</button>' +
@@ -1017,7 +1078,6 @@ if (!visibleMatches.length) {
 
   function onMatchCardClick(matchId) {
     trackClick('cc_match_card_click', { cc_match_id: matchId });
-    const u = getCurrentUser();
     if (needsLogin()) { pendingMatchId = matchId; showUsernameModal(); }
     else openPredModal(matchId);
   }
@@ -1026,7 +1086,8 @@ if (!visibleMatches.length) {
   async function openPredModal(matchId) {
     currentMatchId      = matchId;
     predViewMode        = 'categories';
-    predCurrentCategory = 'pre';
+    predCurrentCategory = 'pregame';
+    categoricalSelections = {};
     const u = getCurrentUser();
 
     document.getElementById('predModal').classList.add('show');
@@ -1044,6 +1105,7 @@ if (!visibleMatches.length) {
       if (!res.ok) throw new Error(data.error || 'Could not load questions.');
 
       currentMatchStatus  = data.match.status;
+      currentMatchData    = data.match;
       currentQuestions    = data.questions || [];
 
       const hdr = document.getElementById('predModalHeader');
@@ -1057,14 +1119,22 @@ if (!visibleMatches.length) {
         currentMatchStatus === 'locked' ? 'Match in progress — bonus questions may be open.' :
         'Enter your predictions below';
 
-      const now = Date.now();
-      currentPreGameQs    = currentQuestions.filter(function(q) { return !q.open_time || new Date(q.open_time).getTime() <= now; });
-      currentDuringGameQs = currentQuestions.filter(function(q) { return q.open_time  && new Date(q.open_time).getTime()  > now; });
+      // Partition questions by question_phase
+      currentPregameQs  = currentQuestions.filter(function(q) { return (q.question_phase || 'pregame') === 'pregame'; });
+      currentMidgameQs  = currentQuestions.filter(function(q) { return (q.question_phase || 'pregame') === 'midgame'; });
+      currentContestQs  = currentQuestions.filter(function(q) { return (q.question_phase || 'pregame') === 'contest'; });
+
+      // Pre-populate categorical selections from existing predictions
+      currentQuestions.forEach(function(q) {
+        if (q.user_predicted_choice) {
+          categoricalSelections[q.id] = q.user_predicted_choice;
+        }
+      });
 
       // Show total points banner for locked/closed matches
       if (currentMatchStatus === 'locked' || currentMatchStatus === 'closed') {
         const scoredQs = currentQuestions.filter(function(q) {
-          return q.status === 'scored' && q.user_prediction !== null && q.user_points !== null;
+          return q.status === 'scored' && (q.user_prediction !== null || q.user_predicted_choice !== null) && q.user_points !== null;
         });
         if (scoredQs.length) {
           const total = scoredQs.reduce(function(sum, q) { return sum + Math.round(Number(q.user_points || 0)); }, 0);
@@ -1088,11 +1158,14 @@ if (!visibleMatches.length) {
     document.getElementById('successToast').classList.remove('show');
     document.body.style.overflow = '';
     currentMatchId       = null;
+    currentMatchData     = null;
     currentQuestions     = [];
-    currentPreGameQs     = [];
-    currentDuringGameQs  = [];
+    currentPregameQs     = [];
+    currentMidgameQs     = [];
+    currentContestQs     = [];
+    categoricalSelections = {};
     predViewMode         = 'categories';
-    predCurrentCategory  = 'pre';
+    predCurrentCategory  = 'pregame';
   }
 
   function handlePredBackBtn() {
@@ -1103,43 +1176,101 @@ if (!visibleMatches.length) {
     }
   }
 
+  /* ── Midgame timer hint ── */
+  function getMidgameTimerHint(qs) {
+    const now = Date.now();
+    // Find first open question's open/lock times
+    for (var i = 0; i < qs.length; i++) {
+      var q = qs[i];
+      if (q.open_time && new Date(q.open_time).getTime() > now) {
+        var diff = new Date(q.open_time).getTime() - now;
+        return 'Opens in ' + formatCountdown(diff);
+      }
+      if (q.lock_time && new Date(q.lock_time).getTime() > now && q.status === 'open') {
+        var diff2 = new Date(q.lock_time).getTime() - now;
+        return 'Closes in ' + formatCountdown(diff2);
+      }
+    }
+    return null;
+  }
+
+  function formatCountdown(ms) {
+    var hrs  = Math.floor(ms / 3600000);
+    var mins = Math.floor((ms % 3600000) / 60000);
+    var secs = Math.floor((ms % 60000) / 1000);
+    if (hrs > 0) return hrs + 'h ' + String(mins).padStart(2,'0') + 'm';
+    return String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0');
+  }
+
   /* ── Category selector ── */
   function renderCategorySelector() {
     predViewMode = 'categories';
-    const hasBonus   = currentDuringGameQs.length > 0;
-    const preCount   = currentPreGameQs.length;
-    const preEditable = currentPreGameQs.some(function(q) { return q.is_editable; });
-    const matchLocked = currentMatchStatus === 'locked' || currentMatchStatus === 'closed';
-    const preIsLocked = matchLocked && !preEditable;
 
-    document.getElementById('predModalBody').innerHTML =
-      '<div class="match-cat-selector">' +
-        '<div class="match-cat-card match-cat-pregame" onclick="selectPredCategory(\'pre\')">' +
-          '<div class="cat-card-left">' +
-            '<div class="cat-card-title">🏏 Pre-Game Questions</div>' +
-            '<div class="cat-card-sub">' + preCount + ' question' + (preCount !== 1 ? 's' : '') +
-              (preIsLocked ? ' · Predictions closed' : '') + '</div>' +
-          '</div>' +
-          '<span class="cat-card-arrow">' + (preIsLocked ? '🔒' : '›') + '</span>' +
+    const hasMidgame    = currentMidgameQs.length > 0;
+    const hasContest    = currentContestQs.length > 0;
+    const matchLocked   = currentMatchStatus === 'locked' || currentMatchStatus === 'closed';
+
+    const pregameCount   = currentPregameQs.length;
+    const pregameEditable = currentPregameQs.some(function(q) { return q.is_editable; });
+    const pregameLocked  = matchLocked && !pregameEditable;
+
+    const midgameTimerHint = hasMidgame ? getMidgameTimerHint(currentMidgameQs) : null;
+    const midgameEditable  = hasMidgame && currentMidgameQs.some(function(q) { return q.is_editable; });
+
+    var html = '<div class="match-cat-selector">';
+
+    // Pregame card
+    html +=
+      '<div class="match-cat-card match-cat-pregame" onclick="selectPredCategory(\'pregame\')">' +
+        '<div class="cat-card-left">' +
+          '<div class="cat-card-title">🏏 Pregame Questions</div>' +
+          '<div class="cat-card-sub">' + pregameCount + ' question' + (pregameCount !== 1 ? 's' : '') +
+            (pregameLocked ? ' · Predictions closed' : '') + '</div>' +
         '</div>' +
-        '<div class="match-cat-card match-cat-bonus' + (hasBonus ? '' : ' cat-disabled') + '"' +
-          (hasBonus ? ' onclick="selectPredCategory(\'during\')"' : '') + '>' +
-          '<div class="cat-card-left">' +
-            '<div class="cat-card-title">🎯 Bonus Questions</div>' +
-            '<div class="cat-card-sub">' + (hasBonus
-              ? currentDuringGameQs.length + ' question' + (currentDuringGameQs.length !== 1 ? 's' : '')
-              : 'Opens during the match') + '</div>' +
-          '</div>' +
-          '<span class="cat-card-arrow">' + (hasBonus ? '›' : '🔒') + '</span>' +
-        '</div>' +
+        '<span class="cat-card-arrow">' + (pregameLocked ? '🔒' : '›') + '</span>' +
       '</div>';
+
+    // Midgame card
+    html +=
+      '<div class="match-cat-card match-cat-midgame' + (hasMidgame ? '' : ' cat-disabled') + '"' +
+        (hasMidgame ? ' onclick="selectPredCategory(\'midgame\')"' : '') + '>' +
+        '<div class="cat-card-left">' +
+          '<div class="cat-card-title">🎯 Midgame Questions</div>' +
+          '<div class="cat-card-sub">' + (hasMidgame
+            ? currentMidgameQs.length + ' question' + (currentMidgameQs.length !== 1 ? 's' : '')
+            : 'Opens during the match') + '</div>' +
+          (midgameTimerHint ? '<div class="cat-timer-hint">' + escapeHTML(midgameTimerHint) + '</div>' : '') +
+        '</div>' +
+        '<span class="cat-card-arrow">' + (hasMidgame ? (midgameEditable ? '›' : '🔒') : '🔒') + '</span>' +
+      '</div>';
+
+    // Contest/Playoffs card (only shown when there are contest questions)
+    if (hasContest) {
+      var contestEditable = currentContestQs.some(function(q) { return q.is_editable; });
+      html +=
+        '<div class="match-cat-card match-cat-contest" onclick="selectPredCategory(\'contest\')">' +
+          '<div class="cat-card-left">' +
+            '<div class="cat-card-title">🏆 Playoffs Contest</div>' +
+            '<div class="cat-card-sub">' + currentContestQs.length + ' question' + (currentContestQs.length !== 1 ? 's' : '') + '</div>' +
+          '</div>' +
+          '<span class="cat-card-arrow">' + (contestEditable ? '›' : '🔒') + '</span>' +
+        '</div>';
+    }
+
+    html += '</div>';
+
+    document.getElementById('predModalBody').innerHTML = html;
     document.getElementById('predModalFooter').style.display = 'none';
   }
 
   function selectPredCategory(cat) {
     predCurrentCategory = cat;
     predViewMode        = 'questions';
-    const qs = cat === 'pre' ? currentPreGameQs : currentDuringGameQs;
+    var qs;
+    if      (cat === 'pregame')  qs = currentPregameQs;
+    else if (cat === 'midgame')  qs = currentMidgameQs;
+    else if (cat === 'contest')  qs = currentContestQs;
+    else                         qs = currentPregameQs;
     renderQuestionsView(qs);
   }
 
@@ -1153,6 +1284,7 @@ if (!visibleMatches.length) {
 
     document.getElementById('predModalBody').innerHTML = qs.map(function(q) { return renderQuestionCard(q); }).join('');
 
+    // Wire numeric inputs
     document.querySelectorAll('.pred-number-input').forEach(function(inp) {
       inp.addEventListener('input', checkAllFilled);
     });
@@ -1170,16 +1302,49 @@ if (!visibleMatches.length) {
 
   /* ── Check all editable inputs are filled ── */
   function checkAllFilled() {
-    const inputs = document.querySelectorAll('.pred-number-input');
-    const editableInputs = Array.from(inputs).filter(function(i) { return !i.disabled; });
-    const allFilled = editableInputs.length > 0 && editableInputs.every(function(i) { return i.value.trim() !== ''; });
+    // Get the current visible questions for this category
+    var qs;
+    if      (predCurrentCategory === 'pregame')  qs = currentPregameQs;
+    else if (predCurrentCategory === 'midgame')  qs = currentMidgameQs;
+    else if (predCurrentCategory === 'contest')  qs = currentContestQs;
+    else                                          qs = currentPregameQs;
+
+    var editableQs = qs.filter(function(q) { return q.is_editable; });
+    if (!editableQs.length) {
+      document.getElementById('predSubmitBtn').disabled = true;
+      return;
+    }
+
+    var allFilled = editableQs.every(function(q) {
+      if (q.scoring_rule_code === 'TEAM_SCORE_SPLIT_75_25') {
+        var runsEl    = document.getElementById('qruns_' + q.id);
+        var wicketsEl = document.getElementById('qwickets_' + q.id);
+        return runsEl && runsEl.value.trim() !== '' && wicketsEl && wicketsEl.value.trim() !== '';
+      }
+      if (q.scoring_rule_code === 'CATEGORICAL_EXACT') {
+        return !!categoricalSelections[q.id];
+      }
+      var el = document.getElementById('qinput_' + q.id);
+      return el && el.value.trim() !== '';
+    });
+
     document.getElementById('predSubmitBtn').disabled = !allFilled;
+  }
+
+  /* ── Select a categorical pill ── */
+  function selectCatPill(questionId, value) {
+    categoricalSelections[questionId] = value;
+    // Update pill styles
+    document.querySelectorAll('.cat-pill[data-qid="' + questionId + '"]').forEach(function(p) {
+      p.classList.toggle('selected', p.dataset.value === value);
+    });
+    checkAllFilled();
   }
 
   function renderQuestionCard(q) {
     const isScored    = q.status === 'scored';
     const isEditable  = q.is_editable;
-    const hasExisting = q.user_prediction !== null;
+    const ruleCode    = q.scoring_rule_code || '';
 
     let cardClass = 'question-card';
     if (isScored)        cardClass += ' is-scored';
@@ -1191,59 +1356,153 @@ if (!visibleMatches.length) {
       : '';
 
     let inputHtml = '';
+
     if (isScored) {
-      const diff    = q.user_prediction !== null ? q.user_difference : null;
-      const pts     = q.user_prediction !== null ? Math.round(Number(q.user_points || 0)) : null;
-      const isExact = diff === 0;
-      inputHtml =
-        '<div class="scored-result-grid">' +
-          '<div class="scored-stat">' +
-            '<div class="scored-stat-val">' + (q.user_prediction !== null ? q.user_prediction : '—') + '</div>' +
-            '<div class="scored-stat-label">Your Pick</div>' +
+      // ── Scored: TEAM_SCORE_SPLIT_75_25 ──
+      if (ruleCode === 'TEAM_SCORE_SPLIT_75_25') {
+        const predRuns    = q.user_predicted_runs    !== null ? q.user_predicted_runs    : q.user_prediction;
+        const predWickets = q.user_predicted_wickets !== null ? q.user_predicted_wickets : '—';
+        const actualRuns  = q.actual_runs    !== null ? q.actual_runs    : q.actual_value;
+        const actualWickts= q.actual_wickets !== null ? q.actual_wickets : '—';
+        const pts         = q.user_points !== null ? Math.round(Number(q.user_points || 0)) : null;
+        inputHtml =
+          '<div class="scored-result-grid wide">' +
+            '<div class="scored-stat">' +
+              '<div class="scored-stat-val">' + (predRuns !== null ? predRuns : '—') + '</div>' +
+              '<div class="scored-stat-label">Pred Runs</div>' +
+            '</div>' +
+            '<div class="scored-stat">' +
+              '<div class="scored-stat-val">' + predWickets + '</div>' +
+              '<div class="scored-stat-label">Pred Wkts</div>' +
+            '</div>' +
+            '<div class="scored-stat">' +
+              '<div class="scored-stat-val">' + (actualRuns !== null ? actualRuns : '—') + '</div>' +
+              '<div class="scored-stat-label">Act Runs</div>' +
+            '</div>' +
+            '<div class="scored-stat">' +
+              '<div class="scored-stat-val">' + actualWickts + '</div>' +
+              '<div class="scored-stat-label">Act Wkts</div>' +
+            '</div>' +
           '</div>' +
-          '<div class="scored-stat">' +
-            '<div class="scored-stat-val">' + (q.actual_value !== null ? q.actual_value : '—') + '</div>' +
-            '<div class="scored-stat-label">Actual</div>' +
-          '</div>' +
-          '<div class="scored-stat ' + (isExact ? 'exact-call' : '') + '">' +
-            '<div class="scored-pts-val">' + (pts !== null ? pts : '—') + ' pts</div>' +
-            '<div class="scored-stat-label">' + (diff !== null ? (isExact ? '✓ Exact!' : 'Off by ' + diff) : 'No pick') + '</div>' +
-          '</div>' +
-        '</div>';
-    } 
-       else if (isEditable) {
-     
-       let placeholderText = 'Enter prediction';
-     
-       if (
-         q.question_type === 'team_final_score' ||
-         q.question_type === 'team_score_6' ||
-         q.question_type === 'team_score_12' ||
-         q.question_type === 'batter_runs'
-       ) {
-         placeholderText = 'Enter runs';
-       }
-     
-       if (q.question_type === 'bowler_wickets') {
-         placeholderText = 'Enter wickets';
-       }
-     
-       inputHtml =
-         '<div class="question-input-row">' +
-           '<input type="number" min="0" max="999" class="pred-number-input"' +
-           ' id="qinput_' + q.id + '" data-question-id="' + q.id + '"' +
-           ' value="' + (hasExisting ? q.user_prediction : '') + '"' +
-           ' placeholder="' + placeholderText + '" />' +
-           (hasExisting
-             ? '<span class="existing-pred-badge">Saved: ' + q.user_prediction + '</span>'
-             : '') +
-         '</div>';
-     
-     }
-   
-    else {
+          '<div style="text-align:center;margin-top:8px;">' +
+            '<span class="scored-pts-val">' + (pts !== null ? pts : '—') + ' pts</span>' +
+          '</div>';
+
+      // ── Scored: CATEGORICAL_EXACT ──
+      } else if (ruleCode === 'CATEGORICAL_EXACT') {
+        const pick   = q.user_predicted_choice !== null ? q.user_predicted_choice : '—';
+        const actual = q.actual_value !== null ? String(q.actual_value) : '—';
+        const pts    = q.user_points !== null ? Math.round(Number(q.user_points || 0)) : null;
+        const isExact = pick === actual && pick !== '—';
+        inputHtml =
+          '<div class="scored-result-grid">' +
+            '<div class="scored-stat">' +
+              '<div class="scored-stat-val" style="font-size:0.82rem;">' + escapeHTML(pick) + '</div>' +
+              '<div class="scored-stat-label">Your Pick</div>' +
+            '</div>' +
+            '<div class="scored-stat">' +
+              '<div class="scored-stat-val" style="font-size:0.82rem;">' + escapeHTML(actual) + '</div>' +
+              '<div class="scored-stat-label">Actual</div>' +
+            '</div>' +
+            '<div class="scored-stat ' + (isExact ? 'exact-call' : '') + '">' +
+              '<div class="scored-pts-val">' + (pts !== null ? pts : '—') + ' pts</div>' +
+              '<div class="scored-stat-label">' + (isExact ? '✓ Exact!' : (pts === 0 ? 'Wrong' : 'Pending')) + '</div>' +
+            '</div>' +
+          '</div>';
+
+      // ── Scored: default numeric ──
+      } else {
+        const diff    = q.user_prediction !== null ? q.user_difference : null;
+        const pts     = q.user_prediction !== null ? Math.round(Number(q.user_points || 0)) : null;
+        const isExact = diff === 0;
+        inputHtml =
+          '<div class="scored-result-grid">' +
+            '<div class="scored-stat">' +
+              '<div class="scored-stat-val">' + (q.user_prediction !== null ? q.user_prediction : '—') + '</div>' +
+              '<div class="scored-stat-label">Your Pick</div>' +
+            '</div>' +
+            '<div class="scored-stat">' +
+              '<div class="scored-stat-val">' + (q.actual_value !== null ? q.actual_value : '—') + '</div>' +
+              '<div class="scored-stat-label">Actual</div>' +
+            '</div>' +
+            '<div class="scored-stat ' + (isExact ? 'exact-call' : '') + '">' +
+              '<div class="scored-pts-val">' + (pts !== null ? pts : '—') + ' pts</div>' +
+              '<div class="scored-stat-label">' + (diff !== null ? (isExact ? '✓ Exact!' : 'Off by ' + diff) : 'No pick') + '</div>' +
+            '</div>' +
+          '</div>';
+      }
+
+    } else if (isEditable) {
+      // ── Editable: TEAM_SCORE_SPLIT_75_25 (dual input) ──
+      if (ruleCode === 'TEAM_SCORE_SPLIT_75_25') {
+        const exRuns    = q.user_predicted_runs    !== null ? q.user_predicted_runs    : (q.user_prediction !== null ? q.user_prediction : '');
+        const exWickets = q.user_predicted_wickets !== null ? q.user_predicted_wickets : '';
+        inputHtml =
+          '<div class="dual-input-wrap">' +
+            '<div class="dual-input-field">' +
+              '<span class="dual-input-label">Runs</span>' +
+              '<input type="number" min="0" max="999" class="pred-number-input"' +
+              ' id="qruns_' + q.id + '" data-question-id="' + q.id + '" data-field="runs"' +
+              ' value="' + escapeHTML(String(exRuns)) + '"' +
+              ' placeholder="e.g. 165" />' +
+            '</div>' +
+            '<div class="dual-input-field">' +
+              '<span class="dual-input-label">Wickets</span>' +
+              '<input type="number" min="0" max="10" class="pred-number-input"' +
+              ' id="qwickets_' + q.id + '" data-question-id="' + q.id + '" data-field="wickets"' +
+              ' value="' + escapeHTML(String(exWickets)) + '"' +
+              ' placeholder="e.g. 3" />' +
+            '</div>' +
+          '</div>';
+
+      // ── Editable: CATEGORICAL_EXACT (pill selector) ──
+      } else if (ruleCode === 'CATEGORICAL_EXACT') {
+        var options = Array.isArray(q.question_options) ? q.question_options : [];
+        var currentSel = categoricalSelections[q.id] || null;
+        inputHtml = '<div class="cat-pills-wrap">' +
+          options.map(function(opt) {
+            var sel = currentSel === opt ? ' selected' : '';
+            return '<button type="button" class="cat-pill' + sel + '"' +
+              ' data-qid="' + q.id + '"' +
+              ' data-value="' + escapeHTML(opt) + '"' +
+              ' onclick="selectCatPill(' + q.id + ', \'' + escapeHTML(opt).replace(/'/g, "\\'") + '\')">' +
+              escapeHTML(opt) +
+              '</button>';
+          }).join('') +
+          '</div>';
+
+      // ── Editable: default numeric ──
+      } else {
+        let placeholderText = 'Enter prediction';
+        if (['team_final_score','team_score_6','team_score_12','batter_runs','total_sixes_tournament'].includes(q.question_type)) {
+          placeholderText = 'Enter runs';
+        }
+        if (q.question_type === 'bowler_wickets') placeholderText = 'Enter wickets';
+
+        const hasExisting = q.user_prediction !== null;
+        inputHtml =
+          '<div class="question-input-row">' +
+            '<input type="number" min="0" max="999" class="pred-number-input"' +
+            ' id="qinput_' + q.id + '" data-question-id="' + q.id + '"' +
+            ' value="' + (hasExisting ? q.user_prediction : '') + '"' +
+            ' placeholder="' + placeholderText + '" />' +
+            (hasExisting
+              ? '<span class="existing-pred-badge">Saved: ' + q.user_prediction + '</span>'
+              : '') +
+          '</div>';
+      }
+
+    } else {
+      // Locked / not-yet-open
       const lockDisplay = q.lock_reason || 'Not Scored Yet';
-      inputHtml = '<div class="lock-reason-badge">🔒 ' + escapeHTML(lockDisplay) + '</div>';
+      // For categorical: show existing pick if any
+      if (ruleCode === 'CATEGORICAL_EXACT' && q.user_predicted_choice) {
+        inputHtml =
+          '<div class="lock-reason-badge">🔒 ' + escapeHTML(lockDisplay) + '</div>' +
+          '<div style="margin-top:8px;font-size:0.82rem;color:#374151;">Your pick: <strong>' + escapeHTML(q.user_predicted_choice) + '</strong></div>';
+      } else {
+        inputHtml = '<div class="lock-reason-badge">🔒 ' + escapeHTML(lockDisplay) + '</div>';
+      }
     }
 
     return '<div class="' + cardClass + '">' +
@@ -1262,20 +1521,64 @@ if (!visibleMatches.length) {
     const btn    = document.getElementById('predSubmitBtn');
     const status = document.getElementById('predSubmitStatus');
 
-    const inputs = document.querySelectorAll('.pred-number-input');
-    const preds  = [];
-    for (const input of inputs) {
-      const val    = input.value.trim();
-      if (val === '') continue;
-      const numVal = parseInt(val, 10);
-      if (isNaN(numVal) || numVal < 0) {
-        status.textContent = 'Please enter valid non-negative numbers.';
-        status.className   = 'pred-submit-status error';
-        input.focus();
-        return;
+    // Get the current visible question set
+    var qs;
+    if      (predCurrentCategory === 'pregame')  qs = currentPregameQs;
+    else if (predCurrentCategory === 'midgame')  qs = currentMidgameQs;
+    else if (predCurrentCategory === 'contest')  qs = currentContestQs;
+    else                                          qs = currentPregameQs;
+
+    var editableQs = qs.filter(function(q) { return q.is_editable; });
+    var preds = [];
+    var hasError = false;
+
+    for (var i = 0; i < editableQs.length; i++) {
+      var q = editableQs[i];
+      var ruleCode = q.scoring_rule_code || '';
+
+      if (ruleCode === 'TEAM_SCORE_SPLIT_75_25') {
+        var runsEl    = document.getElementById('qruns_' + q.id);
+        var wicketsEl = document.getElementById('qwickets_' + q.id);
+        var runsVal    = runsEl ? runsEl.value.trim() : '';
+        var wicketsVal = wicketsEl ? wicketsEl.value.trim() : '';
+        if (runsVal === '' || wicketsVal === '') continue;
+        var numRuns    = parseInt(runsVal, 10);
+        var numWickets = parseInt(wicketsVal, 10);
+        if (isNaN(numRuns) || numRuns < 0) {
+          status.textContent = 'Please enter valid runs (non-negative integer).';
+          status.className = 'pred-submit-status error';
+          if (runsEl) runsEl.focus();
+          hasError = true; break;
+        }
+        if (isNaN(numWickets) || numWickets < 0 || numWickets > 10) {
+          status.textContent = 'Please enter valid wickets (0-10).';
+          status.className = 'pred-submit-status error';
+          if (wicketsEl) wicketsEl.focus();
+          hasError = true; break;
+        }
+        preds.push({ question_id: q.id, predicted_runs: numRuns, predicted_wickets: numWickets, predicted_value: numRuns });
+
+      } else if (ruleCode === 'CATEGORICAL_EXACT') {
+        var choice = categoricalSelections[q.id] || null;
+        if (!choice) continue;
+        preds.push({ question_id: q.id, predicted_choice: choice });
+
+      } else {
+        var inputEl = document.getElementById('qinput_' + q.id);
+        var val = inputEl ? inputEl.value.trim() : '';
+        if (val === '') continue;
+        var numVal = parseInt(val, 10);
+        if (isNaN(numVal) || numVal < 0) {
+          status.textContent = 'Please enter valid non-negative numbers.';
+          status.className = 'pred-submit-status error';
+          if (inputEl) inputEl.focus();
+          hasError = true; break;
+        }
+        preds.push({ question_id: q.id, predicted_value: numVal });
       }
-      preds.push({ question_id: Number(input.dataset.questionId), predicted_value: numVal });
     }
+
+    if (hasError) return;
 
     if (!preds.length) {
       status.textContent = 'Enter at least one prediction before saving.';
@@ -1359,7 +1662,6 @@ if (!visibleMatches.length) {
         return;
       }
 
-      // Update subtitle with match name when single match
       if (matches.length === 1) {
         var m0 = matches[0];
         document.getElementById('playerModalSub').textContent = m0.match_title || m0.team_1 + ' vs ' + m0.team_2;
@@ -1370,7 +1672,6 @@ if (!visibleMatches.length) {
       var matchMap = {};
       matches.forEach(function(m) { matchMap[m.id] = m; });
 
-      // Group predictions by match then phase
       var byMatch = {};
       predictions.forEach(function(p) {
         if (!byMatch[p.match_id]) byMatch[p.match_id] = {};
@@ -1395,16 +1696,22 @@ if (!visibleMatches.length) {
             var isScored = pred.question_status === 'scored';
             var isExact  = isScored && Number(pred.difference) === 0;
             var pts      = isScored ? Math.round(Number(pred.points_awarded || 0)) : null;
+
+            // Pick display: prefer predicted_choice for categorical, otherwise predicted_value
+            var pickDisplay = pred.predicted_choice !== null ? pred.predicted_choice
+              : (pred.predicted_value !== null ? pred.predicted_value : '—');
+            var actualDisplay = (isScored && pred.actual_value !== null) ? pred.actual_value : '—';
+
             html +=
               '<div class="player-pred-card">' +
                 '<div class="player-pred-question">' + escapeHTML(pred.question_text) + '</div>' +
                 '<div class="player-pred-stats">' +
                   '<div class="player-pred-stat">' +
-                    '<div class="player-pred-stat-val">' + (pred.predicted_value !== null ? pred.predicted_value : '—') + '</div>' +
+                    '<div class="player-pred-stat-val" style="font-size:0.85rem;">' + escapeHTML(String(pickDisplay)) + '</div>' +
                     '<div class="player-pred-stat-label">Their Pick</div>' +
                   '</div>' +
                   '<div class="player-pred-stat">' +
-                    '<div class="player-pred-stat-val">' + (isScored && pred.actual_value !== null ? pred.actual_value : '—') + '</div>' +
+                    '<div class="player-pred-stat-val" style="font-size:0.85rem;">' + escapeHTML(String(actualDisplay)) + '</div>' +
                     '<div class="player-pred-stat-label">Actual</div>' +
                   '</div>' +
                   '<div class="player-pred-stat ' + (isExact ? 'exact' : 'pts') + '">' +
@@ -1447,7 +1754,11 @@ if (!visibleMatches.length) {
       strip.classList.add('show');
       lbRenderMatchChips();
       if (!lbSelectedMatchId && allMatches.length) {
-        const closedOrLocked = allMatches.filter(function(m) { return m.status === 'closed' || m.status === 'locked'; });
+        // Pick from the latest 2 matches (by id DESC) that are closed or locked
+        var closedOrLocked = allMatches
+          .filter(function(m) { return m.status === 'closed' || m.status === 'locked'; })
+          .sort(function(a, b) { return b.id - a.id })
+          .slice(0, 2);
         if (closedOrLocked.length) {
           lbSelectMatch(closedOrLocked[0].id);
           return;
@@ -1470,7 +1781,11 @@ if (!visibleMatches.length) {
 
   function lbRenderMatchChips() {
     const strip = document.getElementById('lbMatchStrip');
-    const scored = allMatches.filter(function(m) { return m.status === 'closed' || m.status === 'locked'; });
+    // Only show LATEST 2 matches (by id DESC) that are closed or locked
+    const scored = allMatches
+      .filter(function(m) { return m.status === 'closed' || m.status === 'locked'; })
+      .sort(function(a, b) { return b.id - a.id; })
+      .slice(0, 2);
     if (!scored.length) {
       strip.innerHTML = '<span style="font-size:0.8rem;color:#9ca3af;padding:8px;">No completed matches yet.</span>';
       return;
