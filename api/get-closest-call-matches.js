@@ -9,19 +9,23 @@ module.exports = async function handler(req, res) {
   try {
     const matches = await sql`
       SELECT
-        id,
-        fantasy_match_id,
-        ipl_match_id,
-        match_title,
-        team_1,
-        team_2,
-        match_date,
-        status,
-        created_at,
-        updated_at
-      FROM closest_call_matches
-      WHERE status IN ('open', 'locked', 'closed')
-      ORDER BY match_date DESC, id DESC
+        m.id,
+        m.fantasy_match_id,
+        m.ipl_match_id,
+        m.match_title,
+        m.team_1,
+        m.team_2,
+        m.match_date,
+        m.status,
+        m.created_at,
+        m.updated_at,
+        m.contest_id,
+        c.contest_name,
+        c.contest_type
+      FROM closest_call_matches m
+      LEFT JOIN closest_call_contests c ON c.id = m.contest_id
+      WHERE m.status IN ('open', 'locked', 'closed')
+      ORDER BY m.match_date DESC, m.id DESC
     `;
 
     return res.status(200).json({ matches });

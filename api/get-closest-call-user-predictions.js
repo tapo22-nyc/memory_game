@@ -35,24 +35,59 @@ module.exports = async function handler(req, res) {
       if (!matchRows.length) return res.status(404).json({ error: 'Match not found.' });
       matches = [matchRows[0]];
 
-      predictions = await sql`
-        SELECT
-          p.question_id,
-          p.predicted_value,
-          p.difference,
-          p.points_awarded,
-          p.closest_call_match_id AS match_id,
-          q.question_text,
-          q.phase,
-          q.status AS question_status,
-          q.max_points,
-          q.actual_value
-        FROM closest_call_predictions p
-        JOIN closest_call_questions q ON q.id = p.question_id
-        WHERE p.user_id = ${userId}
-          AND p.closest_call_match_id = ${matchId}
-        ORDER BY q.phase, q.id
-      `;
+      const matchStatus = matchRows[0].status;
+
+      // For open/locked matches: only return predictions where question is scored
+      if (matchStatus === 'open' || matchStatus === 'locked') {
+        predictions = await sql`
+          SELECT
+            p.question_id,
+            p.predicted_value,
+            p.predicted_runs,
+            p.predicted_wickets,
+            p.predicted_choice,
+            p.difference,
+            p.points_awarded,
+            p.closest_call_match_id AS match_id,
+            q.question_text,
+            q.phase,
+            q.status AS question_status,
+            q.max_points,
+            q.actual_value,
+            q.actual_runs,
+            q.actual_wickets
+          FROM closest_call_predictions p
+          JOIN closest_call_questions q ON q.id = p.question_id
+          WHERE p.user_id = ${userId}
+            AND p.closest_call_match_id = ${matchId}
+            AND q.status = 'scored'
+          ORDER BY q.phase, q.id
+        `;
+      } else {
+        predictions = await sql`
+          SELECT
+            p.question_id,
+            p.predicted_value,
+            p.predicted_runs,
+            p.predicted_wickets,
+            p.predicted_choice,
+            p.difference,
+            p.points_awarded,
+            p.closest_call_match_id AS match_id,
+            q.question_text,
+            q.phase,
+            q.status AS question_status,
+            q.max_points,
+            q.actual_value,
+            q.actual_runs,
+            q.actual_wickets
+          FROM closest_call_predictions p
+          JOIN closest_call_questions q ON q.id = p.question_id
+          WHERE p.user_id = ${userId}
+            AND p.closest_call_match_id = ${matchId}
+          ORDER BY q.phase, q.id
+        `;
+      }
     } else {
       const matchIdRows = await sql`
         SELECT DISTINCT closest_call_match_id AS id
@@ -72,10 +107,18 @@ module.exports = async function handler(req, res) {
         ORDER BY match_date DESC
       `;
 
-      predictions = await sql`
+      // Build a map of match statuses
+      const matchStatusMap = {};
+      for (const m of matches) { matchStatusMap[m.id] = m.status; }
+
+      // Fetch all predictions; filter per-match based on status
+      const allPreds = await sql`
         SELECT
           p.question_id,
           p.predicted_value,
+          p.predicted_runs,
+          p.predicted_wickets,
+          p.predicted_choice,
           p.difference,
           p.points_awarded,
           p.closest_call_match_id AS match_id,
@@ -83,12 +126,23 @@ module.exports = async function handler(req, res) {
           q.phase,
           q.status AS question_status,
           q.max_points,
-          q.actual_value
+          q.actual_value,
+          q.actual_runs,
+          q.actual_wickets
         FROM closest_call_predictions p
         JOIN closest_call_questions q ON q.id = p.question_id
         WHERE p.user_id = ${userId}
         ORDER BY p.closest_call_match_id DESC, q.phase, q.id
       `;
+
+      // For open/locked matches, only include scored questions
+      predictions = allPreds.filter(function(p) {
+        const ms = matchStatusMap[p.match_id];
+        if (ms === 'open' || ms === 'locked') {
+          return p.question_status === 'scored';
+        }
+        return true;
+      });
     }
 
     const scored = predictions.filter(p => p.question_status === 'scored');
@@ -99,16 +153,21 @@ module.exports = async function handler(req, res) {
       user,
       matches,
       predictions: predictions.map(p => ({
-        question_id:     p.question_id,
-        match_id:        p.match_id,
-        question_text:   p.question_text,
-        phase:           p.phase,
-        question_status: p.question_status,
-        max_points:      Number(p.max_points || 0),
-        predicted_value: p.predicted_value,
-        actual_value:    p.actual_value,
-        difference:      p.difference,
-        points_awarded:  p.points_awarded !== null ? Number(p.points_awarded) : null,
+        question_id:        p.question_id,
+        match_id:           p.match_id,
+        question_text:      p.question_text,
+        phase:              p.phase,
+        question_status:    p.question_status,
+        max_points:         Number(p.max_points || 0),
+        predicted_value:    p.predicted_value,
+        predicted_runs:     p.predicted_runs    !== undefined ? p.predicted_runs    : null,
+        predicted_wickets:  p.predicted_wickets !== undefined ? p.predicted_wickets : null,
+        predicted_choice:   p.predicted_choice  !== undefined ? p.predicted_choice  : null,
+        actual_value:       p.actual_value,
+        actual_runs:        p.actual_runs        !== undefined ? p.actual_runs        : null,
+        actual_wickets:     p.actual_wickets     !== undefined ? p.actual_wickets     : null,
+        difference:         p.difference,
+        points_awarded:     p.points_awarded !== null ? Number(p.points_awarded) : null,
       })),
       total_points,
       exact_calls,

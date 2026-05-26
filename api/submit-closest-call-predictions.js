@@ -18,7 +18,7 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'predictions array is required.' });
   }
 
-  const matchId  = Number(closest_call_match_id);
+  const matchId   = Number(closest_call_match_id);
   const cleanName = String(user_name).trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
   if (cleanName.length < 3) {
     return res.status(400).json({ error: 'user_name must be at least 3 characters.' });
@@ -71,14 +71,9 @@ module.exports = async function handler(req, res) {
 
     for (const pred of predictions) {
       const questionId = Number(pred.question_id);
-      const predictedValue = parseInt(pred.predicted_value, 10);
 
       if (isNaN(questionId) || questionId <= 0) {
         errors.push({ question_id: pred.question_id, error: 'Invalid question_id.' });
-        continue;
-      }
-      if (isNaN(predictedValue) || predictedValue < 0) {
-        errors.push({ question_id: questionId, error: 'predicted_value must be a non-negative integer.' });
         continue;
       }
 
@@ -110,19 +105,88 @@ module.exports = async function handler(req, res) {
         continue;
       }
 
-      // Upsert prediction
-      const result = await sql`
-        INSERT INTO closest_call_predictions
-          (user_id, closest_call_match_id, question_id, predicted_value, submitted_at, updated_at)
-        VALUES
-          (${user.id}, ${matchId}, ${questionId}, ${predictedValue}, NOW(), NOW())
-        ON CONFLICT (user_id, question_id)
-        DO UPDATE SET
-          predicted_value = EXCLUDED.predicted_value,
-          updated_at      = NOW()
-        RETURNING *
-      `;
-      saved.push(result[0]);
+      const ruleCode = q.scoring_rule_code || '';
+
+      // Determine prediction type based on scoring rule
+      if (ruleCode === 'TEAM_SCORE_SPLIT_75_25') {
+        // Expects predicted_runs + predicted_wickets
+        const pRuns    = parseInt(pred.predicted_runs,    10);
+        const pWickets = parseInt(pred.predicted_wickets, 10);
+        if (isNaN(pRuns) || pRuns < 0) {
+          errors.push({ question_id: questionId, error: 'predicted_runs must be a non-negative integer for TEAM_SCORE_SPLIT_75_25.' });
+          continue;
+        }
+        if (isNaN(pWickets) || pWickets < 0 || pWickets > 10) {
+          errors.push({ question_id: questionId, error: 'predicted_wickets must be 0-10 for TEAM_SCORE_SPLIT_75_25.' });
+          continue;
+        }
+        const result = await sql`
+          INSERT INTO closest_call_predictions
+            (user_id, closest_call_match_id, question_id, predicted_value,
+             predicted_runs, predicted_wickets, submitted_at, updated_at)
+          VALUES
+            (${user.id}, ${matchId}, ${questionId}, ${pRuns},
+             ${pRuns}, ${pWickets}, NOW(), NOW())
+          ON CONFLICT (user_id, question_id)
+          DO UPDATE SET
+            predicted_value   = EXCLUDED.predicted_value,
+            predicted_runs    = EXCLUDED.predicted_runs,
+            predicted_wickets = EXCLUDED.predicted_wickets,
+            updated_at        = NOW()
+          RETURNING *
+        `;
+        saved.push(result[0]);
+
+      } else if (ruleCode === 'CATEGORICAL_EXACT') {
+        // Expects predicted_choice (string)
+        const pChoice = String(pred.predicted_choice || '').trim();
+        if (!pChoice) {
+          errors.push({ question_id: questionId, error: 'predicted_choice is required for CATEGORICAL_EXACT questions.' });
+          continue;
+        }
+        // Validate against question_options if set
+        if (q.question_options && Array.isArray(q.question_options)) {
+          if (!q.question_options.includes(pChoice)) {
+            errors.push({ question_id: questionId, error: 'predicted_choice is not a valid option.' });
+            continue;
+          }
+        }
+        const result = await sql`
+          INSERT INTO closest_call_predictions
+            (user_id, closest_call_match_id, question_id, predicted_value,
+             predicted_choice, submitted_at, updated_at)
+          VALUES
+            (${user.id}, ${matchId}, ${questionId}, 0,
+             ${pChoice}, NOW(), NOW())
+          ON CONFLICT (user_id, question_id)
+          DO UPDATE SET
+            predicted_value  = 0,
+            predicted_choice = EXCLUDED.predicted_choice,
+            updated_at       = NOW()
+          RETURNING *
+        `;
+        saved.push(result[0]);
+
+      } else {
+        // Default: numeric predicted_value
+        const predictedValue = parseInt(pred.predicted_value, 10);
+        if (isNaN(predictedValue) || predictedValue < 0) {
+          errors.push({ question_id: questionId, error: 'predicted_value must be a non-negative integer.' });
+          continue;
+        }
+        const result = await sql`
+          INSERT INTO closest_call_predictions
+            (user_id, closest_call_match_id, question_id, predicted_value, submitted_at, updated_at)
+          VALUES
+            (${user.id}, ${matchId}, ${questionId}, ${predictedValue}, NOW(), NOW())
+          ON CONFLICT (user_id, question_id)
+          DO UPDATE SET
+            predicted_value = EXCLUDED.predicted_value,
+            updated_at      = NOW()
+          RETURNING *
+        `;
+        saved.push(result[0]);
+      }
     }
 
     return res.status(200).json({
