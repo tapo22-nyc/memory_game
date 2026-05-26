@@ -108,7 +108,7 @@ module.exports = async function handler(req, res) {
       const ruleCode = q.scoring_rule_code || '';
 
       // Determine prediction type based on scoring rule
-      if (ruleCode === 'TEAM_SCORE_SPLIT_75_25') {
+      if (ruleCode === 'TEAM_SCORE_SPLIT_75_25' || ruleCode === 'TEAM_SCORE_INNINGS') {
         // Expects predicted_runs + predicted_wickets
         const pRuns    = parseInt(pred.predicted_runs,    10);
         const pWickets = parseInt(pred.predicted_wickets, 10);

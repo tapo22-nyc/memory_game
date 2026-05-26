@@ -23,9 +23,71 @@ const LEGACY_RULES = new Set([
   'TOTAL_SIXES',
 ]);
 
-// Code-based scoring for new rules
-function computePointsCode(ruleCode, diff, opts) {
-  opts = opts || {};
+// Rules that require dual runs+wickets input
+const DUAL_INPUT_RULES = new Set([
+  'TEAM_SCORE_SPLIT_75_25',
+  'TEAM_SCORE_INNINGS',
+]);
+
+// Score the wickets component for dual-input team score rules
+function computeWicketsPoints(ruleCode, wicketsDiff) {
+  if (ruleCode === 'TEAM_SCORE_INNINGS') {
+    if (wicketsDiff === 0) return 25;
+    if (wicketsDiff === 1) return 20;
+    if (wicketsDiff === 2) return 10;
+    return 0;
+  }
+  // TEAM_SCORE_SPLIT_75_25 (legacy)
+  if (wicketsDiff === 0) return 25;
+  if (wicketsDiff === 1) return 20;
+  if (wicketsDiff === 2) return 10;
+  if (wicketsDiff === 3) return 5;
+  return 0;
+}
+
+// Score the runs component for dual-input team score rules
+function computeRunsPoints(ruleCode, runsDiff) {
+  if (ruleCode === 'TEAM_SCORE_INNINGS') {
+    return runsDiff >= 40 ? 0 : Math.max(75 - runsDiff, 0);
+  }
+  // TEAM_SCORE_SPLIT_75_25 (legacy)
+  return Math.max(75 - runsDiff, 0);
+}
+
+// Code-based scoring for single-value rules
+function computePointsCode(ruleCode, diff) {
+  // ── New rules ──────────────────────────────────────────────
+  if (ruleCode === 'BATSMAN_RUNS_INNINGS') {
+    return diff >= 30 ? 0 : Math.max(50 - diff, 0);
+  }
+  if (ruleCode === 'BATSMAN_SIXES_INNINGS') {
+    if (diff === 0) return 20;
+    if (diff === 1) return 20;
+    if (diff === 2) return 10;
+    return 0;
+  }
+  if (ruleCode === 'BOWLER_WICKETS_INNINGS') {
+    if (diff === 0) return 30;
+    if (diff === 1) return 20;
+    if (diff === 2) return 10;
+    return 0;
+  }
+  if (ruleCode === 'DEATH_OVERS_RUNS') {
+    return diff >= 20 ? 0 : Math.max(40 - diff, 0);
+  }
+  if (ruleCode === 'DEATH_OVERS_WICKETS') {
+    if (diff === 0) return 15;
+    if (diff === 1) return 10;
+    if (diff === 2) return 5;
+    return 0;
+  }
+  if (ruleCode === 'DEATH_OVERS_SIXES') {
+    return diff >= 4 ? 0 : Math.max(10 - diff, 0);
+  }
+  if (ruleCode === 'DEATH_OVERS_DOT_BALLS') {
+    return diff >= 4 ? 0 : Math.max(10 - diff, 0);
+  }
+  // ── Legacy new rules ───────────────────────────────────────
   if (ruleCode === 'BATTER_RUNS_50') {
     return Math.max(50 - diff, 0);
   }
@@ -47,8 +109,8 @@ function computePointsCode(ruleCode, diff, opts) {
   if (ruleCode === 'CATEGORICAL_EXACT') {
     return diff === 0 ? 100 : 0;
   }
-  // TEAM_SCORE_SPLIT_75_25 is handled separately (needs runs + wickets)
-  return null; // unknown rule — caller should fall back to DB
+  // TEAM_SCORE_SPLIT_75_25 / TEAM_SCORE_INNINGS handled separately (dual input)
+  return null; // unknown rule — fall back to DB
 }
 
 module.exports = async function handler(req, res) {
@@ -76,9 +138,9 @@ module.exports = async function handler(req, res) {
 
       const ruleCodeRaw = String(update.scoring_rule_code || '').trim() || null;
 
-      // ── TEAM_SCORE_SPLIT_75_25 ───────────────────────────────────────────
+      // ── Dual-input team score rules ─────────────────────────────────────
       if (
-        ruleCodeRaw === 'TEAM_SCORE_SPLIT_75_25' ||
+        DUAL_INPUT_RULES.has(ruleCodeRaw) ||
         update.actual_runs !== undefined ||
         update.actual_wickets !== undefined
       ) {
@@ -115,12 +177,8 @@ module.exports = async function handler(req, res) {
           const runsDiff    = Math.abs(predRuns    - actualRuns);
           const wicketsDiff = Math.abs(predWickets - actualWickets);
 
-          const runsPts = Math.max(75 - runsDiff, 0);
-          let wicketsPts = 0;
-          if      (wicketsDiff === 0) wicketsPts = 25;
-          else if (wicketsDiff === 1) wicketsPts = 20;
-          else if (wicketsDiff === 2) wicketsPts = 10;
-          else if (wicketsDiff === 3) wicketsPts = 5;
+          const runsPts    = computeRunsPoints(ruleCode, runsDiff);
+          const wicketsPts = computeWicketsPoints(ruleCode, wicketsDiff);
 
           const totalPts = runsPts + wicketsPts;
           const displayDiff = runsDiff; // runs difference for display
