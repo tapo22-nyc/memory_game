@@ -173,37 +173,60 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .section-label   { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #2563eb; white-space: nowrap; }
   .section-line    { flex: 1; min-width: 60px; height: 1px; background: linear-gradient(90deg, #d1d5db, transparent); }
 
-  /* ── Match cards ── */
+  /* ── Match cards — 3-section layout ── */
   .match-grid { display: flex; flex-direction: column; gap: 10px; }
   .match-card {
     background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px;
-    padding: 14px 16px; transition: transform 0.18s, border-color 0.18s;
-    display: flex; align-items: center; gap: 12px;
+    overflow: hidden; transition: transform 0.18s, border-color 0.18s;
+    display: grid; grid-template-columns: 1fr 1fr 148px; align-items: stretch;
   }
   .match-card:hover { transform: translateY(-2px); border-color: #93c5fd; }
-  .match-card-info { flex: 1; min-width: 0; }
-  .match-teams { font-size: 1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #111827; }
-  .card-timer-val {
-    display: inline-block; font-size: 0.72rem; font-weight: 800;
-    color: #dc2626; margin-top: 4px; letter-spacing: 0.3px;
+
+  /* Section 1 – Match name */
+  .mc-name {
+    padding: 14px 16px; border-right: 1px solid #f3f4f6;
+    display: flex; flex-direction: column; justify-content: center; min-width: 0;
   }
-  .match-card-btn {
-    padding: 8px 16px; border: none; border-radius: 10px;
-    font-size: 0.82rem; font-weight: 700; cursor: pointer;
+  .mc-name-title { font-size: 0.97rem; font-weight: 800; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Section 2 – Status / timer */
+  .mc-status {
+    padding: 14px 16px; border-right: 1px solid #f3f4f6;
+    display: flex; flex-direction: column; justify-content: center; min-width: 0;
+  }
+  .mc-status-label { font-size: 0.78rem; font-weight: 700; color: #6b7280; }
+  .mc-status-timer { font-size: 0.78rem; font-weight: 800; color: #dc2626; margin-top: 2px; }
+  .mc-status-locked { color: #d97706; }
+  .mc-status-closed { color: #15803d; }
+
+  /* Section 3 – CTA */
+  .mc-action {
+    padding: 12px 14px; display: flex; align-items: center; justify-content: center;
+  }
+  .mc-btn {
+    width: 100%; padding: 10px 8px; border: none; border-radius: 10px;
+    font-size: 0.8rem; font-weight: 700; cursor: pointer;
     transition: transform 0.12s, background 0.15s;
-    letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0;
+    letter-spacing: 0.2px; text-align: center; white-space: nowrap;
   }
-  .match-card-btn:active { transform: scale(0.97); }
-  .btn-open   { background: #2563eb; color: #fff; box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
-  .btn-open:hover { background: #1d4ed8; }
-  .btn-locked { background: #fef3c7; color: #d97706; border: 1.5px solid #fde68a; }
-  .btn-locked:hover { background: #fde68a; }
-  .btn-closed { background: #f0fdf4; color: #15803d; border: 1.5px solid #bbf7d0; }
-  .btn-closed:hover { background: #dcfce7; }
+  .mc-btn:active { transform: scale(0.97); }
+  .mc-btn-open   { background: #2563eb; color: #fff; box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
+  .mc-btn-open:hover   { background: #1d4ed8; }
+  .mc-btn-locked { background: #fef3c7; color: #d97706; border: 1.5px solid #fde68a; }
+  .mc-btn-locked:hover { background: #fde68a; }
+  .mc-btn-closed { background: #f0fdf4; color: #15803d; border: 1.5px solid #bbf7d0; }
+  .mc-btn-closed:hover { background: #dcfce7; }
+
   .match-empty {
     padding: 36px 20px; text-align: center;
     color: #9ca3af; font-size: 0.9rem;
     background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px;
+  }
+
+  /* Mobile: stack sections */
+  @media (max-width: 600px) {
+    .match-card { grid-template-columns: 1fr; }
+    .mc-name, .mc-status { border-right: none; border-bottom: 1px solid #f3f4f6; }
   }
 
   /* Contest badge */
@@ -854,7 +877,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   let currentMatchData    = null; // full match object from API
   let currentQuestions    = [];
   let currentPregameQs    = [];
-  let currentMidgameQs    = [];
+  let currentMidgameQs    = [];  // kept for legacy; prefer midgame1/midgame2 below
+  let currentMidgame1Qs   = [];
+  let currentMidgame2Qs   = [];
   let currentContestQs    = [];
   let predViewMode        = 'categories'; // 'categories' | 'questions'
   let predCurrentCategory = 'pregame';
@@ -1011,23 +1036,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       if (!el) return;
 
       function tick() {
-        const diff = deadline - Date.now();
+        var diff = deadline - Date.now();
         if (diff <= 0) {
-          el.textContent = 'Starting now';
+          el.textContent = 'Match starting now';
           clearInterval(cardTimerIntervals[m.id]);
           delete cardTimerIntervals[m.id];
           return;
         }
-        const days = Math.floor(diff / 86400000);
-        const hrs  = Math.floor((diff % 86400000) / 3600000);
-        const mins = Math.floor((diff % 3600000) / 60000);
-        const secs = Math.floor((diff % 60000) / 1000);
+        var days = Math.floor(diff / 86400000);
+        var hrs  = Math.floor((diff % 86400000) / 3600000);
+        var mins = Math.floor((diff % 3600000) / 60000);
+        var secs = Math.floor((diff % 60000) / 1000);
         if (days > 0) {
-          el.textContent = days + 'd ' + hrs + 'h';
+          el.textContent = 'Closes in ' + days + 'd ' + hrs + 'h';
         } else if (hrs > 0) {
-          el.textContent = hrs + 'h ' + String(mins).padStart(2,'0') + 'm';
+          el.textContent = 'Closes in ' + hrs + 'h ' + String(mins).padStart(2,'0') + 'm';
         } else {
-          el.textContent = String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0');
+          el.textContent = 'Closes in ' + String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0');
         }
       }
       tick();
@@ -1064,31 +1089,48 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
 
     grid.innerHTML = visibleMatches.map(function(m) {
-      const s = m.status;
-      let btnClass, btnLabel;
-      if (s === 'open')        { btnClass = 'btn-open';   btnLabel = 'Make Predictions'; }
-      else if (s === 'locked') { btnClass = 'btn-locked'; btnLabel = 'View Live Score'; }
-      else                     { btnClass = 'btn-closed'; btnLabel = 'View Final Score'; }
+      var s = m.status;
+      var btnClass, btnLabel, statusLabel, statusExtra;
 
-      const timerHtml = (s === 'open' && m.match_date)
-        ? '<div><span class="card-timer-val" id="card-timer-' + m.id + '"></span></div>'
-        : '';
+      if (s === 'open') {
+        btnClass    = 'mc-btn-open';
+        btnLabel    = 'Make Predictions';
+        statusLabel = 'Predictions open';
+        statusExtra = m.match_date
+          ? '<div class="mc-status-timer" id="card-timer-' + m.id + '"></div>'
+          : '';
+      } else if (s === 'locked') {
+        btnClass    = 'mc-btn-locked';
+        btnLabel    = 'View Live Score';
+        statusLabel = 'Match in Progress';
+        statusExtra = '<div class="mc-status-timer mc-status-locked">Mid-Game Questions Live</div>';
+      } else {
+        btnClass    = 'mc-btn-closed';
+        btnLabel    = 'View Final Score';
+        statusLabel = 'Match Complete';
+        statusExtra = '<div class="mc-status-timer mc-status-closed">Results Available</div>';
+      }
 
       // Contest badge
-      let badgeHtml = '';
+      var badgeHtml = '';
       if (m.contest_name) {
-        const badgeClass = m.contest_type === 'tournament' ? 'contest-badge-tournament' : 'contest-badge-match';
-        const badgeIcon  = m.contest_type === 'tournament' ? '🏆' : '🎯';
+        var badgeClass = m.contest_type === 'tournament' ? 'contest-badge-tournament' : 'contest-badge-match';
+        var badgeIcon  = m.contest_type === 'tournament' ? '🏆' : '🎯';
         badgeHtml = '<div><span class="contest-badge ' + badgeClass + '">' + badgeIcon + ' ' + escapeHTML(m.contest_name) + '</span></div>';
       }
 
       return '<div class="match-card">' +
-        '<div class="match-card-info">' +
-          '<div class="match-teams">' + escapeHTML(m.match_title || m.team_1 + ' vs ' + m.team_2) + '</div>' +
+        '<div class="mc-name">' +
+          '<div class="mc-name-title">' + escapeHTML(m.match_title || m.team_1 + ' vs ' + m.team_2) + '</div>' +
           badgeHtml +
-          timerHtml +
         '</div>' +
-        '<button class="match-card-btn ' + btnClass + '" onclick="onMatchCardClick(' + m.id + ')">' + btnLabel + '</button>' +
+        '<div class="mc-status">' +
+          '<div class="mc-status-label">' + escapeHTML(statusLabel) + '</div>' +
+          statusExtra +
+        '</div>' +
+        '<div class="mc-action">' +
+          '<button class="mc-btn ' + btnClass + '" onclick="onMatchCardClick(' + m.id + ')">' + btnLabel + '</button>' +
+        '</div>' +
       '</div>';
     }).join('');
     startCardTimers();
@@ -1134,12 +1176,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         data.match.match_title || (data.match.team_1 + ' vs ' + data.match.team_2);
       document.getElementById('predModalSubtitle').textContent =
         currentMatchStatus === 'closed' ? 'Results are in! See how you did.' :
-        currentMatchStatus === 'locked' ? 'Match in progress — bonus questions may be open.' :
-        'Enter your predictions below';
+        currentMatchStatus === 'locked' ? 'Match in progress — Mid-Game questions open by innings.' :
+        'Make your predictions before the match starts.';
 
-      // Partition questions by question_phase
+      // Partition questions by question_phase and innings_number
       currentPregameQs  = currentQuestions.filter(function(q) { return (q.question_phase || 'pregame') === 'pregame'; });
       currentMidgameQs  = currentQuestions.filter(function(q) { return (q.question_phase || 'pregame') === 'midgame'; });
+      currentMidgame1Qs = currentMidgameQs.filter(function(q) { return q.innings_number !== 2; });
+      currentMidgame2Qs = currentMidgameQs.filter(function(q) { return q.innings_number === 2; });
       currentContestQs  = currentQuestions.filter(function(q) { return (q.question_phase || 'pregame') === 'contest'; });
 
       // Pre-populate categorical selections from existing predictions
@@ -1180,6 +1224,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     currentQuestions     = [];
     currentPregameQs     = [];
     currentMidgameQs     = [];
+    currentMidgame1Qs    = [];
+    currentMidgame2Qs    = [];
     currentContestQs     = [];
     categoricalSelections = {};
     predViewMode         = 'categories';
@@ -1192,6 +1238,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     } else {
       closePredModal();
     }
+  }
+
+  /* ── Pregame timer hint (countdown to match_date when open) ── */
+  function getPregameTimerHint(matchDate) {
+    var diff = new Date(matchDate).getTime() - Date.now();
+    if (diff <= 0) return 'Closing soon';
+    return 'Closes in ' + formatCountdown(diff);
   }
 
   /* ── Midgame timer hint ── */
@@ -1224,45 +1277,68 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   function renderCategorySelector() {
     predViewMode = 'categories';
 
-    const hasMidgame    = currentMidgameQs.length > 0;
-    const hasContest    = currentContestQs.length > 0;
-    const matchLocked   = currentMatchStatus === 'locked' || currentMatchStatus === 'closed';
+    const hasInn1      = currentMidgame1Qs.length > 0;
+    const hasInn2      = currentMidgame2Qs.length > 0;
+    const hasContest   = currentContestQs.length > 0;
+    const matchLocked  = currentMatchStatus === 'locked' || currentMatchStatus === 'closed';
 
-    const pregameCount   = currentPregameQs.length;
+    const pregameCount    = currentPregameQs.length;
     const pregameEditable = currentPregameQs.some(function(q) { return q.is_editable; });
-    const pregameLocked  = matchLocked && !pregameEditable;
+    const pregameLocked   = matchLocked && !pregameEditable;
 
-    const midgameTimerHint = hasMidgame ? getMidgameTimerHint(currentMidgameQs) : null;
-    const midgameEditable  = hasMidgame && currentMidgameQs.some(function(q) { return q.is_editable; });
+    // Pregame timer only shown when match is still open
+    const pregameTimerHint = (!matchLocked && currentMatchData && currentMatchData.match_date)
+      ? getPregameTimerHint(currentMatchData.match_date)
+      : null;
+
+    const inn1TimerHint = hasInn1 ? getMidgameTimerHint(currentMidgame1Qs) : null;
+    const inn2TimerHint = hasInn2 ? getMidgameTimerHint(currentMidgame2Qs) : null;
+    const inn1Editable  = hasInn1 && currentMidgame1Qs.some(function(q) { return q.is_editable; });
+    const inn2Editable  = hasInn2 && currentMidgame2Qs.some(function(q) { return q.is_editable; });
 
     var html = '<div class="match-cat-selector">';
 
-    // Pregame card
+    // ── Pre-Game card ──────────────────────────────────────────────────────
     html +=
       '<div class="match-cat-card match-cat-pregame" onclick="selectPredCategory(\'pregame\')">' +
         '<div class="cat-card-left">' +
-          '<div class="cat-card-title">🏏 Pregame Questions</div>' +
+          '<div class="cat-card-title">🏏 Pre-Game Questions</div>' +
           '<div class="cat-card-sub">' + pregameCount + ' question' + (pregameCount !== 1 ? 's' : '') +
             (pregameLocked ? ' · Predictions closed' : '') + '</div>' +
+          (pregameTimerHint ? '<div class="cat-timer-hint">' + escapeHTML(pregameTimerHint) + '</div>' : '') +
         '</div>' +
         '<span class="cat-card-arrow">' + (pregameLocked ? '🔒' : '›') + '</span>' +
       '</div>';
 
-    // Midgame card
+    // ── Innings 1 Mid-Game card ────────────────────────────────────────────
     html +=
-      '<div class="match-cat-card match-cat-midgame' + (hasMidgame ? '' : ' cat-disabled') + '"' +
-        (hasMidgame ? ' onclick="selectPredCategory(\'midgame\')"' : '') + '>' +
+      '<div class="match-cat-card match-cat-midgame' + (hasInn1 ? '' : ' cat-disabled') + '"' +
+        (hasInn1 ? ' onclick="selectPredCategory(\'midgame1\')"' : '') + '>' +
         '<div class="cat-card-left">' +
-          '<div class="cat-card-title">🎯 Midgame Questions</div>' +
-          '<div class="cat-card-sub">' + (hasMidgame
-            ? currentMidgameQs.length + ' question' + (currentMidgameQs.length !== 1 ? 's' : '')
-            : 'Opens during the match') + '</div>' +
-          (midgameTimerHint ? '<div class="cat-timer-hint">' + escapeHTML(midgameTimerHint) + '</div>' : '') +
+          '<div class="cat-card-title">⚡ Innings 1 Mid-Game</div>' +
+          '<div class="cat-card-sub">' + (hasInn1
+            ? currentMidgame1Qs.length + ' question' + (currentMidgame1Qs.length !== 1 ? 's' : '') + ' · Overs 16–20'
+            : 'Opens during Innings 1') + '</div>' +
+          (inn1TimerHint ? '<div class="cat-timer-hint">' + escapeHTML(inn1TimerHint) + '</div>' : '') +
         '</div>' +
-        '<span class="cat-card-arrow">' + (hasMidgame ? (midgameEditable ? '›' : '🔒') : '🔒') + '</span>' +
+        '<span class="cat-card-arrow">' + (hasInn1 ? (inn1Editable ? '›' : '🔒') : '🔒') + '</span>' +
       '</div>';
 
-    // Contest/Playoffs card (only shown when there are contest questions)
+    // ── Innings 2 Mid-Game card ────────────────────────────────────────────
+    html +=
+      '<div class="match-cat-card match-cat-midgame' + (hasInn2 ? '' : ' cat-disabled') + '"' +
+        (hasInn2 ? ' onclick="selectPredCategory(\'midgame2\')"' : '') + '>' +
+        '<div class="cat-card-left">' +
+          '<div class="cat-card-title">⚡ Innings 2 Mid-Game</div>' +
+          '<div class="cat-card-sub">' + (hasInn2
+            ? currentMidgame2Qs.length + ' question' + (currentMidgame2Qs.length !== 1 ? 's' : '') + ' · Overs 16–20'
+            : 'Opens during Innings 2') + '</div>' +
+          (inn2TimerHint ? '<div class="cat-timer-hint">' + escapeHTML(inn2TimerHint) + '</div>' : '') +
+        '</div>' +
+        '<span class="cat-card-arrow">' + (hasInn2 ? (inn2Editable ? '›' : '🔒') : '🔒') + '</span>' +
+      '</div>';
+
+    // ── Playoffs Contest card (only if contest questions exist) ────────────
     if (hasContest) {
       var contestEditable = currentContestQs.some(function(q) { return q.is_editable; });
       html +=
@@ -1285,10 +1361,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     predCurrentCategory = cat;
     predViewMode        = 'questions';
     var qs;
-    if      (cat === 'pregame')  qs = currentPregameQs;
-    else if (cat === 'midgame')  qs = currentMidgameQs;
-    else if (cat === 'contest')  qs = currentContestQs;
-    else                         qs = currentPregameQs;
+    if      (cat === 'pregame')   qs = currentPregameQs;
+    else if (cat === 'midgame1')  qs = currentMidgame1Qs;
+    else if (cat === 'midgame2')  qs = currentMidgame2Qs;
+    else if (cat === 'midgame')   qs = currentMidgameQs;  // legacy fallback
+    else if (cat === 'contest')   qs = currentContestQs;
+    else                          qs = currentPregameQs;
     renderQuestionsView(qs);
   }
 
@@ -1322,10 +1400,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   function checkAllFilled() {
     // Get the current visible questions for this category
     var qs;
-    if      (predCurrentCategory === 'pregame')  qs = currentPregameQs;
-    else if (predCurrentCategory === 'midgame')  qs = currentMidgameQs;
-    else if (predCurrentCategory === 'contest')  qs = currentContestQs;
-    else                                          qs = currentPregameQs;
+    if      (predCurrentCategory === 'pregame')   qs = currentPregameQs;
+    else if (predCurrentCategory === 'midgame1')  qs = currentMidgame1Qs;
+    else if (predCurrentCategory === 'midgame2')  qs = currentMidgame2Qs;
+    else if (predCurrentCategory === 'midgame')   qs = currentMidgameQs;
+    else if (predCurrentCategory === 'contest')   qs = currentContestQs;
+    else                                           qs = currentPregameQs;
 
     var editableQs = qs.filter(function(q) { return q.is_editable; });
     if (!editableQs.length) {
@@ -1541,10 +1621,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     // Get the current visible question set
     var qs;
-    if      (predCurrentCategory === 'pregame')  qs = currentPregameQs;
-    else if (predCurrentCategory === 'midgame')  qs = currentMidgameQs;
-    else if (predCurrentCategory === 'contest')  qs = currentContestQs;
-    else                                          qs = currentPregameQs;
+    if      (predCurrentCategory === 'pregame')   qs = currentPregameQs;
+    else if (predCurrentCategory === 'midgame1')  qs = currentMidgame1Qs;
+    else if (predCurrentCategory === 'midgame2')  qs = currentMidgame2Qs;
+    else if (predCurrentCategory === 'midgame')   qs = currentMidgameQs;
+    else if (predCurrentCategory === 'contest')   qs = currentContestQs;
+    else                                           qs = currentPregameQs;
 
     var editableQs = qs.filter(function(q) { return q.is_editable; });
     var preds = [];
