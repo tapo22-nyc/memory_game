@@ -642,22 +642,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
     <div class="scoring-modal-body">
       <div class="scoring-section">
-        <div class="scoring-section-title">🏏 Team Score (Split: 75+25)</div>
-        <div class="scoring-row s-exact"><span class="s-label">Exact runs (75 pts) + Exact wickets (25 pts)</span><span class="s-pts">100 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Runs: max 75 − |diff|; Wickets off by 1</span><span class="s-pts">up to 95 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Wickets exact (25), off by 1 → 20, by 2 → 10, by 3 → 5</span><span class="s-pts">wickets part</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">Runs diff ≥ 75</span><span class="s-pts">0 runs pts</span></div>
+        <div class="scoring-section-title">🏏 Team Score (75 runs + 25 wickets)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact runs + Exact wickets</span><span class="s-pts">100 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Runs: max(75 − diff, 0); zero if diff ≥ 40</span><span class="s-pts">runs part</span></div>
+        <div class="scoring-row"><span class="s-label">Wickets exact → 25, off by 1 → 20, by 2 → 10</span><span class="s-pts">wickets part</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">Runs diff ≥ 40 or wickets off by 3+</span><span class="s-pts">0 pts</span></div>
       </div>
       <div class="scoring-section">
         <div class="scoring-section-title">🧢 Batter Runs (50 pts)</div>
         <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">50 pts</span></div>
         <div class="scoring-row"><span class="s-label">Off by N runs</span><span class="s-pts">max(50 − N, 0) pts</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">50+ runs away</span><span class="s-pts">0 pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">30+ runs away</span><span class="s-pts">0 pts</span></div>
       </div>
       <div class="scoring-section">
         <div class="scoring-section-title">💥 Batter Sixes (20 pts)</div>
-        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">20 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Off by 1</span><span class="s-pts">15 pts</span></div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact or off by 1</span><span class="s-pts">20 pts</span></div>
         <div class="scoring-row"><span class="s-label">Off by 2</span><span class="s-pts">10 pts</span></div>
         <div class="scoring-row s-zero"><span class="s-label">Off by 3+</span><span class="s-pts">0 pts</span></div>
       </div>
@@ -667,6 +666,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <div class="scoring-row"><span class="s-label">Off by 1</span><span class="s-pts">20 pts</span></div>
         <div class="scoring-row"><span class="s-label">Off by 2</span><span class="s-pts">10 pts</span></div>
         <div class="scoring-row s-zero"><span class="s-label">Off by 3+</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">⚡ Death Overs — Runs (40 pts)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">40 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by N runs</span><span class="s-pts">max(40 − N, 0) pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">20+ runs away</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">⚡ Death Overs — Wickets (15 pts)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">15 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by 1</span><span class="s-pts">10 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by 2</span><span class="s-pts">5 pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">Off by 3+</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">⚡ Death Overs — Sixes &amp; Dot Balls (10 pts)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">10 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by N</span><span class="s-pts">max(10 − N, 0) pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">4+ away</span><span class="s-pts">0 pts</span></div>
       </div>
       <div class="scoring-section">
         <div class="scoring-section-title">🏆 Playoffs / Categorical</div>
@@ -1316,7 +1334,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
 
     var allFilled = editableQs.every(function(q) {
-      if (q.scoring_rule_code === 'TEAM_SCORE_SPLIT_75_25') {
+      if ((q.scoring_rule_code === 'TEAM_SCORE_SPLIT_75_25' || q.scoring_rule_code === 'TEAM_SCORE_INNINGS')) {
         var runsEl    = document.getElementById('qruns_' + q.id);
         var wicketsEl = document.getElementById('qwickets_' + q.id);
         return runsEl && runsEl.value.trim() !== '' && wicketsEl && wicketsEl.value.trim() !== '';
@@ -1359,7 +1377,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     if (isScored) {
       // ── Scored: TEAM_SCORE_SPLIT_75_25 ──
-      if (ruleCode === 'TEAM_SCORE_SPLIT_75_25') {
+      if ((ruleCode === 'TEAM_SCORE_SPLIT_75_25' || ruleCode === 'TEAM_SCORE_INNINGS')) {
         const predRuns    = q.user_predicted_runs    !== null ? q.user_predicted_runs    : q.user_prediction;
         const predWickets = q.user_predicted_wickets !== null ? q.user_predicted_wickets : '—';
         const actualRuns  = q.actual_runs    !== null ? q.actual_runs    : q.actual_value;
@@ -1434,7 +1452,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     } else if (isEditable) {
       // ── Editable: TEAM_SCORE_SPLIT_75_25 (dual input) ──
-      if (ruleCode === 'TEAM_SCORE_SPLIT_75_25') {
+      if ((ruleCode === 'TEAM_SCORE_SPLIT_75_25' || ruleCode === 'TEAM_SCORE_INNINGS')) {
         const exRuns    = q.user_predicted_runs    !== null ? q.user_predicted_runs    : (q.user_prediction !== null ? q.user_prediction : '');
         const exWickets = q.user_predicted_wickets !== null ? q.user_predicted_wickets : '';
         inputHtml =
@@ -1536,7 +1554,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       var q = editableQs[i];
       var ruleCode = q.scoring_rule_code || '';
 
-      if (ruleCode === 'TEAM_SCORE_SPLIT_75_25') {
+      if ((ruleCode === 'TEAM_SCORE_SPLIT_75_25' || ruleCode === 'TEAM_SCORE_INNINGS')) {
         var runsEl    = document.getElementById('qruns_' + q.id);
         var wicketsEl = document.getElementById('qwickets_' + q.id);
         var runsVal    = runsEl ? runsEl.value.trim() : '';
