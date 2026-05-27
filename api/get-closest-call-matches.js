@@ -16,6 +16,7 @@ module.exports = async function handler(req, res) {
         m.team_1,
         m.team_2,
         m.match_date,
+        EXTRACT(EPOCH FROM m.match_date)::bigint * 1000 AS match_date_ms,
         m.status,
         m.created_at,
         m.updated_at,
