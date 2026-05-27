@@ -1031,17 +1031,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     clearCardTimers();
     allMatches.forEach(function(m) {
       if (m.status !== 'open' || !m.match_date) return;
-      // Normalize Neon timestamp to valid ISO-8601 UTC
-      var dateStr = (m.match_date + '').trim()
-        .replace(' ', 'T')                    // space → T
-        .replace(/([+-]\d{2})$/, '$1:00');    // +00 → +00:00
-      if (!/Z|[+-]\d{2}:\d{2}$/.test(dateStr)) dateStr += 'Z';
-      var deadline = new Date(dateStr).getTime();
+      // Use pre-computed epoch ms from API — no date parsing needed
+      var deadline = Number(m.match_date_ms);
       const el = document.getElementById('card-timer-' + m.id);
       if (!el) return;
 
-      // Guard: if parsing failed, hide the timer silently
-      if (isNaN(deadline)) { el.textContent = ''; return; }
+      if (!deadline || isNaN(deadline)) { el.textContent = ''; return; }
 
       function tick() {
         var diff = deadline - Date.now();
