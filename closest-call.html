@@ -1031,14 +1031,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     clearCardTimers();
     allMatches.forEach(function(m) {
       if (m.status !== 'open' || !m.match_date) return;
-      const deadline = new Date(m.match_date).getTime();
+      // Ensure UTC parsing — append Z if no timezone info is present
+      var dateStr = m.match_date;
+      if (!/Z|[+-]\d{2}:?\d{2}$/.test(dateStr)) dateStr += 'Z';
+      var deadline = new Date(dateStr).getTime();
       const el = document.getElementById('card-timer-' + m.id);
       if (!el) return;
+
+      // Guard: if parsing failed, hide the timer silently
+      if (isNaN(deadline)) { el.textContent = ''; return; }
 
       function tick() {
         var diff = deadline - Date.now();
         if (diff <= 0) {
-          el.textContent = 'Match starting now';
+          // Match date passed but game is still open (e.g. midgame phase)
+          el.textContent = 'Predictions open';
           clearInterval(cardTimerIntervals[m.id]);
           delete cardTimerIntervals[m.id];
           return;
