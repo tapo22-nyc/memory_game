@@ -1030,7 +1030,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   function startCardTimers() {
     clearCardTimers();
     allMatches.forEach(function(m) {
-      if (m.status !== 'open' || !m.match_date) return;
+      if (m.status !== 'open') return;
       // Use pre-computed epoch ms from API — no date parsing needed
       var deadline = Number(m.match_date_ms);
       const el = document.getElementById('card-timer-' + m.id);
@@ -1040,13 +1040,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
       function tick() {
         var diff = deadline - Date.now();
+       
         if (diff <= 0) {
-          // Match date passed but game is still open (e.g. midgame phase)
-          el.textContent = 'Predictions open';
-          clearInterval(cardTimerIntervals[m.id]);
-          delete cardTimerIntervals[m.id];
+          el.textContent = 'Closes soon';
           return;
-        }
+        }       
         var days = Math.floor(diff / 86400000);
         var hrs  = Math.floor((diff % 86400000) / 3600000);
         var mins = Math.floor((diff % 3600000) / 60000);
@@ -1095,15 +1093,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     grid.innerHTML = visibleMatches.map(function(m) {
       var s = m.status;
       var btnClass, btnLabel, statusLabel, statusExtra;
-
-      if (s === 'open') {
-        btnClass    = 'mc-btn-open';
-        btnLabel    = 'Make Predictions';
-        statusLabel = 'Predictions open';
-        statusExtra = m.match_date
-          ? '<div class="mc-status-timer" id="card-timer-' + m.id + '"></div>'
-          : '';
-      } else if (s === 'locked') {
+     
+     if (s === 'open') {
+       btnClass    = 'mc-btn-open';
+       btnLabel    = 'Make Predictions';
+       statusLabel = 'Prediction Window';
+       statusExtra = '<div class="mc-status-timer" id="card-timer-' + m.id + '">Loading timer…</div>';
+     }
+      
+      else if (s === 'locked') {
         btnClass    = 'mc-btn-locked';
         btnLabel    = 'View Live Score';
         statusLabel = 'Match in Progress';
