@@ -1031,9 +1031,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     clearCardTimers();
     allMatches.forEach(function(m) {
       if (m.status !== 'open' || !m.match_date) return;
-      // Ensure UTC parsing — append Z if no timezone info is present
-      var dateStr = m.match_date;
-      if (!/Z|[+-]\d{2}:?\d{2}$/.test(dateStr)) dateStr += 'Z';
+      // Normalize Neon timestamp to valid ISO-8601 UTC
+      var dateStr = (m.match_date + '').trim()
+        .replace(' ', 'T')                    // space → T
+        .replace(/([+-]\d{2})$/, '$1:00');    // +00 → +00:00
+      if (!/Z|[+-]\d{2}:\d{2}$/.test(dateStr)) dateStr += 'Z';
       var deadline = new Date(dateStr).getTime();
       const el = document.getElementById('card-timer-' + m.id);
       if (!el) return;
