@@ -3,6 +3,7 @@ import { neon } from '@neondatabase/serverless';
 const sql = neon(process.env.DATABASE_URL);
 
 const IPL_2026_SERIES_ID = '87c62aac-bc3c-4738-ab93-19da0690488f';
+const MATCH_LIMIT = 60;
 
 function emptyStats() {
   return {
@@ -198,21 +199,23 @@ export default async function handler(req, res) {
     const seriesResponse = await fetch(seriesUrl);
     const seriesData = await seriesResponse.json();
 
-    const latestFiveMatches = (seriesData.data?.matchList || [])
+    const latestSixtyMatches = (seriesData.data?.matchList || [])
       .filter(match => match.matchEnded === true)
       .sort((a, b) => new Date(b.dateTimeGMT) - new Date(a.dateTimeGMT))
-      .slice(0, 5);
+      .slice(0, MATCH_LIMIT);
 
     const results = [];
 
-    for (const match of latestFiveMatches) {
+    for (const match of latestSixtyMatches) {
       const result = await syncSingleMatch(match.id);
       results.push(result);
     }
 
     return res.status(200).json({
       success: true,
-      synced_matches: latestFiveMatches.map(m => ({
+      match_limit: MATCH_LIMIT,
+      synced_matches_count: latestSixtyMatches.length,
+      synced_matches: latestSixtyMatches.map(m => ({
         id: m.id,
         name: m.name,
         date: m.date
@@ -221,7 +224,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('sync-last-5-ipl-history error:', error);
+    console.error('sync-last-60-ipl-history error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
