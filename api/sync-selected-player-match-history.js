@@ -3,22 +3,7 @@ import { neon } from "@neondatabase/serverless";
 const sql = neon(process.env.DATABASE_URL);
 
 const TARGET_COUNTRIES = ["India", "Afghanistan"];
-
-function normalize(value) {
-  return String(value || "").trim().toLowerCase();
-}
-
-function isTargetTeamMatch(match) {
-  const teams = match.teams || [];
-  return teams.some(team =>
-    TARGET_COUNTRIES.some(country => normalize(team) === normalize(country))
-  );
-}
-
-function getOpponent(teams, playerCountry) {
-  if (!Array.isArray(teams)) return null;
-  return teams.find(team => normalize(team) !== normalize(playerCountry)) || null;
-}
+const TARGET_TEAMS = ["India", "Afghanistan"];
 
 async function fetchCurrentMatches() {
   const url =
@@ -44,52 +29,46 @@ async function fetchScorecard(matchId) {
   const data = await response.json();
 
   if (!response.ok || data.status === "failure") {
-    throw new Error(`scorecard failed for ${matchId}: ${JSON.stringify(data)}`);
+    throw new Error(`match_scorecard failed for ${matchId}: ${JSON.stringify(data)}`);
   }
 
   return data.data;
 }
 
-function findPlayerBatting(scorecard, playerId) {
-  for (const innings of scorecard || []) {
-    for (const row of innings.batting || []) {
-      if (row.batsman?.id === playerId) {
-        return {
-          innings_name: innings.inning || null,
-          row
-        };
-      }
+function normalizeTeamName(name) {
+  return String(name || "").trim().toLowerCase();
+}
+
+function getOpponent(teams, playerCountry) {
+  if (!Array.isArray(teams)) return null;
+
+  const opponent = teams.find(
+    t => normalizeTeamName(t) !== normalizeTeamName(playerCountry)
+  );
+
+  return opponent || null;
+}
+
+function detectBattingTeam(inningName, teams) {
+  const inning = normalizeTeamName(inningName);
+
+  for (const team of teams || []) {
+    if (inning.includes(normalizeTeamName(team))) {
+      return team;
     }
   }
 
-  return {
-    innings_name: null,
-    row: null
-  };
+  return null;
 }
 
-function findPlayerBowling(scorecard, playerId) {
-  for (const innings of scorecard || []) {
-    for (const row of innings.bowling || []) {
-      if (row.bowler?.id === playerId) {
-        return {
-          innings_name: innings.inning || null,
-          row
-        };
-      }
-    }
-  }
-
-  return {
-    innings_name: null,
-    row: null
-  };
+function isOut(dismissalText) {
+  return dismissalText && normalizeTeamName(dismissalText) !== "not out";
 }
 
-function isOutFromBattingRow(row) {
-  if (!row) return false;
-  const text = normalize(row["dismissal-text"]);
-  return text && text !== "not out";
+function toNumber(value) {
+  if (value === null || value === undefined || value === "") return 0;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : 0;
 }
 
 export default async function handler(req, res) {
@@ -98,149 +77,217 @@ export default async function handler(req, res) {
       SELECT cricapi_player_id, player_name, country
       FROM cricapi_player_master
       WHERE country = ANY(${TARGET_COUNTRIES})
-      ORDER BY country, player_name
     `;
 
-    const playerIds = new Set(selectedPlayers.map(p => p.cricapi_player_id));
+    const playerMap = new Map(
+      selectedPlayers.map(p => [p.cricapi_player_id, p])
+    );
 
     const currentMatches = await fetchCurrentMatches();
 
-    const completedTargetMatches = currentMatches.filter(match =>
-      match.matchEnded === true &&
-      match.fantasyEnabled === true &&
-      isTargetTeamMatch(match)
-    );
+    const targetMatches = currentMatches.filter(match => {
+      const teams = match.teams || [];
+      const hasTargetTeam = teams.some(t =>
+        TARGET_TEAMS.includes(t)
+      );
 
-    const results = [];
+      return hasTargetTeam && match.matchEnded === true;
+    });
 
-    for (const match of completedTargetMatches) {
+    const insertedRows = [];
+    const skippedMatches = [];
+
+    for (const match of targetMatches) {
+      const alreadySynced = await sql`
+        SELECT cricapi_match_id
+        FROM cricapi_player_history_synced_matches
+        WHERE cricapi_match_id = ${match.id}
+        LIMIT 1
+      `;
+
+      if (alreadySynced.length > 0) {
+        skippedMatches.push({
+          match_id: match.id,
+          match_name: match.name,
+          reason: "already_synced"
+        });
+        continue;
+      }
+
       const scorecardData = await fetchScorecard(match.id);
       const scorecard = scorecardData.scorecard || [];
 
-      let insertedOrUpdated = 0;
+      for (const innings of scorecard) {
+        const battingTeam = detectBattingTeam(innings.inning, scorecardData.teams);
+        const bowlingTeam = getOpponent(scorecardData.teams, battingTeam);
 
-      for (const player of selectedPlayers) {
-        const batting = findPlayerBatting(scorecard, player.cricapi_player_id);
-        const bowling = findPlayerBowling(scorecard, player.cricapi_player_id);
+        const battingRows = innings.batting || [];
+        const bowlingRows = innings.bowling || [];
 
-        if (!batting.row && !bowling.row) {
-          continue;
+        for (const bat of battingRows) {
+          const batterId = bat.batsman?.id;
+          const selectedPlayer = playerMap.get(batterId);
+
+          if (!selectedPlayer) continue;
+
+          const dismissalText = bat["dismissal-text"] || null;
+
+          await sql`
+            INSERT INTO cricapi_player_match_history (
+              cricapi_match_id,
+              cricapi_player_id,
+              player_name,
+              country,
+              match_name,
+              match_date,
+              match_type,
+              team,
+              opponent,
+              venue,
+              runs,
+              balls,
+              fours,
+              sixes,
+              strike_rate,
+              dismissal_info,
+              dismissal_type,
+              dismissed_by_bowler,
+              dismissed_by_fielder,
+              is_out,
+              raw_batting_json,
+              raw_scorecard_json,
+              updated_at
+            )
+            VALUES (
+              ${scorecardData.id},
+              ${batterId},
+              ${selectedPlayer.player_name},
+              ${selectedPlayer.country},
+              ${scorecardData.name},
+              ${scorecardData.date},
+              ${scorecardData.matchType},
+              ${battingTeam},
+              ${bowlingTeam},
+              ${scorecardData.venue},
+              ${toNumber(bat.r)},
+              ${toNumber(bat.b)},
+              ${toNumber(bat["4s"])},
+              ${toNumber(bat["6s"])},
+              ${toNumber(bat.sr)},
+              ${dismissalText},
+              ${bat.dismissal || null},
+              ${bat.bowler?.name || null},
+              ${bat.catcher?.name || null},
+              ${isOut(dismissalText)},
+              ${JSON.stringify(bat)},
+              ${JSON.stringify(scorecardData)},
+              NOW()
+            )
+            ON CONFLICT (cricapi_match_id, cricapi_player_id)
+            DO UPDATE SET
+              player_name = EXCLUDED.player_name,
+              country = EXCLUDED.country,
+              match_name = EXCLUDED.match_name,
+              match_date = EXCLUDED.match_date,
+              match_type = EXCLUDED.match_type,
+              team = EXCLUDED.team,
+              opponent = EXCLUDED.opponent,
+              venue = EXCLUDED.venue,
+              runs = EXCLUDED.runs,
+              balls = EXCLUDED.balls,
+              fours = EXCLUDED.fours,
+              sixes = EXCLUDED.sixes,
+              strike_rate = EXCLUDED.strike_rate,
+              dismissal_info = EXCLUDED.dismissal_info,
+              dismissal_type = EXCLUDED.dismissal_type,
+              dismissed_by_bowler = EXCLUDED.dismissed_by_bowler,
+              dismissed_by_fielder = EXCLUDED.dismissed_by_fielder,
+              is_out = EXCLUDED.is_out,
+              raw_batting_json = EXCLUDED.raw_batting_json,
+              raw_scorecard_json = EXCLUDED.raw_scorecard_json,
+              updated_at = NOW()
+          `;
+
+          insertedRows.push({
+            player_name: selectedPlayer.player_name,
+            match_name: scorecardData.name,
+            type: "batting"
+          });
         }
 
-        const battingRow = batting.row;
-        const bowlingRow = bowling.row;
+        for (const bowl of bowlingRows) {
+          const bowlerId = bowl.bowler?.id;
+          const selectedPlayer = playerMap.get(bowlerId);
 
-        const opponent = getOpponent(scorecardData.teams, player.country);
+          if (!selectedPlayer) continue;
 
-        await sql`
-          INSERT INTO cricapi_player_match_history (
-            cricapi_match_id,
-            cricapi_player_id,
-            player_name,
-            country,
+          await sql`
+            INSERT INTO cricapi_player_match_history (
+              cricapi_match_id,
+              cricapi_player_id,
+              player_name,
+              country,
+              match_name,
+              match_date,
+              match_type,
+              team,
+              opponent,
+              venue,
+              overs,
+              maidens,
+              runs_conceded,
+              wickets,
+              economy,
+              raw_bowling_json,
+              raw_scorecard_json,
+              updated_at
+            )
+            VALUES (
+              ${scorecardData.id},
+              ${bowlerId},
+              ${selectedPlayer.player_name},
+              ${selectedPlayer.country},
+              ${scorecardData.name},
+              ${scorecardData.date},
+              ${scorecardData.matchType},
+              ${bowlingTeam},
+              ${battingTeam},
+              ${scorecardData.venue},
+              ${toNumber(bowl.o)},
+              ${toNumber(bowl.m)},
+              ${toNumber(bowl.r)},
+              ${toNumber(bowl.w)},
+              ${toNumber(bowl.eco)},
+              ${JSON.stringify(bowl)},
+              ${JSON.stringify(scorecardData)},
+              NOW()
+            )
+            ON CONFLICT (cricapi_match_id, cricapi_player_id)
+            DO UPDATE SET
+              player_name = EXCLUDED.player_name,
+              country = EXCLUDED.country,
+              match_name = EXCLUDED.match_name,
+              match_date = EXCLUDED.match_date,
+              match_type = EXCLUDED.match_type,
+              team = COALESCE(cricapi_player_match_history.team, EXCLUDED.team),
+              opponent = COALESCE(cricapi_player_match_history.opponent, EXCLUDED.opponent),
+              venue = EXCLUDED.venue,
+              overs = EXCLUDED.overs,
+              maidens = EXCLUDED.maidens,
+              runs_conceded = EXCLUDED.runs_conceded,
+              wickets = EXCLUDED.wickets,
+              economy = EXCLUDED.economy,
+              raw_bowling_json = EXCLUDED.raw_bowling_json,
+              raw_scorecard_json = EXCLUDED.raw_scorecard_json,
+              updated_at = NOW()
+          `;
 
-            match_name,
-            match_date,
-            match_type,
-            team,
-            opponent,
-            venue,
-
-            runs,
-            balls,
-            fours,
-            sixes,
-            strike_rate,
-
-            overs,
-            maidens,
-            runs_conceded,
-            wickets,
-            economy,
-
-            dismissal_info,
-            dismissal_type,
-            dismissed_by_bowler,
-            dismissed_by_fielder,
-            is_out,
-
-            raw_batting_json,
-            raw_bowling_json,
-            raw_scorecard_json,
-            updated_at
-          )
-          VALUES (
-            ${scorecardData.id},
-            ${player.cricapi_player_id},
-            ${player.player_name},
-            ${player.country},
-
-            ${scorecardData.name},
-            ${scorecardData.date},
-            ${scorecardData.matchType},
-            ${player.country},
-            ${opponent},
-            ${scorecardData.venue},
-
-            ${battingRow?.r || 0},
-            ${battingRow?.b || 0},
-            ${battingRow?.["4s"] || 0},
-            ${battingRow?.["6s"] || 0},
-            ${battingRow?.sr || 0},
-
-            ${bowlingRow?.o || 0},
-            ${bowlingRow?.m || 0},
-            ${bowlingRow?.r || 0},
-            ${bowlingRow?.w || 0},
-            ${bowlingRow?.eco || 0},
-
-            ${battingRow?.["dismissal-text"] || null},
-            ${battingRow?.dismissal || null},
-            ${battingRow?.bowler?.name || null},
-            ${battingRow?.catcher?.name || null},
-            ${isOutFromBattingRow(battingRow)},
-
-            ${JSON.stringify(battingRow || null)},
-            ${JSON.stringify(bowlingRow || null)},
-            ${JSON.stringify(scorecardData)},
-            NOW()
-          )
-          ON CONFLICT (cricapi_match_id, cricapi_player_id)
-          DO UPDATE SET
-            player_name = EXCLUDED.player_name,
-            country = EXCLUDED.country,
-            match_name = EXCLUDED.match_name,
-            match_date = EXCLUDED.match_date,
-            match_type = EXCLUDED.match_type,
-            team = EXCLUDED.team,
-            opponent = EXCLUDED.opponent,
-            venue = EXCLUDED.venue,
-
-            runs = EXCLUDED.runs,
-            balls = EXCLUDED.balls,
-            fours = EXCLUDED.fours,
-            sixes = EXCLUDED.sixes,
-            strike_rate = EXCLUDED.strike_rate,
-
-            overs = EXCLUDED.overs,
-            maidens = EXCLUDED.maidens,
-            runs_conceded = EXCLUDED.runs_conceded,
-            wickets = EXCLUDED.wickets,
-            economy = EXCLUDED.economy,
-
-            dismissal_info = EXCLUDED.dismissal_info,
-            dismissal_type = EXCLUDED.dismissal_type,
-            dismissed_by_bowler = EXCLUDED.dismissed_by_bowler,
-            dismissed_by_fielder = EXCLUDED.dismissed_by_fielder,
-            is_out = EXCLUDED.is_out,
-
-            raw_batting_json = EXCLUDED.raw_batting_json,
-            raw_bowling_json = EXCLUDED.raw_bowling_json,
-            raw_scorecard_json = EXCLUDED.raw_scorecard_json,
-            updated_at = NOW()
-        `;
-
-        insertedOrUpdated++;
+          insertedRows.push({
+            player_name: selectedPlayer.player_name,
+            match_name: scorecardData.name,
+            type: "bowling"
+          });
+        }
       }
 
       await sql`
@@ -270,6 +317,21 @@ export default async function handler(req, res) {
           raw_json = EXCLUDED.raw_json,
           synced_at = NOW()
       `;
+    }
 
-      results.push({
-        match_id
+    return res.status(200).json({
+      success: true,
+      selected_players: selectedPlayers.length,
+      target_matches_found: targetMatches.length,
+      inserted_or_updated_rows: insertedRows.length,
+      insertedRows,
+      skippedMatches
+    });
+  } catch (error) {
+    console.error("sync-selected-player-match-history error:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+}
