@@ -17,19 +17,26 @@ async function fetchPlayerInfo(playerId) {
   return data;
 }
 
-function findStat(statsArray, format, statType) {
+function normalizeText(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function buildStatsObject(statsArray, format, type) {
   if (!Array.isArray(statsArray)) return null;
 
-  return statsArray.find(item => {
-    const fn = String(item.fn || item.format || "").toLowerCase();
-    const matchtype = String(item.matchtype || item.matchType || "").toLowerCase();
-    const type = String(item.type || item.category || "").toLowerCase();
+  const output = {};
 
-    return (
-      (fn.includes(format) || matchtype.includes(format)) &&
-      type.includes(statType)
-    );
-  }) || null;
+  for (const row of statsArray) {
+    const rowType = normalizeText(row.fn);
+    const rowFormat = normalizeText(row.matchtype);
+    const statName = normalizeText(row.stat);
+
+    if (rowType === type && rowFormat === format) {
+      output[statName] = String(row.value || "").trim();
+    }
+  }
+
+  return Object.keys(output).length > 0 ? output : null;
 }
 
 export default async function handler(req, res) {
@@ -46,16 +53,19 @@ export default async function handler(req, res) {
       try {
         const apiData = await fetchPlayerInfo(player.cricapi_player_id);
         const playerData = apiData.data || apiData;
-
         const stats = playerData.stats || [];
 
-        const battingTest = findStat(stats, "test", "batting");
-        const battingOdi = findStat(stats, "odi", "batting");
-        const battingT20 = findStat(stats, "t20", "batting");
+        const battingTest = buildStatsObject(stats, "test", "batting");
+        const battingOdi = buildStatsObject(stats, "odi", "batting");
+        const battingT20 =
+          buildStatsObject(stats, "t20", "batting") ||
+          buildStatsObject(stats, "t20i", "batting");
 
-        const bowlingTest = findStat(stats, "test", "bowling");
-        const bowlingOdi = findStat(stats, "odi", "bowling");
-        const bowlingT20 = findStat(stats, "t20", "bowling");
+        const bowlingTest = buildStatsObject(stats, "test", "bowling");
+        const bowlingOdi = buildStatsObject(stats, "odi", "bowling");
+        const bowlingT20 =
+          buildStatsObject(stats, "t20", "bowling") ||
+          buildStatsObject(stats, "t20i", "bowling");
 
         await sql`
           INSERT INTO cricapi_player_career_stats (
@@ -73,8 +83,8 @@ export default async function handler(req, res) {
           )
           VALUES (
             ${player.cricapi_player_id},
-            ${player.player_name},
-            ${player.country},
+            ${playerData.name || player.player_name},
+            ${playerData.country || player.country},
             ${JSON.stringify(battingTest)},
             ${JSON.stringify(battingOdi)},
             ${JSON.stringify(battingT20)},
@@ -99,14 +109,12 @@ export default async function handler(req, res) {
         `;
 
         results.push({
-          player_name: player.player_name,
-          cricapi_player_id: player.cricapi_player_id,
+          player_name: playerData.name || player.player_name,
           status: "saved"
         });
       } catch (playerError) {
         results.push({
           player_name: player.player_name,
-          cricapi_player_id: player.cricapi_player_id,
           status: "error",
           error: playerError.message
         });
@@ -119,7 +127,6 @@ export default async function handler(req, res) {
       results
     });
   } catch (error) {
-    console.error("sync-selected-player-career-stats error:", error);
     return res.status(500).json({
       success: false,
       error: error.message
