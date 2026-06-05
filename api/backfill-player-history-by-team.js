@@ -26,10 +26,19 @@ export default async function handler(req, res) {
     const team = req.query.team || "India";
     const format = req.query.format || "t20";
 
-    const apiData = await fetchMatches(0);
-    const matches = apiData.data || [];
+    const offsets = [0, 25, 50, 75, 100];
+    const allMatches = [];
 
-    const filteredMatches = matches.filter(match => {
+    for (const offset of offsets) {
+      const apiData = await fetchMatches(offset);
+      const matches = apiData.data || [];
+
+      allMatches.push(...matches);
+
+      if (matches.length === 0) break;
+    }
+
+    const filteredMatches = allMatches.filter(match => {
       const teams = match.teams || [];
 
       return (
@@ -43,7 +52,8 @@ export default async function handler(req, res) {
       success: true,
       team,
       format,
-      total_matches_from_api: matches.length,
+      offsets_checked: offsets,
+      total_matches_scanned: allMatches.length,
       filtered_matches_found: filteredMatches.length,
       filteredMatches: filteredMatches.map(m => ({
         id: m.id,
