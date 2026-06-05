@@ -2,6 +2,7 @@
   "dependencies": {
     "@neondatabase/serverless": "latest",
     "resend": "^6.12.3",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "jszip": "^3.10.1"
   }
 }
