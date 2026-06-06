@@ -30,8 +30,9 @@ const SELECTED_PLAYERS = [
   { search_name: "Shreyas Iyer", country: "India" },
   { search_name: "Shubman Gill", country: "India" },
   { search_name: "Tilak Varma", country: "India" },
-  { search_name: "Vaibhav Suryavanshi", country: "India" },
-  { search_name: "Varun Chakravarthy", country: "India" },
+{ search_name: "Vaibhav Sooryavanshi", country: "India" },
+{ search_name: "Varun Chakaravarthy", country: "India" },
+{ search_name: "Varun Chakravarthy", country: "India" },
   { search_name: "Virat Kohli", country: "India" },
   { search_name: "Washington Sundar", country: "India" },
   { search_name: "Yashasvi Jaiswal", country: "India" }
