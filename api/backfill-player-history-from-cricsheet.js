@@ -257,16 +257,32 @@ export default async function handler(req, res) {
     const arrayBuffer = await response.arrayBuffer();
     const zip = await JSZip.loadAsync(arrayBuffer);
 
-    const jsonFiles = Object.values(zip.files)
-      .filter(file => !file.dir && file.name.endsWith(".json"))
-      .map(file => file.name)
-      .sort()
-      .reverse()
-      .slice(0, maxFiles);
 
-    const insertedRows = [];
-    const matchedMatches = [];
+const allJsonFiles = Object.values(zip.files)
+  .filter(file => !file.dir && file.name.endsWith(".json"))
+  .map(file => file.name);
 
+const datedFiles = [];
+
+for (const fileName of allJsonFiles) {
+  const text = await zip.file(fileName).async("text");
+  const match = JSON.parse(text);
+
+  datedFiles.push({
+    fileName,
+    matchDate: match.info?.dates?.[0] || "1900-01-01"
+  });
+}
+
+const jsonFiles = datedFiles
+  .sort((a, b) => new Date(b.matchDate) - new Date(a.matchDate))
+  .slice(0, maxFiles)
+  .map(x => x.fileName);
+
+const insertedRows = [];
+const matchedMatches = [];
+
+    
     for (const fileName of jsonFiles) {
       const text = await zip.file(fileName).async("text");
       const match = JSON.parse(text);
@@ -330,7 +346,7 @@ export default async function handler(req, res) {
             updated_at
           )
           VALUES (
-            ${row.cricsheet_match_id + "_" + row.innings_number},
+            ${row.cricsheet_match_id + "_" + row.innings_number + "_" + row.type},
             ${row.source_match_id},
             ${"cricsheet"},
             ${selectedPlayer.cricapi_player_id},
