@@ -26,7 +26,6 @@ function nameParts(fullName) {
 
 function initialsSurname(fullName) {
   const parts = nameParts(fullName);
-
   if (parts.length < 2) return normalize(fullName);
 
   const surname = parts[parts.length - 1];
@@ -37,7 +36,6 @@ function initialsSurname(fullName) {
 
 function firstInitialSurname(fullName) {
   const parts = nameParts(fullName);
-
   if (parts.length < 2) return normalize(fullName);
 
   const surname = parts[parts.length - 1];
@@ -48,7 +46,6 @@ function firstInitialSurname(fullName) {
 
 function surnameOnly(fullName) {
   const parts = nameParts(fullName);
-
   if (parts.length === 0) return normalize(fullName);
 
   return parts[parts.length - 1];
@@ -68,7 +65,25 @@ function buildCandidates(playerName, searchName) {
   return [...new Set(candidates.filter(Boolean))];
 }
 
-function findBestMatch(people, candidates) {
+function candidateInitialSurnameMatch(personName, fullName) {
+  const personParts = normalize(personName).split(" ").filter(Boolean);
+  const playerParts = nameParts(fullName);
+
+  if (personParts.length < 2 || playerParts.length < 2) return false;
+
+  const personInitials = personParts[0];
+  const personSurname = personParts[personParts.length - 1];
+
+  const playerFirstInitial = playerParts[0][0];
+  const playerSurname = playerParts[playerParts.length - 1];
+
+  return (
+    personSurname === playerSurname &&
+    personInitials.startsWith(playerFirstInitial)
+  );
+}
+
+function findBestMatch(people, candidates, playerName, searchName) {
   for (const candidate of candidates) {
     const exact =
       people.find((p) => normalize(p.name) === candidate) ||
@@ -81,6 +96,25 @@ function findBestMatch(people, candidates) {
         match_type: "exact_candidate"
       };
     }
+  }
+
+  const fuzzyMatches = people.filter((p) =>
+    candidateInitialSurnameMatch(p.name, playerName) ||
+    candidateInitialSurnameMatch(p.unique_name, playerName) ||
+    candidateInitialSurnameMatch(p.name, searchName) ||
+    candidateInitialSurnameMatch(p.unique_name, searchName)
+  );
+
+  const uniqueById = Array.from(
+    new Map(fuzzyMatches.map((p) => [p.identifier, p])).values()
+  );
+
+  if (uniqueById.length === 1) {
+    return {
+      match: uniqueById[0],
+      matched_on: "surname + first initial",
+      match_type: "initial_surname_unique"
+    };
   }
 
   return null;
@@ -119,7 +153,13 @@ export default async function handler(req, res) {
 
     for (const player of players) {
       const candidates = buildCandidates(player.player_name, player.search_name);
-      const best = findBestMatch(people, candidates);
+
+      const best = findBestMatch(
+        people,
+        candidates,
+        player.player_name,
+        player.search_name
+      );
 
       if (!best) {
         await sql`
