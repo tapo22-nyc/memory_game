@@ -19,6 +19,17 @@ function normalize(value) {
     .replace(/\s+/g, " ");
 }
 
+function initialsSurname(fullName) {
+  const parts = normalize(fullName).split(" ").filter(Boolean);
+
+  if (parts.length < 2) return normalize(fullName);
+
+  const surname = parts[parts.length - 1];
+  const initials = parts.slice(0, -1).map((p) => p[0]).join("");
+
+  return `${initials} ${surname}`;
+}
+
 export default async function handler(req, res) {
   try {
     const response = await fetch("https://cricsheet.org/register/people.csv");
@@ -51,11 +62,18 @@ export default async function handler(req, res) {
     const results = [];
 
     for (const player of players) {
+      const playerKey = initialsSurname(player.player_name);
+      const searchKey = initialsSurname(player.search_name);
+
       const exact =
-        people.find(p => normalize(p.name) === normalize(player.player_name)) ||
-        people.find(p => normalize(p.unique_name) === normalize(player.player_name)) ||
-        people.find(p => normalize(p.name) === normalize(player.search_name)) ||
-        people.find(p => normalize(p.unique_name) === normalize(player.search_name));
+        people.find((p) => normalize(p.name) === normalize(player.player_name)) ||
+        people.find((p) => normalize(p.unique_name) === normalize(player.player_name)) ||
+        people.find((p) => normalize(p.name) === normalize(player.search_name)) ||
+        people.find((p) => normalize(p.unique_name) === normalize(player.search_name)) ||
+        people.find((p) => normalize(p.name) === playerKey) ||
+        people.find((p) => normalize(p.unique_name) === playerKey) ||
+        people.find((p) => normalize(p.name) === searchKey) ||
+        people.find((p) => normalize(p.unique_name) === searchKey);
 
       if (!exact) {
         await sql`
@@ -89,6 +107,7 @@ export default async function handler(req, res) {
           country: player.country,
           status: "not_found"
         });
+
         continue;
       }
 
