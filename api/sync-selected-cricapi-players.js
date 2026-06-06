@@ -2,7 +2,7 @@ import { neon } from "@neondatabase/serverless";
 
 const sql = neon(process.env.DATABASE_URL);
 
-const selectedPlayers = [
+const SELECTED_PLAYERS = [
   { search_name: "Abhishek Sharma", country: "India" },
   { search_name: "Akash Deep", country: "India" },
   { search_name: "Arshdeep Singh", country: "India" },
@@ -58,7 +58,7 @@ function pickBestMatch(apiData, expectedName) {
   if (players.length === 0) return null;
 
   const exact = players.find(
-    p => p.name?.toLowerCase() === expectedName.toLowerCase()
+    (p) => p.name?.toLowerCase() === expectedName.toLowerCase()
   );
 
   return exact || players[0];
@@ -69,12 +69,12 @@ export default async function handler(req, res) {
     const results = [];
 
     for (const player of SELECTED_PLAYERS) {
-      const apiData = await searchPlayer(player.name);
-      const bestMatch = pickBestMatch(apiData, player.name);
+      const apiData = await searchPlayer(player.search_name);
+      const bestMatch = pickBestMatch(apiData, player.search_name);
 
       if (!bestMatch) {
         results.push({
-          search_name: player.name,
+          search_name: player.search_name,
           country: player.country,
           status: "not_found"
         });
@@ -94,7 +94,7 @@ export default async function handler(req, res) {
           ${bestMatch.id},
           ${bestMatch.name},
           ${player.country},
-          ${player.name},
+          ${player.search_name},
           ${JSON.stringify(bestMatch)},
           NOW()
         )
@@ -108,7 +108,7 @@ export default async function handler(req, res) {
       `;
 
       results.push({
-        search_name: player.name,
+        search_name: player.search_name,
         saved_name: bestMatch.name,
         cricapi_player_id: bestMatch.id,
         country: player.country,
@@ -123,6 +123,7 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("sync-selected-cricapi-players error:", error);
+
     return res.status(500).json({
       success: false,
       error: error.message
