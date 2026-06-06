@@ -6,61 +6,73 @@ export default async function handler(req, res) {
       format = "odis",
       name = "",
       playerId = "",
-      maxFiles = 1000
+      team = "",
+      maxFiles = 5000
     } = req.query;
 
-    if (!name && !playerId) {
+    if (!name && !playerId && !team) {
       return res.status(400).json({
         success: false,
-        error: "Either name or playerId parameter is required"
+        error: "Provide name, playerId, or team"
       });
     }
 
-    let zipUrl = "";
+    const URLS = {
+      tests: "https://cricsheet.org/downloads/tests_json.zip",
+      odis: "https://cricsheet.org/downloads/odis_json.zip",
+      t20s: "https://cricsheet.org/downloads/t20s_json.zip"
+    };
 
-    if (format === "tests") {
-      zipUrl = "https://cricsheet.org/downloads/tests_json.zip";
-    } else if (format === "odis") {
-      zipUrl = "https://cricsheet.org/downloads/odis_json.zip";
-    } else if (format === "t20s") {
-      zipUrl = "https://cricsheet.org/downloads/t20s_json.zip";
-    } else {
+    if (!URLS[format]) {
       return res.status(400).json({
         success: false,
-        error: "invalid format"
+        error: "Invalid format. Use tests, odis, or t20s."
       });
     }
 
-    const response = await fetch(zipUrl);
+    const response = await fetch(URLS[format]);
     const buffer = await response.arrayBuffer();
-
     const zip = await JSZip.loadAsync(buffer);
 
     const files = Object.values(zip.files)
-      .filter(
-        (file) =>
-          !file.dir &&
-          file.name.endsWith(".json")
-      )
-      .slice(0, Number(maxFiles));
+      .filter(file => !file.dir && file.name.endsWith(".json"));
 
-    const searchTerm = name.toLowerCase();
+    const nameTerm = String(name).toLowerCase();
+    const teamTerm = String(team).toLowerCase();
 
     const matches = [];
+    let scannedFiles = 0;
 
     for (const file of files) {
+      if (scannedFiles >= Number(maxFiles)) break;
+      scannedFiles += 1;
+
       try {
         const text = await file.async("text");
         const match = JSON.parse(text);
 
-        const registry =
-          match.info?.registry?.people || {};
+        const teams = match.info?.teams || [];
+        const registry = match.info?.registry?.people || {};
+
+        const teamMatch =
+          team &&
+          teams.some(t => String(t).toLowerCase().includes(teamTerm));
+
+        if (teamMatch) {
+          matches.push({
+            file: file.name,
+            match_date: match.info?.dates?.[0] || null,
+            teams,
+            registry_people: registry
+          });
+
+          continue;
+        }
 
         for (const [playerName, playerIdFromRegistry] of Object.entries(registry)) {
-
           const nameMatch =
             name &&
-            playerName.toLowerCase().includes(searchTerm);
+            playerName.toLowerCase().includes(nameTerm);
 
           const idMatch =
             playerId &&
@@ -71,10 +83,8 @@ export default async function handler(req, res) {
               file: file.name,
               player_name: playerName,
               cricsheet_player_id: playerIdFromRegistry,
-              match_date:
-                match.info?.dates?.[0] || null,
-              teams:
-                match.info?.teams || []
+              match_date: match.info?.dates?.[0] || null,
+              teams
             });
           }
         }
@@ -88,10 +98,11 @@ export default async function handler(req, res) {
       format,
       search_name: name,
       search_player_id: playerId,
+      search_team: team,
+      files_scanned: scannedFiles,
       total_matches_found: matches.length,
-      matches: matches.slice(0, 100)
+      matches: matches.slice(0, 50)
     });
-
   } catch (err) {
     return res.status(500).json({
       success: false,
