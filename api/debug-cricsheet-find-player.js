@@ -5,27 +5,25 @@ export default async function handler(req, res) {
     const {
       format = "odis",
       name = "",
+      playerId = "",
       maxFiles = 1000
     } = req.query;
 
-    if (!name) {
+    if (!name && !playerId) {
       return res.status(400).json({
         success: false,
-        error: "name parameter required"
+        error: "Either name or playerId parameter is required"
       });
     }
 
     let zipUrl = "";
 
     if (format === "tests") {
-      zipUrl =
-        "https://cricsheet.org/downloads/tests_json.zip";
+      zipUrl = "https://cricsheet.org/downloads/tests_json.zip";
     } else if (format === "odis") {
-      zipUrl =
-        "https://cricsheet.org/downloads/odis_json.zip";
+      zipUrl = "https://cricsheet.org/downloads/odis_json.zip";
     } else if (format === "t20s") {
-      zipUrl =
-        "https://cricsheet.org/downloads/t20s_json.zip";
+      zipUrl = "https://cricsheet.org/downloads/t20s_json.zip";
     } else {
       return res.status(400).json({
         success: false,
@@ -58,18 +56,21 @@ export default async function handler(req, res) {
         const registry =
           match.info?.registry?.people || {};
 
-        for (const [playerName, playerId] of Object.entries(
-          registry
-        )) {
-          if (
-            playerName
-              .toLowerCase()
-              .includes(searchTerm)
-          ) {
+        for (const [playerName, playerIdFromRegistry] of Object.entries(registry)) {
+
+          const nameMatch =
+            name &&
+            playerName.toLowerCase().includes(searchTerm);
+
+          const idMatch =
+            playerId &&
+            playerId === playerIdFromRegistry;
+
+          if (nameMatch || idMatch) {
             matches.push({
               file: file.name,
               player_name: playerName,
-              cricsheet_player_id: playerId,
+              cricsheet_player_id: playerIdFromRegistry,
               match_date:
                 match.info?.dates?.[0] || null,
               teams:
@@ -86,9 +87,11 @@ export default async function handler(req, res) {
       success: true,
       format,
       search_name: name,
+      search_player_id: playerId,
       total_matches_found: matches.length,
       matches: matches.slice(0, 100)
     });
+
   } catch (err) {
     return res.status(500).json({
       success: false,
