@@ -2,20 +2,39 @@ import { neon } from "@neondatabase/serverless";
 
 const sql = neon(process.env.DATABASE_URL);
 
-const SELECTED_PLAYERS = [
-  { name: "Shubman Gill", country: "India" },
-  { name: "KL Rahul", country: "India" },
-  { name: "Yashasvi Jaiswal", country: "India" },
-  { name: "Mohammed Siraj", country: "India" },
-  { name: "Dhruv Jurel", country: "India" },
-  { name: "Kuldeep Yadav", country: "India" },
-
-  { name: "Hashmatullah Shahidi", country: "Afghanistan" },
-  { name: "Abdul Malik", country: "Afghanistan" },
-  { name: "Afsar Zazai", country: "Afghanistan" },
-  { name: "Azmatullah Omarzai", country: "Afghanistan" },
-  { name: "Rahmanullah Gurbaz", country: "Afghanistan" },
-  { name: "Qais Ahmad", country: "Afghanistan" }
+const selectedPlayers = [
+  { search_name: "Abhishek Sharma", country: "India" },
+  { search_name: "Akash Deep", country: "India" },
+  { search_name: "Arshdeep Singh", country: "India" },
+  { search_name: "Axar Patel", country: "India" },
+  { search_name: "Devdutt Padikkal", country: "India" },
+  { search_name: "Dhruv Jurel", country: "India" },
+  { search_name: "Harshit Rana", country: "India" },
+  { search_name: "Ishan Kishan", country: "India" },
+  { search_name: "Jasprit Bumrah", country: "India" },
+  { search_name: "KL Rahul", country: "India" },
+  { search_name: "Kuldeep Yadav", country: "India" },
+  { search_name: "Mohammed Siraj", country: "India" },
+  { search_name: "Mukesh Kumar", country: "India" },
+  { search_name: "Nitish Kumar Reddy", country: "India" },
+  { search_name: "Prasidh Krishna", country: "India" },
+  { search_name: "Prince Yadav", country: "India" },
+  { search_name: "Ravi Bishnoi", country: "India" },
+  { search_name: "Ravindra Jadeja", country: "India" },
+  { search_name: "Rishabh Pant", country: "India" },
+  { search_name: "Rohit Sharma", country: "India" },
+  { search_name: "Sai Sudharsan", country: "India" },
+  { search_name: "Sanju Samson", country: "India" },
+  { search_name: "Sarfaraz Khan", country: "India" },
+  { search_name: "Shivam Dube", country: "India" },
+  { search_name: "Shreyas Iyer", country: "India" },
+  { search_name: "Shubman Gill", country: "India" },
+  { search_name: "Tilak Varma", country: "India" },
+  { search_name: "Vaibhav Suryavanshi", country: "India" },
+  { search_name: "Varun Chakravarthy", country: "India" },
+  { search_name: "Virat Kohli", country: "India" },
+  { search_name: "Washington Sundar", country: "India" },
+  { search_name: "Yashasvi Jaiswal", country: "India" }
 ];
 
 async function searchPlayer(playerName) {
