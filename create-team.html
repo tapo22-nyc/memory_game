@@ -4633,7 +4633,7 @@ const updateNote = currentMatchData?.score_update_note || '';
       const typeHtml = player.player_type
         ? `<span class="tag tag-type">${escapeHTML(player.player_type)}</span>`
         : '';
-      const statsBtn = `<button class="player-stats-btn" onclick="event.stopPropagation();openPlayerHistoryModal(${JSON.stringify(player.player_name)})" title="View Stats">Stats</button>`;
+      const statsBtn = `<button class="player-stats-btn" data-player="${escapeHTML(player.player_name)}" onclick="event.stopPropagation();openPlayerHistoryModal(this.dataset.player)" title="View Stats">Stats</button>`;
       const btnHtml = isSelected
         ? `<button class="player-action-btn remove-btn" onclick="togglePlayer(${pid})" title="Remove">&#x2715;</button>`
         : `<button class="player-action-btn add-btn" onclick="togglePlayer(${pid})" title="Add" ${canAdd ? '' : 'disabled'}>&#43;</button>`;
