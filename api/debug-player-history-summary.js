@@ -15,36 +15,58 @@ export default async function handler(req, res) {
     }
 
     const rows = await sql`
-      SELECT
-        cricapi_player_id,
-        cricsheet_player_id,
-        player_name,
-        match_name,
-        match_date,
-        match_type,
-        opponent,
-        venue,
-        innings_number,
-        batting_team,
-        bowling_team,
-        runs,
-        balls,
-        fours,
-        sixes,
-        strike_rate,
-        dismissal_type,
-        dismissed_by_bowler,
-        dismissed_by_fielder,
-        is_out,
-        overs,
-        runs_conceded,
-        wickets,
-        economy
-      FROM cricapi_player_match_history
-      WHERE LOWER(player_name) = LOWER(${player})
-        AND match_type = ${format}
-      ORDER BY match_date DESC, innings_number ASC
-      LIMIT 20
+    
+SELECT DISTINCT ON (
+  source_match_id,
+  cricapi_player_id,
+  innings_number,
+  batting_team,
+  bowling_team,
+  runs,
+  balls,
+  wickets,
+  overs
+)
+  cricapi_player_id,
+  cricsheet_player_id,
+  player_name,
+  match_name,
+  match_date,
+  match_type,
+  opponent,
+  venue,
+  innings_number,
+  batting_team,
+  bowling_team,
+  runs,
+  balls,
+  fours,
+  sixes,
+  strike_rate,
+  dismissal_type,
+  dismissed_by_bowler,
+  dismissed_by_fielder,
+  is_out,
+  overs,
+  runs_conceded,
+  wickets,
+  economy
+FROM cricapi_player_match_history
+WHERE LOWER(player_name) = LOWER(${player})
+  AND match_type = ${format}
+ORDER BY
+  source_match_id,
+  cricapi_player_id,
+  innings_number,
+  batting_team,
+  bowling_team,
+  runs,
+  balls,
+  wickets,
+  overs,
+  match_date DESC
+LIMIT 20
+
     `;
 
     return res.status(200).json({
