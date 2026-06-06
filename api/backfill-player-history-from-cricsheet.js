@@ -125,9 +125,7 @@ function parseMatch(match, sourceMatchId) {
         }
 
         const extras = d.extras || {};
-        const bowlerExtras =
-          (extras.wides || 0) +
-          (extras.noballs || 0);
+        const bowlerExtras = (extras.wides || 0) + (extras.noballs || 0);
 
         bowling[bowler].runs_conceded +=
           (d.runs?.batter || 0) + bowlerExtras;
@@ -183,7 +181,10 @@ function parseMatch(match, sourceMatchId) {
         balls: bat.balls,
         fours: bat.fours,
         sixes: bat.sixes,
-        strike_rate: bat.balls > 0 ? Number(((bat.runs / bat.balls) * 100).toFixed(2)) : null,
+        strike_rate:
+          bat.balls > 0
+            ? Number(((bat.runs / bat.balls) * 100).toFixed(2))
+            : null,
         dismissal_type: bat.dismissal_type,
         dismissed_by_bowler: bat.dismissed_by_bowler,
         dismissed_by_fielder: bat.dismissed_by_fielder,
@@ -216,7 +217,10 @@ function parseMatch(match, sourceMatchId) {
         balls: bowl.balls,
         runs_conceded: bowl.runs_conceded,
         wickets: bowl.wickets,
-        economy: bowl.balls > 0 ? Number((bowl.runs_conceded / (bowl.balls / 6)).toFixed(2)) : null,
+        economy:
+          bowl.balls > 0
+            ? Number((bowl.runs_conceded / (bowl.balls / 6)).toFixed(2))
+            : null,
         raw_bowling_json: bowl.raw_bowling_json,
         raw_scorecard_json: match
       });
@@ -229,7 +233,7 @@ function parseMatch(match, sourceMatchId) {
 export default async function handler(req, res) {
   try {
     const format = String(req.query.format || "tests").toLowerCase();
-    const maxFiles = Number(req.query.maxFiles || 50);
+    const maxFiles = Number(req.query.maxFiles || 200);
     const limitPerPlayer = Number(req.query.limitPerPlayer || 5);
 
     if (!URLS[format]) {
@@ -239,55 +243,79 @@ export default async function handler(req, res) {
       });
     }
 
-    const selectedPlayers = await sql`
-      SELECT cricapi_player_id, cricsheet_player_id, player_name, country
+    const mappedPlayers = await sql`
+      SELECT
+        cricapi_player_id,
+        cricsheet_player_id,
+        player_name,
+        country,
+        mapping_status
       FROM cricsheet_player_mapping
       WHERE cricsheet_player_id IS NOT NULL
+        AND mapping_status = 'mapped'
+    `;
+
+    const mappingSummary = await sql`
+      SELECT
+        COUNT(*)::int AS total_players,
+        COUNT(*) FILTER (
+          WHERE cricsheet_player_id IS NOT NULL
+            AND mapping_status = 'mapped'
+        )::int AS mapped_players,
+        COUNT(*) FILTER (
+          WHERE cricsheet_player_id IS NULL
+             OR mapping_status IS DISTINCT FROM 'mapped'
+        )::int AS unmapped_players
+      FROM cricsheet_player_mapping
     `;
 
     const selectedByCricsheetId = new Map(
-      selectedPlayers.map(p => [p.cricsheet_player_id, p])
+      mappedPlayers.map(p => [p.cricsheet_player_id, p])
     );
 
     const counts = new Map(
-      selectedPlayers.map(p => [p.cricsheet_player_id, 0])
+      mappedPlayers.map(p => [p.cricsheet_player_id, 0])
     );
 
     const response = await fetch(URLS[format]);
+
+    if (!response.ok) {
+      throw new Error(`Failed to download Cricsheet zip for ${format}`);
+    }
+
     const arrayBuffer = await response.arrayBuffer();
     const zip = await JSZip.loadAsync(arrayBuffer);
 
+    const allJsonFiles = Object.values(zip.files)
+      .filter(file => !file.dir && file.name.endsWith(".json"))
+      .map(file => file.name);
 
-const allJsonFiles = Object.values(zip.files)
-  .filter(file => !file.dir && file.name.endsWith(".json"))
-  .map(file => file.name);
+    const datedFiles = [];
 
-const datedFiles = [];
+    for (const fileName of allJsonFiles) {
+      const text = await zip.file(fileName).async("text");
+      const match = JSON.parse(text);
 
-for (const fileName of allJsonFiles) {
-  const text = await zip.file(fileName).async("text");
-  const match = JSON.parse(text);
+      datedFiles.push({
+        fileName,
+        matchDate: match.info?.dates?.[0] || "1900-01-01"
+      });
+    }
 
-  datedFiles.push({
-    fileName,
-    matchDate: match.info?.dates?.[0] || "1900-01-01"
-  });
-}
+    const jsonFiles = datedFiles
+      .sort((a, b) => new Date(b.matchDate) - new Date(a.matchDate))
+      .slice(0, maxFiles)
+      .map(x => x.fileName);
 
-const jsonFiles = datedFiles
-  .sort((a, b) => new Date(b.matchDate) - new Date(a.matchDate))
-  .slice(0, maxFiles)
-  .map(x => x.fileName);
+    const insertedRows = [];
+    const matchedMatches = [];
 
-const insertedRows = [];
-const matchedMatches = [];
-
-    
     for (const fileName of jsonFiles) {
       const text = await zip.file(fileName).async("text");
       const match = JSON.parse(text);
 
       const parsedRows = parseMatch(match, fileName.replace(".json", ""));
+
       const relevantRows = parsedRows.filter(row =>
         selectedByCricsheetId.has(row.cricsheet_player_id)
       );
@@ -308,6 +336,9 @@ const matchedMatches = [];
         if (row.type === "batting" && currentCount >= limitPerPlayer) {
           continue;
         }
+
+        const uniqueRowKey =
+          row.cricsheet_match_id + "*" + row.innings_number + "*" + row.type;
 
         await sql`
           INSERT INTO cricapi_player_match_history (
@@ -346,7 +377,7 @@ const matchedMatches = [];
             updated_at
           )
           VALUES (
-            ${row.cricsheet_match_id + "_" + row.innings_number + "_" + row.type},
+            ${uniqueRowKey},
             ${row.source_match_id},
             ${"cricsheet"},
             ${selectedPlayer.cricapi_player_id},
@@ -417,10 +448,11 @@ const matchedMatches = [];
           player_name: selectedPlayer.player_name,
           format,
           fileName,
+          uniqueRowKey,
           innings_number: row.innings_number,
           type: row.type,
-          runs: row.runs,
-          wickets: row.wickets
+          runs: row.runs || 0,
+          wickets: row.wickets || 0
         });
 
         if (row.type === "batting") {
@@ -438,11 +470,15 @@ const matchedMatches = [];
     return res.status(200).json({
       success: true,
       format,
-      selected_players: selectedPlayers.length,
+      maxFiles,
+      limitPerPlayer,
+      total_players_in_mapping_table: mappingSummary[0]?.total_players || 0,
+      mapped_players_processed: mappedPlayers.length,
+      unmapped_players_skipped: mappingSummary[0]?.unmapped_players || 0,
       files_scanned: jsonFiles.length,
       matched_matches: matchedMatches.length,
       inserted_or_updated_rows: insertedRows.length,
-      counts: Object.fromEntries(counts),
+      counts_by_cricsheet_player_id: Object.fromEntries(counts),
       matchedMatches,
       insertedRows
     });
