@@ -44,7 +44,7 @@ export default async function handler(req, res) {
       WHERE LOWER(player_name) = LOWER(${player})
         AND match_type = ${format}
       ORDER BY match_date DESC, innings_number ASC
-      LIMIT 10
+      LIMIT 20
     `;
 
     return res.status(200).json({
