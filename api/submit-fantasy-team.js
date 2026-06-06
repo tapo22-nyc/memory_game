@@ -128,16 +128,21 @@ module.exports = async function handler(req, res) {
       ? [...cleanActivePlayerIds, substitutePlayerId]
       : cleanActivePlayerIds;
 
+    // Unified join: handles both ipl_player_master and cricket_player_pool.
     const players = await sql`
       SELECT
-        pm.id,
-        pm.player_cost_coins,
-        pm.team_code
+        fmp.player_id                                           AS id,
+        COALESCE(ipm.player_cost_coins, cpp.player_cost_coins) AS player_cost_coins,
+        COALESCE(ipm.team_code,         cpp.country)           AS team_code
       FROM fantasy_match_players fmp
-      JOIN ipl_player_master pm
-        ON pm.id = fmp.player_id
+      LEFT JOIN ipl_player_master ipm
+        ON ipm.id = fmp.player_id
+        AND COALESCE(fmp.player_source, 'ipl') = 'ipl'
+      LEFT JOIN cricket_player_pool cpp
+        ON cpp.id = fmp.player_id
+        AND fmp.player_source = 'cricket'
       WHERE fmp.fantasy_match_id = ${fantasyMatchId}
-        AND pm.id = ANY(${allSelectedPlayerIds})
+        AND fmp.player_id = ANY(${allSelectedPlayerIds})
     `;
 
     if (players.length !== allSelectedPlayerIds.length) {
