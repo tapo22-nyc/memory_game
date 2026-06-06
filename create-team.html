@@ -1426,6 +1426,118 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .player-action-btn.remove-btn:hover { background: #fee2e2; }
     .player-action-btn:disabled   { background: #f3f4f6; color: #9ca3af; cursor: not-allowed; }
 
+    /* ── Stats button (player history) ── */
+    .player-stats-btn {
+      flex-shrink: 0;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      background: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+      border-radius: 6px;
+      padding: 4px 7px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .player-stats-btn:hover { background: #dcfce7; color: #166534; }
+
+    /* ── Country tag (international matches) ── */
+    .tag-country { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+
+    /* ══════════════════════════════════════════════════════
+       PLAYER HISTORY MODAL
+    ══════════════════════════════════════════════════════ */
+    .player-history-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55); z-index: 4000;
+      align-items: flex-end; justify-content: center; padding: 16px;
+    }
+    .player-history-overlay.show { display: flex; }
+    @media (min-width: 500px) { .player-history-overlay { align-items: center; } }
+
+    .player-history-modal {
+      width: 100%; max-width: 520px; background: #fff;
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.2);
+      display: flex; flex-direction: column; max-height: 88dvh;
+    }
+    .player-history-header {
+      display: flex; align-items: center; gap: 10px; padding: 14px 18px;
+      background: linear-gradient(135deg, #065f46, #059669);
+      flex-shrink: 0;
+    }
+    .player-history-title { flex: 1; font-size: 0.95rem; font-weight: 800; color: #fff; }
+    .player-history-close {
+      background: rgba(255,255,255,0.2); border: none; color: #fff;
+      width: 32px; height: 32px; border-radius: 50%; font-size: 18px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .player-history-close:hover { background: rgba(255,255,255,0.35); }
+
+    .ph-tabs {
+      display: flex; border-bottom: 1px solid #e5e7eb;
+      background: #f9fafb; flex-shrink: 0;
+    }
+    .ph-tab {
+      flex: 1; border: none; background: transparent;
+      padding: 10px 6px; font-size: 0.78rem; font-weight: 700;
+      color: #6b7280; cursor: pointer; border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .ph-tab.active { color: #059669; border-bottom-color: #059669; }
+    .ph-tab:hover:not(.active) { color: #374151; }
+
+    .player-history-body {
+      overflow-y: auto; flex: 1; padding: 12px 14px;
+    }
+
+    /* Overview */
+    .ph-overview { display: flex; flex-direction: column; gap: 12px; }
+    .ph-profile-card {
+      padding: 14px 16px; background: #f0fdf4; border: 1px solid #bbf7d0;
+      border-radius: 12px;
+    }
+    .ph-player-name { font-size: 1rem; font-weight: 800; color: #111827; }
+    .ph-country { font-size: 0.82rem; color: #6b7280; margin-top: 3px; }
+    .ph-availability {
+      display: flex; gap: 8px;
+    }
+    .ph-avail-item {
+      flex: 1; text-align: center; padding: 12px 8px;
+      background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px;
+    }
+    .ph-avail-val { font-size: 1.3rem; font-weight: 900; color: #059669; }
+    .ph-avail-label { font-size: 0.68rem; color: #6b7280; margin-top: 3px; font-weight: 600; letter-spacing: 0.3px; }
+
+    /* Match card */
+    .ph-match-card {
+      border: 1px solid #e5e7eb; border-radius: 12px;
+      padding: 12px 14px; margin-bottom: 10px; background: #fff;
+    }
+    .ph-match-card:last-child { margin-bottom: 0; }
+    .ph-match-header { margin-bottom: 10px; }
+    .ph-match-name { font-size: 0.85rem; font-weight: 700; color: #111827; }
+    .ph-match-meta { font-size: 0.75rem; color: #6b7280; margin-top: 2px; }
+    .ph-match-venue { font-size: 0.72rem; color: #9ca3af; margin-top: 1px; }
+
+    .ph-innings { margin-bottom: 8px; }
+    .ph-innings-label {
+      font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1px; color: #6b7280; margin-bottom: 5px;
+    }
+    .ph-stat-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .ph-stat {
+      background: #f3f4f6; border-radius: 8px;
+      padding: 6px 10px; text-align: center; min-width: 46px;
+    }
+    .ph-stat-val { font-size: 0.9rem; font-weight: 800; color: #111827; line-height: 1.2; }
+    .ph-stat-key { font-size: 0.62rem; color: #6b7280; margin-top: 2px; font-weight: 600; }
+    .ph-dismissal {
+      font-size: 0.72rem; color: #dc2626; margin-top: 5px; font-style: italic;
+    }
+
     .captain-step { display: flex; flex-direction: column; gap: 16px; }
     .captain-step-title { font-size: 16px; font-weight: 700; color: #d97706; margin-bottom: 4px; }
     .captain-step-sub   { font-size: 13px; color: #6b7280; margin-bottom: 12px; }
@@ -2801,6 +2913,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       return ['foreign','overseas'].includes(String(player.role||player.player_tag||'').toLowerCase());
     }
 
+    // Returns true for any non-franchise format (Test / ODI / T20I / T20).
+    // IPL, MLC, BBL remain "false" so their overseas/Indian logic is unchanged.
+    function isInternationalMatch() {
+      const fmt = String(currentMatchData?.match_format || 'ipl').toLowerCase();
+      return !['ipl', 'mlc', 'bbl', ''].includes(fmt);
+    }
+
     function playerCost(p) { return Number(p.player_cost_coins||p.auction_price_cr||0); }
 
     function formatNum(val) {
@@ -3993,10 +4112,13 @@ function renderLeaderboardUpdateNote() {
       const bar = document.getElementById('summaryBar');
       bar.style.display = '';
       if (!document.getElementById('statPlayers') || !document.getElementById('statSubstitute')) {
+        const overseasStatHtml = isInternationalMatch()
+          ? ''
+          : `<div class="summary-stat"><div class="summary-stat-val" id="statOverseas">0/4</div><div class="summary-stat-label">Overseas</div></div>`;
         bar.innerHTML = `
           <div class="summary-stat"><div class="summary-stat-val" id="statPlayers">0/11</div><div class="summary-stat-label">Active</div></div>
           <div class="summary-stat"><div class="summary-stat-val" id="statSubstitute">--</div><div class="summary-stat-label">Sub</div></div>
-          <div class="summary-stat"><div class="summary-stat-val" id="statOverseas">0/4</div><div class="summary-stat-label">Overseas</div></div>
+          ${overseasStatHtml}
           <div class="summary-stat"><div class="summary-stat-val" id="statTeam1">0/7</div><div class="summary-stat-label" id="statTeam1Label">Team 1</div></div>
           <div class="summary-stat"><div class="summary-stat-val" id="statTeam2">0/7</div><div class="summary-stat-label" id="statTeam2Label">Team 2</div></div>
           <div class="summary-stat"><div class="summary-stat-val" id="statCredits">75</div><div class="summary-stat-label">Budget Left</div></div>
@@ -4016,7 +4138,7 @@ function renderLeaderboardUpdateNote() {
             sEl.className = 'summary-stat-val' + (substitutePlayerId ? ' good' : substituteBoosterEnabled ? ' warn' : '');
           }
       }
-      const oEl=document.getElementById('statOverseas'); oEl.textContent=`${oc}/${MAX_OVERSEAS}`; oEl.className='summary-stat-val'+(oc===MAX_OVERSEAS?' warn':'');
+      const oEl=document.getElementById('statOverseas'); if(oEl){oEl.textContent=`${oc}/${MAX_OVERSEAS}`;oEl.className='summary-stat-val'+(oc===MAX_OVERSEAS?' warn':'');}
       const t1El=document.getElementById('statTeam1'); const t1c=tc[t1]||0; t1El.textContent=`${t1c}/${MAX_PER_TEAM}`; t1El.className='summary-stat-val'+(t1c===MAX_PER_TEAM?' warn':''); document.getElementById('statTeam1Label').textContent=t1||'Team 1';
       const t2El=document.getElementById('statTeam2'); const t2c=tc[t2]||0; t2El.textContent=`${t2c}/${MAX_PER_TEAM}`; t2El.className='summary-stat-val'+(t2c===MAX_PER_TEAM?' warn':''); document.getElementById('statTeam2Label').textContent=t2||'Team 2';
       const cEl=document.getElementById('statCredits'); cEl.textContent=formatNum(left)+' Cr'; cEl.className='summary-stat-val'+(left<0?' over':left<5?' warn':'');
@@ -4500,12 +4622,18 @@ const updateNote = currentMatchData?.score_update_note || '';
       const initials = playerInitials(player.player_name);
       const color = teamColor(player.team_name);
       const canAdd = !isSelected && canSelectPlayer(player);
-      const tagHtml = isOverseas(player)
-        ? `<span class="tag tag-overseas">Overseas</span>`
-        : `<span class="tag tag-indian">Indian</span>`;
+
+      // For international matches show the country, not Overseas/Indian
+      const tagHtml = isInternationalMatch()
+        ? `<span class="tag tag-country">${escapeHTML(player.country || player.team_name || '')}</span>`
+        : isOverseas(player)
+          ? `<span class="tag tag-overseas">Overseas</span>`
+          : `<span class="tag tag-indian">Indian</span>`;
+
       const typeHtml = player.player_type
         ? `<span class="tag tag-type">${escapeHTML(player.player_type)}</span>`
         : '';
+      const statsBtn = `<button class="player-stats-btn" onclick="event.stopPropagation();openPlayerHistoryModal(${JSON.stringify(player.player_name)})" title="View Stats">Stats</button>`;
       const btnHtml = isSelected
         ? `<button class="player-action-btn remove-btn" onclick="togglePlayer(${pid})" title="Remove">&#x2715;</button>`
         : `<button class="player-action-btn add-btn" onclick="togglePlayer(${pid})" title="Add" ${canAdd ? '' : 'disabled'}>&#43;</button>`;
@@ -4518,6 +4646,7 @@ const updateNote = currentMatchData?.score_update_note || '';
             <div class="player-tags">${tagHtml}${typeHtml}</div>
           </div>
           <div class="player-credits"><div class="player-credit-val">${formatNum(cost)}</div><div class="player-credit-label">Cr</div></div>
+          ${statsBtn}
           ${btnHtml}
         </div>`;
     }
@@ -4534,7 +4663,7 @@ const updateNote = currentMatchData?.score_update_note || '';
       }
 
       if (activeCount >= MAX_PLAYERS) return false;
-      if (isOverseas(player)&&getOverseasCount()>=MAX_OVERSEAS) return false;
+      if (!isInternationalMatch() && isOverseas(player) && getOverseasCount() >= MAX_OVERSEAS) return false;
       if ((getTeamCounts()[player.team_name]||0)>=MAX_PER_TEAM) return false;
       if (getTotalCoinsUsed()+playerCost(player)>budget) return false;
       return true;
@@ -4594,7 +4723,7 @@ const updateNote = currentMatchData?.score_update_note || '';
             setFooterMsg(msg, 'error');
             return;
           }
-          if (isOverseas(player)&&getOverseasCount()>=MAX_OVERSEAS) { setFooterMsg(`Maximum ${MAX_OVERSEAS} overseas players allowed.`, 'error'); return; }
+          if (!isInternationalMatch() && isOverseas(player) && getOverseasCount() >= MAX_OVERSEAS) { setFooterMsg(`Maximum ${MAX_OVERSEAS} overseas players allowed.`, 'error'); return; }
           if ((getTeamCounts()[player.team_name]||0)>=MAX_PER_TEAM) { setFooterMsg(`Maximum ${MAX_PER_TEAM} players from one team allowed.`, 'error'); return; }
           if (getTotalCoinsUsed()+playerCost(player)>budget) { setFooterMsg('Not enough budget to pick this player.', 'error'); return; }
 
@@ -5571,8 +5700,153 @@ const updateNote = currentMatchData?.score_update_note || '';
       if (e.key === 'Escape') {
         const dropdown = document.getElementById('hamburgerDropdown');
         if (dropdown) dropdown.classList.remove('open');
+        closePlayerHistoryModal();
       }
     });
+
+    /* ══════════════════════════════════════════════════════
+       PLAYER HISTORY MODAL
+    ══════════════════════════════════════════════════════ */
+
+    let _phData    = null;
+    let _phTab     = 'overview';
+
+    async function fetchPlayerProfile(playerName) {
+      const url = `/api/get-player-profile?player=${encodeURIComponent(playerName)}&limit=5`;
+      const res  = await fetch(url);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not load player profile.');
+      return data;
+    }
+
+    function openPlayerHistoryModal(playerName) {
+      _phData = null;
+      _phTab  = 'overview';
+      document.getElementById('phTitle').textContent = `Player History: ${playerName}`;
+      document.getElementById('phBody').innerHTML =
+        '<div style="padding:36px;text-align:center;color:#94a3b8;">Loading…</div>';
+      document.getElementById('playerHistoryOverlay').classList.add('show');
+      document.querySelectorAll('.ph-tab').forEach((t, i) =>
+        t.classList.toggle('active', i === 0)
+      );
+
+      fetchPlayerProfile(playerName)
+        .then(data => { _phData = data; _renderPhTab('overview'); })
+        .catch(err  => {
+          document.getElementById('phBody').innerHTML =
+            `<div style="padding:36px;text-align:center;color:#fb7185;">${escapeHTML(err.message || 'No data available.')}</div>`;
+        });
+    }
+
+    function closePlayerHistoryModal() {
+      const el = document.getElementById('playerHistoryOverlay');
+      if (el) el.classList.remove('show');
+    }
+
+    function _switchPhTab(tab) {
+      _phTab = tab;
+      document.querySelectorAll('.ph-tab').forEach(t =>
+        t.classList.toggle('active', t.dataset.tab === tab)
+      );
+      if (_phData) _renderPhTab(tab);
+    }
+
+    function _renderPhTab(tab) {
+      const body = document.getElementById('phBody');
+      if (!_phData || !_phData.success) {
+        body.innerHTML = '<div style="padding:32px;text-align:center;color:#fb7185;">No data available.</div>';
+        return;
+      }
+      const { profile, availability, history } = _phData;
+      if (tab === 'overview') {
+        body.innerHTML = `
+          <div class="ph-overview">
+            <div class="ph-profile-card">
+              <div class="ph-player-name">${escapeHTML(profile.player_name || '')}</div>
+              <div class="ph-country">${escapeHTML(profile.country || '')}</div>
+            </div>
+            <div class="ph-availability">
+              <div class="ph-avail-item"><div class="ph-avail-val">${availability.tests}</div><div class="ph-avail-label">Tests Available</div></div>
+              <div class="ph-avail-item"><div class="ph-avail-val">${availability.odis}</div><div class="ph-avail-label">ODIs Available</div></div>
+              <div class="ph-avail-item"><div class="ph-avail-val">${availability.t20s}</div><div class="ph-avail-label">T20s Available</div></div>
+            </div>
+          </div>`;
+        return;
+      }
+      const matches = { tests: history.tests, odis: history.odis, t20s: history.t20s }[tab] || [];
+      if (!matches.length) {
+        body.innerHTML = `<div style="padding:32px;text-align:center;color:#94a3b8;">No ${escapeHTML(tab)} data available.</div>`;
+        return;
+      }
+      body.innerHTML = matches.map(_renderPhMatch).join('');
+    }
+
+    function _renderPhMatch(m) {
+      const batting  = m.batting  || [];
+      const bowling  = m.bowling  || [];
+      const dateStr  = m.match_date
+        ? new Date(m.match_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+        : '';
+
+      const battingHtml = batting.map(b => `
+        <div class="ph-innings">
+          <div class="ph-innings-label">Batting — Innings ${b.innings_number}</div>
+          <div class="ph-stat-row">
+            <div class="ph-stat"><div class="ph-stat-val">${b.runs  ?? '—'}</div><div class="ph-stat-key">Runs</div></div>
+            <div class="ph-stat"><div class="ph-stat-val">${b.balls ?? '—'}</div><div class="ph-stat-key">Balls</div></div>
+            <div class="ph-stat"><div class="ph-stat-val">${b.fours ?? '—'}</div><div class="ph-stat-key">4s</div></div>
+            <div class="ph-stat"><div class="ph-stat-val">${b.sixes ?? '—'}</div><div class="ph-stat-key">6s</div></div>
+            <div class="ph-stat"><div class="ph-stat-val">${b.strike_rate != null ? Number(b.strike_rate).toFixed(1) : '—'}</div><div class="ph-stat-key">SR</div></div>
+          </div>
+          ${b.dismissal_type
+            ? `<div class="ph-dismissal">${escapeHTML(b.dismissal_type)}${b.dismissed_by_bowler ? ' b. ' + escapeHTML(b.dismissed_by_bowler) : ''}</div>`
+            : ''}
+        </div>`).join('');
+
+      const bowlingHtml = bowling.map(bl => `
+        <div class="ph-innings">
+          <div class="ph-innings-label">Bowling — Innings ${bl.innings_number}</div>
+          <div class="ph-stat-row">
+            <div class="ph-stat"><div class="ph-stat-val">${bl.overs        ?? '—'}</div><div class="ph-stat-key">Overs</div></div>
+            <div class="ph-stat"><div class="ph-stat-val">${bl.runs_conceded ?? '—'}</div><div class="ph-stat-key">Runs</div></div>
+            <div class="ph-stat"><div class="ph-stat-val">${bl.wickets      ?? '—'}</div><div class="ph-stat-key">Wkts</div></div>
+            <div class="ph-stat"><div class="ph-stat-val">${bl.economy != null ? Number(bl.economy).toFixed(1) : '—'}</div><div class="ph-stat-key">Econ</div></div>
+          </div>
+        </div>`).join('');
+
+      const noData = !battingHtml && !bowlingHtml
+        ? '<div style="color:#94a3b8;font-size:12px;padding:4px 0;">No performance data for this match.</div>'
+        : '';
+
+      return `
+        <div class="ph-match-card">
+          <div class="ph-match-header">
+            <div class="ph-match-name">${escapeHTML(m.match_name || '')}</div>
+            <div class="ph-match-meta">${m.opponent ? escapeHTML('vs ' + m.opponent) + ' · ' : ''}${escapeHTML(dateStr)}</div>
+            ${m.venue ? `<div class="ph-match-venue">${escapeHTML(m.venue)}</div>` : ''}
+          </div>
+          ${battingHtml}${bowlingHtml}${noData}
+        </div>`;
+    }
   </script>
+
+  <!-- ── Player History Modal ── -->
+  <div id="playerHistoryOverlay" class="player-history-overlay" onclick="if(event.target===this)closePlayerHistoryModal()">
+    <div class="player-history-modal">
+      <div class="player-history-header">
+        <div class="player-history-title" id="phTitle">Player History</div>
+        <button class="player-history-close" onclick="closePlayerHistoryModal()">&#x2715;</button>
+      </div>
+      <div class="ph-tabs">
+        <button class="ph-tab active" data-tab="overview" onclick="_switchPhTab('overview')">Overview</button>
+        <button class="ph-tab" data-tab="tests"    onclick="_switchPhTab('tests')">Tests</button>
+        <button class="ph-tab" data-tab="odis"     onclick="_switchPhTab('odis')">ODIs</button>
+        <button class="ph-tab" data-tab="t20s"     onclick="_switchPhTab('t20s')">T20s</button>
+      </div>
+      <div class="player-history-body" id="phBody">
+        <div style="padding:36px;text-align:center;color:#94a3b8;">Loading…</div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
