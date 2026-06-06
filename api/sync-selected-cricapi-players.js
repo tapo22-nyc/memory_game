@@ -2,41 +2,6 @@ import { neon } from "@neondatabase/serverless";
 
 const sql = neon(process.env.DATABASE_URL);
 
-const SELECTED_PLAYERS = [
-  { search_name: "Abhishek Sharma", country: "India" },
-  { search_name: "Akash Deep", country: "India" },
-  { search_name: "Arshdeep Singh", country: "India" },
-  { search_name: "Axar Patel", country: "India" },
-  { search_name: "Devdutt Padikkal", country: "India" },
-  { search_name: "Dhruv Jurel", country: "India" },
-  { search_name: "Harshit Rana", country: "India" },
-  { search_name: "Ishan Kishan", country: "India" },
-  { search_name: "Jasprit Bumrah", country: "India" },
-  { search_name: "KL Rahul", country: "India" },
-  { search_name: "Kuldeep Yadav", country: "India" },
-  { search_name: "Mohammed Siraj", country: "India" },
-  { search_name: "Mukesh Kumar", country: "India" },
-  { search_name: "Nitish Kumar Reddy", country: "India" },
-  { search_name: "Prasidh Krishna", country: "India" },
-  { search_name: "Prince Yadav", country: "India" },
-  { search_name: "Ravi Bishnoi", country: "India" },
-  { search_name: "Ravindra Jadeja", country: "India" },
-  { search_name: "Rishabh Pant", country: "India" },
-  { search_name: "Rohit Sharma", country: "India" },
-  { search_name: "Sai Sudharsan", country: "India" },
-  { search_name: "Sanju Samson", country: "India" },
-  { search_name: "Sarfaraz Khan", country: "India" },
-  { search_name: "Shivam Dube", country: "India" },
-  { search_name: "Shreyas Iyer", country: "India" },
-  { search_name: "Shubman Gill", country: "India" },
-  { search_name: "Tilak Varma", country: "India" },
-  { search_name: "Vaibhav Sooryavanshi", country: "India" },
-  { search_name: "Varun Chakaravarthy", country: "India" },
-  { search_name: "Virat Kohli", country: "India" },
-  { search_name: "Washington Sundar", country: "India" },
-  { search_name: "Yashasvi Jaiswal", country: "India" }
-];
-
 async function searchPlayer(playerName) {
   const url =
     `https://api.cricapi.com/v1/players?apikey=${process.env.CRICAPI_KEY}` +
@@ -66,16 +31,27 @@ function pickBestMatch(apiData, expectedName) {
 
 export default async function handler(req, res) {
   try {
+    const selectedPlayers = await sql`
+      SELECT
+        player_name,
+        search_name,
+        primary_country
+      FROM selected_cricket_players
+      WHERE is_active = TRUE
+      ORDER BY primary_country, player_name
+    `;
+
     const results = [];
 
-    for (const player of SELECTED_PLAYERS) {
+    for (const player of selectedPlayers) {
       const apiData = await searchPlayer(player.search_name);
       const bestMatch = pickBestMatch(apiData, player.search_name);
 
       if (!bestMatch) {
         results.push({
           search_name: player.search_name,
-          country: player.country,
+          player_name: player.player_name,
+          country: player.primary_country,
           status: "not_found"
         });
         continue;
@@ -93,7 +69,7 @@ export default async function handler(req, res) {
         VALUES (
           ${bestMatch.id},
           ${bestMatch.name},
-          ${player.country},
+          ${player.primary_country},
           ${player.search_name},
           ${JSON.stringify(bestMatch)},
           NOW()
@@ -111,14 +87,15 @@ export default async function handler(req, res) {
         search_name: player.search_name,
         saved_name: bestMatch.name,
         cricapi_player_id: bestMatch.id,
-        country: player.country,
+        country: player.primary_country,
         status: "saved"
       });
     }
 
     return res.status(200).json({
       success: true,
-      total_players: SELECTED_PLAYERS.length,
+      source: "selected_cricket_players",
+      total_players: selectedPlayers.length,
       results
     });
   } catch (error) {
