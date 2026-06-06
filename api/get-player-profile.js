@@ -178,21 +178,27 @@ export default async function handler(req, res) {
       getHistory(player, "t20", limit)
     ]);
 
-    return res.status(200).json({
-      success: true,
-      player,
-      profile: {
-        player_name: profile.player_name,
-        country: profile.country,
-        cricapi_player_id: profile.cricapi_player_id,
-        cricsheet_player_id: profile.cricsheet_player_id
-      },
-      history: {
-        tests,
-        odis,
-        t20s
-      }
-    });
+  return res.status(200).json({
+    success: true,
+    player,
+    profile: {
+      player_name: profile.player_name,
+      country: profile.country,
+      cricapi_player_id: profile.cricapi_player_id,
+      cricsheet_player_id: profile.cricsheet_player_id
+    },
+    availability: {
+      tests: tests.length,
+      odis: odis.length,
+      t20s: t20s.length
+    },
+    history: {
+      tests,
+      odis,
+      t20s
+    }
+  });
+    
   } catch (error) {
     console.error("get-player-profile error:", error);
 
