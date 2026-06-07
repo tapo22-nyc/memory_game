@@ -1443,6 +1443,125 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
     .player-stats-btn:hover { background: #dcfce7; color: #166534; }
 
+    /* ── Player Selection Redesign (Step 1) ── */
+    .ps-stats-bar {
+      display: flex; align-items: center; gap: 0;
+      background: #f8fafc; border-bottom: 1px solid #e5e7eb;
+      padding: 8px 0;
+    }
+    .ps-stat {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      padding: 0 4px; border-right: 1px solid #e5e7eb;
+    }
+    .ps-stat:last-child { border-right: none; }
+    .ps-stat-val { font-size: 13px; font-weight: 700; color: #111827; line-height: 1.2; }
+    .ps-stat-lbl { font-size: 9px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 1px; }
+    .ps-stat.ps-stat-good .ps-stat-val { color: #16a34a; }
+    .ps-stat.ps-stat-warn .ps-stat-val { color: #f97316; }
+    .ps-stat.ps-stat-over .ps-stat-val { color: #dc2626; }
+
+    .ps-filter-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px 6px;
+      flex-wrap: wrap;
+    }
+    .ps-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .ps-chip {
+      padding: 5px 12px; border-radius: 20px; border: 1.5px solid #d1d5db;
+      background: white; font-size: 12px; font-weight: 600; color: #374151;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .ps-chip:hover { border-color: #2563eb; color: #2563eb; }
+    .ps-chip.active { background: #2563eb; border-color: #2563eb; color: white; }
+
+    .ps-search-wrap { flex: 1; min-width: 140px; }
+    .ps-search {
+      width: 100%; padding: 7px 12px; border-radius: 20px;
+      border: 1.5px solid #d1d5db; font-size: 13px; color: #111827;
+      background: white; outline: none; box-sizing: border-box;
+    }
+    .ps-search:focus { border-color: #2563eb; }
+    .ps-search::placeholder { color: #9ca3af; }
+
+    .ps-sort-row {
+      display: flex; align-items: center; gap: 6px;
+      padding: 4px 14px 8px;
+    }
+    .ps-sort-label { font-size: 11px; color: #6b7280; font-weight: 600; margin-right: 2px; }
+    .ps-sort-btn {
+      padding: 4px 10px; border-radius: 12px; border: 1.5px solid #d1d5db;
+      background: white; font-size: 11px; font-weight: 600; color: #374151;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .ps-sort-btn:hover { border-color: #2563eb; color: #2563eb; }
+    .ps-sort-btn.active { background: #eff6ff; border-color: #2563eb; color: #2563eb; }
+
+    .ps-player-list { padding-bottom: 8px; }
+    .ps-role-section { margin-bottom: 4px; }
+    .ps-role-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 14px 6px;
+      background: #f1f5f9; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;
+      position: sticky; top: 0; z-index: 2;
+    }
+    .ps-role-label { font-size: 12px; font-weight: 700; color: #1e293b; letter-spacing: 0.5px; }
+    .ps-role-count { font-size: 11px; color: #64748b; }
+
+    .ps-player-card {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      background: white; transition: background 0.12s;
+    }
+    .ps-player-card:hover { background: #f8fafc; }
+    .ps-player-card.ps-selected { background: #eff6ff; }
+    .ps-player-card.ps-substitute { background: #fef9c3; }
+
+    .ps-avatar {
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 12px; color: white;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    .ps-player-card.ps-selected .ps-avatar { border-color: #93c5fd; }
+
+    .ps-player-info { flex: 1; min-width: 0; }
+    .ps-player-name {
+      font-size: 13px; font-weight: 600; color: #111827;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ps-player-meta { font-size: 11px; color: #6b7280; margin-top: 1px; }
+    .ps-sub-badge {
+      display: inline-block; font-size: 9px; font-weight: 700;
+      background: #fbbf24; color: #7c2d12; border-radius: 4px;
+      padding: 1px 4px; margin-left: 5px; vertical-align: middle;
+    }
+
+    .ps-cost { font-size: 13px; font-weight: 700; color: #d97706; flex-shrink: 0; white-space: nowrap; }
+
+    .ps-stats-btn {
+      flex-shrink: 0; font-size: 10px; font-weight: 700; letter-spacing: 0.4px;
+      background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0;
+      border-radius: 6px; padding: 4px 7px; cursor: pointer;
+      transition: background 0.15s; white-space: nowrap;
+    }
+    .ps-stats-btn:hover { background: #dcfce7; color: #166534; }
+
+    .ps-add-btn {
+      width: 28px; height: 28px; border-radius: 50%; border: none; cursor: pointer;
+      font-size: 18px; font-weight: 700; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: #2563eb; color: white; transition: transform 0.12s, background 0.12s;
+      line-height: 1;
+    }
+    .ps-add-btn:hover { background: #1d4ed8; }
+    .ps-add-btn:active { transform: scale(0.9); }
+    .ps-remove-btn { background: #fef2f2 !important; color: #dc2626 !important; border: 1.5px solid #fecaca !important; font-size: 14px !important; }
+    .ps-remove-btn:hover { background: #fee2e2 !important; }
+    .ps-add-btn-disabled { background: #f3f4f6 !important; color: #9ca3af !important; cursor: not-allowed !important; }
+
+    .ps-empty { padding: 32px 16px; text-align: center; color: #9ca3af; font-size: 13px; }
+
     /* ── Country tag (international matches) ── */
     .tag-country { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
 
@@ -2750,6 +2869,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const MAX_PLAYERS  = 11;
     const MAX_OVERSEAS = 4;
     const MAX_PER_TEAM = 7;
+
+    /* ── Player selection UI state ── */
+    let playerTeamFilter  = 'all';
+    let playerSearchQuery = '';
+    let playerSortMode    = 'budget';
 
     /* ── Team metadata ── */
     const TEAM_FULL = {
@@ -4110,6 +4234,7 @@ function renderLeaderboardUpdateNote() {
     /* ── Summary bar (open state) ── */
     function updateSummaryBar() {
       const bar = document.getElementById('summaryBar');
+      if (modalStep === 1) { bar.style.display = 'none'; return; }
       bar.style.display = '';
       if (!document.getElementById('statPlayers') || !document.getElementById('statSubstitute')) {
         const overseasStatHtml = isInternationalMatch()
@@ -4553,65 +4678,151 @@ const updateNote = currentMatchData?.score_update_note || '';
     }
 
     function renderTeamSections() {
+      document.getElementById('summaryBar').style.display = 'none';
+
       const teams = getTeams();
       const tc = getTeamCounts();
-      const playerTypes = ['Batsman', 'Bowler', 'All Rounder', 'Wicket Keeper'];
+      const used = getTotalCoinsUsed();
+      const left = budget - used;
+      const activeCount = getActivePlayerCount();
+      const t1 = teams[0] || '', t2 = teams[1] || '';
+      const t1c = tc[t1] || 0, t2c = tc[t2] || 0;
+      const oc = getOverseasCount();
 
-      const stepBarHtml = renderStepIndicator(1);
-      document.getElementById('modalContent').innerHTML = `${stepBarHtml}${renderSubstitutionControlCard()}<div class="team-cards">${teams.map(team => {
-        const players = allPlayers.filter(p => p.team_name === team);
-        const selCount = tc[team] || 0;
-        const isExpanded = expandedTeams.has(team);
-        const color = teamColor(team);
-        const fullName = teamFullName(team);
+      const overseasStat = isInternationalMatch() ? '' : `
+        <div class="ps-stat ${oc >= MAX_OVERSEAS ? 'ps-stat-warn' : ''}">
+          <span class="ps-stat-val">${oc}/${MAX_OVERSEAS}</span>
+          <span class="ps-stat-lbl">Overseas</span>
+        </div>`;
 
-        if (!activePlayerTypeByTeam[team]) {
-          activePlayerTypeByTeam[team] = 'Batsman';
+      const statsBarHtml = `
+        <div class="ps-stats-bar">
+          <div class="ps-stat ${activeCount === MAX_PLAYERS ? 'ps-stat-good' : ''}">
+            <span class="ps-stat-val">${activeCount}/${MAX_PLAYERS}</span>
+            <span class="ps-stat-lbl">Players</span>
+          </div>
+          ${overseasStat}
+          <div class="ps-stat ${t1c >= MAX_PER_TEAM ? 'ps-stat-warn' : ''}">
+            <span class="ps-stat-val">${t1c}/${MAX_PER_TEAM}</span>
+            <span class="ps-stat-lbl">${escapeHTML(t1 || 'Team 1')}</span>
+          </div>
+          <div class="ps-stat ${t2c >= MAX_PER_TEAM ? 'ps-stat-warn' : ''}">
+            <span class="ps-stat-val">${t2c}/${MAX_PER_TEAM}</span>
+            <span class="ps-stat-lbl">${escapeHTML(t2 || 'Team 2')}</span>
+          </div>
+          <div class="ps-stat ${left < 0 ? 'ps-stat-over' : left < 5 ? 'ps-stat-warn' : ''}">
+            <span class="ps-stat-val">${formatNum(left)}</span>
+            <span class="ps-stat-lbl">Budget</span>
+          </div>
+        </div>`;
+
+      const chipsHtml = `
+        <div class="ps-filter-row">
+          <div class="ps-chips">
+            <button class="ps-chip ${playerTeamFilter==='all'?'active':''}" onclick="setTeamFilter('all')">All</button>
+            ${teams.map(t => `<button class="ps-chip ${playerTeamFilter===t?'active':''}" onclick="setTeamFilter('${escapeHTML(t)}')">${escapeHTML(t)}</button>`).join('')}
+          </div>
+          <div class="ps-search-wrap">
+            <input class="ps-search" type="text" placeholder="Search players..." value="${escapeHTML(playerSearchQuery)}"
+              oninput="setPlayerSearch(this.value)" />
+          </div>
+        </div>`;
+
+      const sortHtml = `
+        <div class="ps-sort-row">
+          <span class="ps-sort-label">Sort:</span>
+          <button class="ps-sort-btn ${playerSortMode==='budget'?'active':''}" onclick="setPlayerSort('budget')">Budget</button>
+          <button class="ps-sort-btn ${playerSortMode==='name'?'active':''}" onclick="setPlayerSort('name')">Name</button>
+        </div>`;
+
+      let filtered = allPlayers.filter(p => {
+        if (playerTeamFilter !== 'all' && p.team_name !== playerTeamFilter) return false;
+        if (playerSearchQuery) {
+          const q = playerSearchQuery.toLowerCase();
+          if (!p.player_name.toLowerCase().includes(q)) return false;
         }
+        return true;
+      });
 
-        const activeType = activePlayerTypeByTeam[team];
-        const filteredPlayers = players.filter(p => normalizePlayerType(p.player_type) === activeType);
+      if (playerSortMode === 'budget') {
+        filtered.sort((a, b) => playerCost(b) - playerCost(a));
+      } else if (playerSortMode === 'name') {
+        filtered.sort((a, b) => a.player_name.localeCompare(b.player_name));
+      }
 
+      const roleOrder = ['Wicket Keeper', 'Batsman', 'All Rounder', 'Bowler'];
+      const roleLabels = { 'Wicket Keeper': 'WK', 'Batsman': 'BAT', 'All Rounder': 'AR', 'Bowler': 'BOWL' };
+      const grouped = {};
+      filtered.forEach(p => {
+        const role = normalizePlayerType(p.player_type);
+        if (!grouped[role]) grouped[role] = [];
+        grouped[role].push(p);
+      });
+
+      const sectionsHtml = roleOrder.map(role => {
+        const players = grouped[role];
+        if (!players || !players.length) return '';
         return `
-          <div class="team-card ${isExpanded ? 'expanded' : ''} ${selCount > 0 ? 'has-selection' : ''}">
-            <div class="team-card-header" onclick="toggleTeam('${escapeHTML(team)}')">
-              <div class="team-badge" style="background:${color};">${escapeHTML(team)}</div>
-              <div class="team-card-info">
-                <div class="team-card-name">${escapeHTML(fullName)}</div>
-                <div class="team-card-sub">${players.length} players available</div>
-              </div>
-              <div class="team-card-count ${selCount >= MAX_PER_TEAM ? 'at-limit' : ''}">${selCount}/${MAX_PER_TEAM}</div>
-              <div class="team-card-toggle">&#8964;</div>
+          <div class="ps-role-section">
+            <div class="ps-role-header">
+              <span class="ps-role-label">${escapeHTML(roleLabels[role] || role)}</span>
+              <span class="ps-role-count">${players.length} available</span>
             </div>
-
-            <div class="player-list-wrap">
-              <div class="player-type-tabs">
-                ${playerTypes.map(type => {
-                  const count = players.filter(p => normalizePlayerType(p.player_type) === type).length;
-                  return `
-                    <button
-                      class="player-type-tab ${activeType === type ? 'active' : ''}"
-                      onclick="event.stopPropagation(); setPlayerTypeTab('${escapeHTML(team)}', '${escapeHTML(type)}')"
-                    >
-                      ${escapeHTML(type)} (${count})
-                    </button>
-                  `;
-                }).join('')}
-              </div>
-
-              <div class="player-list-header">
-                <div class="player-list-header-label">${escapeHTML(activeType)}</div>
-                <div class="player-list-header-credits">Budget (Cr)</div>
-              </div>
-
-              ${
-                filteredPlayers.length
-                  ? filteredPlayers.map(p => renderPlayerRow(p)).join('')
-                  : `<div style="padding:18px 16px;color:#64748b;font-size:12px;text-align:center;">No ${escapeHTML(activeType)} players available.</div>`
-              }
-            </div>
+            ${players.map(p => renderPlayerCard(p)).join('')}
           </div>`;
-      }).join('')}</div>`;
+      }).join('');
+
+      const listHtml = filtered.length === 0
+        ? `<div class="ps-empty">No players match your search.</div>`
+        : sectionsHtml;
+
+      document.getElementById('modalContent').innerHTML =
+        `${renderStepIndicator(1)}${renderSubstitutionControlCard()}${statsBarHtml}${chipsHtml}${sortHtml}<div class="ps-player-list">${listHtml}</div>`;
+    }
+
+    function renderPlayerCard(player) {
+      const pid = Number(player.id);
+      const isSelected = selectedPlayers.includes(pid);
+      const isSubstitute = Number(substitutePlayerId) === pid;
+      const cost = playerCost(player);
+      const color = teamColor(player.team_name);
+      const canAdd = !isSelected && canSelectPlayer(player);
+      const role = normalizePlayerType(player.player_type);
+      const roleShort = { 'Wicket Keeper': 'WK', 'Batsman': 'BAT', 'All Rounder': 'AR', 'Bowler': 'BOWL' }[role] || role;
+      const teamLabel = isInternationalMatch()
+        ? escapeHTML(player.country || player.team_name || '')
+        : escapeHTML(player.team_name || '');
+
+      const addBtn = isSelected
+        ? `<button class="ps-add-btn ps-remove-btn" onclick="togglePlayer(${pid})">&#x2715;</button>`
+        : `<button class="ps-add-btn${canAdd ? '' : ' ps-add-btn-disabled'}" onclick="togglePlayer(${pid})" ${canAdd ? '' : 'disabled'}>+</button>`;
+
+      const statsBtn = `<button class="ps-stats-btn" data-player="${escapeHTML(player.player_name)}" onclick="event.stopPropagation();openPlayerHistoryModal(this.dataset.player)">Stats</button>`;
+
+      return `
+        <div class="ps-player-card ${isSelected ? 'ps-selected' : ''} ${isSubstitute ? 'ps-substitute' : ''}">
+          <div class="ps-avatar" style="background:${color};">${escapeHTML(playerInitials(player.player_name))}</div>
+          <div class="ps-player-info">
+            <div class="ps-player-name">${escapeHTML(player.player_name)}${isSubstitute ? '<span class="ps-sub-badge">Sub</span>' : ''}</div>
+            <div class="ps-player-meta">${escapeHTML(roleShort)} &middot; ${teamLabel}</div>
+          </div>
+          ${statsBtn}
+          <div class="ps-cost">${formatNum(cost)} Cr</div>
+          ${addBtn}
+        </div>`;
+    }
+
+    function setTeamFilter(t) {
+      playerTeamFilter = t;
+      renderTeamSections();
+    }
+    function setPlayerSearch(q) {
+      playerSearchQuery = q;
+      renderTeamSections();
+    }
+    function setPlayerSort(mode) {
+      playerSortMode = mode;
+      renderTeamSections();
     }
 
     function renderPlayerRow(player) {
@@ -4752,6 +4963,7 @@ const updateNote = currentMatchData?.score_update_note || '';
     }
 
     function renderCaptainStep() {
+      updateSummaryBar();
       const rows=getActivePlayerIds().map(pid=>{
         const p=allPlayers.find(x=>Number(x.id)===pid); if(!p) return '';
         const isCap=captainId===pid, isVice=viceCaptainId===pid, color=teamColor(p.team_name);
@@ -4850,6 +5062,7 @@ const updateNote = currentMatchData?.score_update_note || '';
     }
 
     function renderBoosterStep() {
+      updateSummaryBar();
       const displayCoins = getDisplayCoins();
       const canAffordCaptain = captainBoosterSelected || displayCoins >= 300;
       const canAffordVC = viceCaptainBoosterSelected || displayCoins >= 200;
@@ -5109,6 +5322,7 @@ const updateNote = currentMatchData?.score_update_note || '';
       currentFantasyMatchId=fantasyMatchId; selectedPlayers=[]; substitutePlayerId=null; substituteBoosterEnabled=false; substitutionUsed=false; selectedSwapOutPlayerId=null; savedFantasyTeamId=null; allPlayers=[]; currentMatchData=null;
       budget=75; modalStep=1; expandedTeams=new Set(); activePlayerTypeByTeam = {}; captainId=null; viceCaptainId=null; hasLoadedSavedTeamForOpenMatch=false; captainBoosterSelected=false; viceCaptainBoosterSelected=false;
       alreadyPaidCaptainBooster=false; alreadyPaidVCBooster=false; alreadyPaidSubBooster=false;
+      playerTeamFilter='all'; playerSearchQuery=''; playerSortMode='budget';
       if(countdownInterval){clearInterval(countdownInterval);countdownInterval=null;}
 
       document.getElementById('teamModal').classList.add('show');
