@@ -1444,11 +1444,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .player-stats-btn:hover { background: #dcfce7; color: #166534; }
 
     /* ── Player Selection Redesign (Step 1) ── */
-    .ps-stats-bar {
-      display: flex; align-items: center; gap: 0;
-      background: #f8fafc; border-bottom: 1px solid #e5e7eb;
-      padding: 8px 0;
-    }
     .ps-stat {
       flex: 1; display: flex; flex-direction: column; align-items: center;
       padding: 0 4px; border-right: 1px solid #e5e7eb;
@@ -1537,7 +1532,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       padding: 1px 4px; margin-left: 5px; vertical-align: middle;
     }
 
-    .ps-cost { font-size: 13px; font-weight: 700; color: #d97706; flex-shrink: 0; white-space: nowrap; }
+    .ps-cost { font-size: 13px; font-weight: 700; color: #d97706; flex-shrink: 0; white-space: nowrap; min-width: 52px; text-align: center; }
 
     .ps-stats-btn {
       flex-shrink: 0; font-size: 10px; font-weight: 700; letter-spacing: 0.4px;
@@ -1561,6 +1556,78 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .ps-add-btn-disabled { background: #f3f4f6 !important; color: #9ca3af !important; cursor: not-allowed !important; }
 
     .ps-empty { padding: 32px 16px; text-align: center; color: #9ca3af; font-size: 13px; }
+
+    /* ── Sticky stats bar ── */
+    .ps-stats-bar {
+      position: sticky; top: -16px; z-index: 10;
+      margin: -16px -14px 0;
+      display: flex; align-items: center; gap: 0;
+      background: #f8fafc; border-bottom: 1px solid #e5e7eb;
+      padding: 8px 0;
+    }
+
+    /* ── Team filter buttons (wide rectangular) ── */
+    .ps-team-filter-row {
+      display: flex; gap: 8px; padding: 10px 14px 4px;
+    }
+    .ps-team-btn {
+      flex: 1; padding: 8px 12px; border-radius: 8px;
+      border: 1.5px solid #d1d5db; background: white;
+      font-size: 13px; font-weight: 700; color: #374151;
+      cursor: pointer; transition: all 0.15s; text-align: center;
+      letter-spacing: 0.5px;
+    }
+    .ps-team-btn:hover { border-color: #2563eb; color: #2563eb; }
+    .ps-team-btn.active { background: #2563eb; border-color: #2563eb; color: white; }
+
+    /* ── Role filter buttons ── */
+    .ps-role-filter-row {
+      display: flex; gap: 6px; padding: 6px 14px 8px; flex-wrap: wrap;
+    }
+    .ps-role-btn {
+      flex: 1; min-width: 70px; padding: 6px 8px; border-radius: 8px;
+      border: 1.5px solid #d1d5db; background: white;
+      font-size: 11px; font-weight: 700; color: #374151;
+      cursor: pointer; transition: all 0.15s; text-align: center;
+      white-space: nowrap;
+    }
+    .ps-role-btn:hover { border-color: #2563eb; color: #2563eb; }
+    .ps-role-btn.active { background: #1e3a8a; border-color: #1e3a8a; color: white; }
+
+    /* ── Column header (PLAYERS | IMPACT POINTS | BUDGET) ── */
+    .ps-col-header {
+      display: flex; align-items: center;
+      padding: 5px 14px; background: #f1f5f9;
+      border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;
+    }
+    .ps-col-header-left { flex: 1; font-size: 9px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+    .ps-col-header-mid {
+      font-size: 9px; font-weight: 900; color: #64748b; text-transform: uppercase;
+      letter-spacing: 1px; min-width: 58px; text-align: center; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 2px;
+    }
+    .ps-col-header-mid:hover { color: #2563eb; }
+    .ps-col-header-mid.sort-asc::after { content: ' ↑'; font-size: 9px; }
+    .ps-col-header-mid.sort-desc::after { content: ' ↓'; font-size: 9px; }
+    .ps-col-header-right {
+      font-size: 9px; font-weight: 900; color: #64748b; text-transform: uppercase;
+      letter-spacing: 1px; min-width: 52px; text-align: center; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 2px;
+    }
+    .ps-col-header-right:hover { color: #2563eb; }
+    .ps-col-header-right.sort-asc::after { content: ' ↑'; font-size: 9px; }
+    .ps-col-header-right.sort-desc::after { content: ' ↓'; font-size: 9px; }
+    .ps-col-header-add { width: 28px; flex-shrink: 0; }
+
+    /* ── Impact points in player card ── */
+    .ps-impact {
+      font-size: 13px; font-weight: 700; color: #2563eb;
+      flex-shrink: 0; min-width: 58px; text-align: center;
+    }
+
+    /* ── Redesigned player card ── */
+    .ps-player-info { flex: 1; min-width: 0; }
+    .ps-player-name-row { display: flex; flex-direction: column; gap: 3px; }
 
     /* ── Country tag (international matches) ── */
     .tag-country { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
@@ -2873,7 +2940,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     /* ── Player selection UI state ── */
     let playerTeamFilter  = 'all';
     let playerSearchQuery = '';
-    let playerSortMode    = 'budget';
+    let playerSortMode    = 'impact_desc';
+    let playerRoleFilter  = 'all';
 
     /* ── Team metadata ── */
     const TEAM_FULL = {
@@ -4716,42 +4784,49 @@ const updateNote = currentMatchData?.score_update_note || '';
           </div>
         </div>`;
 
-      const chipsHtml = `
-        <div class="ps-filter-row">
-          <div class="ps-chips">
-            <button class="ps-chip ${playerTeamFilter==='all'?'active':''}" onclick="setTeamFilter('all')">All</button>
-            ${teams.map(t => `<button class="ps-chip ${playerTeamFilter===t?'active':''}" onclick="setTeamFilter('${escapeHTML(t)}')">${escapeHTML(t)}</button>`).join('')}
-          </div>
-          <div class="ps-search-wrap">
-            <input class="ps-search" type="text" placeholder="Search players..." value="${escapeHTML(playerSearchQuery)}"
-              oninput="setPlayerSearch(this.value)" />
-          </div>
+      const teamFilterHtml = `
+        <div class="ps-team-filter-row">
+          ${teams.map(t => `<button class="ps-team-btn ${playerTeamFilter===t?'active':''}" onclick="setTeamFilter('${escapeHTML(t)}')">${escapeHTML(t)}</button>`).join('')}
         </div>`;
 
-      const sortHtml = `
-        <div class="ps-sort-row">
-          <span class="ps-sort-label">Sort:</span>
-          <button class="ps-sort-btn ${playerSortMode==='budget'?'active':''}" onclick="setPlayerSort('budget')">Budget</button>
-          <button class="ps-sort-btn ${playerSortMode==='name'?'active':''}" onclick="setPlayerSort('name')">Name</button>
+      const roleFilterHtml = `
+        <div class="ps-role-filter-row">
+          <button class="ps-role-btn ${playerRoleFilter==='all'?'active':''}" onclick="setRoleFilter('all')">All</button>
+          <button class="ps-role-btn ${playerRoleFilter==='Batsman'?'active':''}" onclick="setRoleFilter('Batsman')">Batsman</button>
+          <button class="ps-role-btn ${playerRoleFilter==='Bowler'?'active':''}" onclick="setRoleFilter('Bowler')">Bowler</button>
+          <button class="ps-role-btn ${playerRoleFilter==='Wicket Keeper'?'active':''}" onclick="setRoleFilter('Wicket Keeper')">Wicketkeeper</button>
+          <button class="ps-role-btn ${playerRoleFilter==='All Rounder'?'active':''}" onclick="setRoleFilter('All Rounder')">All Rounder</button>
+        </div>`;
+
+      const impactSortClass = playerSortMode === 'impact_desc' ? 'sort-desc' : playerSortMode === 'impact_asc' ? 'sort-asc' : '';
+      const budgetSortClass = playerSortMode === 'budget_desc' ? 'sort-desc' : playerSortMode === 'budget_asc' ? 'sort-asc' : '';
+
+      const colHeaderHtml = `
+        <div class="ps-col-header">
+          <div class="ps-col-header-left">Players</div>
+          <div class="ps-col-header-mid ${impactSortClass}" onclick="cycleSort('impact')">Impact Pts</div>
+          <div class="ps-col-header-right ${budgetSortClass}" onclick="cycleSort('budget')">Budget</div>
+          <div class="ps-col-header-add"></div>
         </div>`;
 
       let filtered = allPlayers.filter(p => {
         if (playerTeamFilter !== 'all' && p.team_name !== playerTeamFilter) return false;
-        if (playerSearchQuery) {
-          const q = playerSearchQuery.toLowerCase();
-          if (!p.player_name.toLowerCase().includes(q)) return false;
-        }
+        if (playerRoleFilter !== 'all' && normalizePlayerType(p.player_type) !== playerRoleFilter) return false;
         return true;
       });
 
-      if (playerSortMode === 'budget') {
+      if (playerSortMode === 'impact_desc') {
+        filtered.sort((a, b) => (Number(b.impact_points)||100) - (Number(a.impact_points)||100));
+      } else if (playerSortMode === 'impact_asc') {
+        filtered.sort((a, b) => (Number(a.impact_points)||100) - (Number(b.impact_points)||100));
+      } else if (playerSortMode === 'budget_desc') {
         filtered.sort((a, b) => playerCost(b) - playerCost(a));
-      } else if (playerSortMode === 'name') {
-        filtered.sort((a, b) => a.player_name.localeCompare(b.player_name));
+      } else if (playerSortMode === 'budget_asc') {
+        filtered.sort((a, b) => playerCost(a) - playerCost(b));
       }
 
       const roleOrder = ['Wicket Keeper', 'Batsman', 'All Rounder', 'Bowler'];
-      const roleLabels = { 'Wicket Keeper': 'WK', 'Batsman': 'BAT', 'All Rounder': 'AR', 'Bowler': 'BOWL' };
+      const roleLabels = { 'Wicket Keeper': 'Wicketkeeper', 'Batsman': 'Batsman', 'All Rounder': 'All Rounder', 'Bowler': 'Bowler' };
       const grouped = {};
       filtered.forEach(p => {
         const role = normalizePlayerType(p.player_type);
@@ -4760,6 +4835,7 @@ const updateNote = currentMatchData?.score_update_note || '';
       });
 
       const sectionsHtml = roleOrder.map(role => {
+        if (playerRoleFilter !== 'all' && role !== playerRoleFilter) return '';
         const players = grouped[role];
         if (!players || !players.length) return '';
         return `
@@ -4773,11 +4849,11 @@ const updateNote = currentMatchData?.score_update_note || '';
       }).join('');
 
       const listHtml = filtered.length === 0
-        ? `<div class="ps-empty">No players match your search.</div>`
+        ? `<div class="ps-empty">No players found.</div>`
         : sectionsHtml;
 
       document.getElementById('modalContent').innerHTML =
-        `${renderStepIndicator(1)}${renderSubstitutionControlCard()}${statsBarHtml}${chipsHtml}${sortHtml}<div class="ps-player-list">${listHtml}</div>`;
+        `${renderSubstitutionControlCard()}${statsBarHtml}${teamFilterHtml}${roleFilterHtml}${colHeaderHtml}<div class="ps-player-list">${listHtml}</div>`;
     }
 
     function renderPlayerCard(player) {
@@ -4787,11 +4863,7 @@ const updateNote = currentMatchData?.score_update_note || '';
       const cost = playerCost(player);
       const color = teamColor(player.team_name);
       const canAdd = !isSelected && canSelectPlayer(player);
-      const role = normalizePlayerType(player.player_type);
-      const roleShort = { 'Wicket Keeper': 'WK', 'Batsman': 'BAT', 'All Rounder': 'AR', 'Bowler': 'BOWL' }[role] || role;
-      const teamLabel = isInternationalMatch()
-        ? escapeHTML(player.country || player.team_name || '')
-        : escapeHTML(player.team_name || '');
+      const impactPts = player.impact_points != null ? Number(player.impact_points) : 100;
 
       const addBtn = isSelected
         ? `<button class="ps-add-btn ps-remove-btn" onclick="togglePlayer(${pid})">&#x2715;</button>`
@@ -4804,9 +4876,9 @@ const updateNote = currentMatchData?.score_update_note || '';
           <div class="ps-avatar" style="background:${color};">${escapeHTML(playerInitials(player.player_name))}</div>
           <div class="ps-player-info">
             <div class="ps-player-name">${escapeHTML(player.player_name)}${isSubstitute ? '<span class="ps-sub-badge">Sub</span>' : ''}</div>
-            <div class="ps-player-meta">${escapeHTML(roleShort)} &middot; ${teamLabel}</div>
+            ${statsBtn}
           </div>
-          ${statsBtn}
+          <div class="ps-impact">${impactPts}</div>
           <div class="ps-cost">${formatNum(cost)} Cr</div>
           ${addBtn}
         </div>`;
@@ -4822,6 +4894,18 @@ const updateNote = currentMatchData?.score_update_note || '';
     }
     function setPlayerSort(mode) {
       playerSortMode = mode;
+      renderTeamSections();
+    }
+    function setRoleFilter(role) {
+      playerRoleFilter = role;
+      renderTeamSections();
+    }
+    function cycleSort(col) {
+      if (col === 'impact') {
+        playerSortMode = playerSortMode === 'impact_desc' ? 'impact_asc' : 'impact_desc';
+      } else if (col === 'budget') {
+        playerSortMode = playerSortMode === 'budget_desc' ? 'budget_asc' : 'budget_desc';
+      }
       renderTeamSections();
     }
 
@@ -5322,7 +5406,7 @@ const updateNote = currentMatchData?.score_update_note || '';
       currentFantasyMatchId=fantasyMatchId; selectedPlayers=[]; substitutePlayerId=null; substituteBoosterEnabled=false; substitutionUsed=false; selectedSwapOutPlayerId=null; savedFantasyTeamId=null; allPlayers=[]; currentMatchData=null;
       budget=75; modalStep=1; expandedTeams=new Set(); activePlayerTypeByTeam = {}; captainId=null; viceCaptainId=null; hasLoadedSavedTeamForOpenMatch=false; captainBoosterSelected=false; viceCaptainBoosterSelected=false;
       alreadyPaidCaptainBooster=false; alreadyPaidVCBooster=false; alreadyPaidSubBooster=false;
-      playerTeamFilter='all'; playerSearchQuery=''; playerSortMode='budget';
+      playerTeamFilter='all'; playerSearchQuery=''; playerSortMode='impact_desc'; playerRoleFilter='all';
       if(countdownInterval){clearInterval(countdownInterval);countdownInterval=null;}
 
       document.getElementById('teamModal').classList.add('show');
