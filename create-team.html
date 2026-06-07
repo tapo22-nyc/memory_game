@@ -1451,9 +1451,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .ps-stat:last-child { border-right: none; }
     .ps-stat-val { font-size: 13px; font-weight: 700; color: #111827; line-height: 1.2; }
     .ps-stat-lbl { font-size: 9px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 1px; }
-    .ps-stat.ps-stat-good .ps-stat-val { color: #16a34a; }
-    .ps-stat.ps-stat-warn .ps-stat-val { color: #f97316; }
-    .ps-stat.ps-stat-over .ps-stat-val { color: #dc2626; }
+    .ps-stat.ps-stat-good   .ps-stat-val { color: #16a34a; }
+    .ps-stat.ps-stat-yellow .ps-stat-val { color: #d97706; }
+    .ps-stat.ps-stat-warn   .ps-stat-val { color: #f97316; }
+    .ps-stat.ps-stat-over   .ps-stat-val { color: #dc2626; }
 
     .ps-filter-row {
       display: flex; align-items: center; gap: 8px;
@@ -1494,13 +1495,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .ps-player-list { padding-bottom: 8px; }
     .ps-role-section { margin-bottom: 4px; }
     .ps-role-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 8px 14px 6px;
+      display: flex; align-items: center;
+      padding: 7px 14px 6px;
       background: #f1f5f9; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;
-      position: sticky; top: 0; z-index: 2;
+      position: sticky; top: 0; z-index: 2; gap: 6px;
     }
-    .ps-role-label { font-size: 12px; font-weight: 700; color: #1e293b; letter-spacing: 0.5px; }
-    .ps-role-count { font-size: 11px; color: #64748b; }
+    .ps-role-label { font-size: 12px; font-weight: 700; color: #1e293b; letter-spacing: 0.5px; flex: 1; }
+    /* .ps-role-count removed — no longer shown */
+    .ps-role-sort-btn {
+      font-size: 9px; font-weight: 900; color: #64748b; text-transform: uppercase;
+      letter-spacing: 0.8px; cursor: pointer; white-space: nowrap;
+      display: flex; align-items: center; gap: 1px;
+      padding: 3px 6px; border-radius: 5px; border: 1px solid #e2e8f0; background: white;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .ps-role-sort-btn:hover { color: #2563eb; border-color: #93c5fd; }
+    .ps-role-sort-btn.sort-asc::after  { content: ' ↑'; }
+    .ps-role-sort-btn.sort-desc::after { content: ' ↓'; }
 
     .ps-player-card {
       display: flex; align-items: center; gap: 10px;
@@ -1580,16 +1591,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .ps-team-btn:hover { border-color: #2563eb; color: #2563eb; }
     .ps-team-btn.active { background: #2563eb; border-color: #2563eb; color: white; }
 
-    /* ── Role filter buttons ── */
+    /* ── Role filter buttons (4 in one row, no wrap) ── */
     .ps-role-filter-row {
-      display: flex; gap: 6px; padding: 6px 14px 8px; flex-wrap: wrap;
+      display: flex; gap: 5px; padding: 6px 14px 8px;
+      flex-wrap: nowrap; overflow: hidden;
     }
     .ps-role-btn {
-      flex: 1; min-width: 70px; padding: 6px 8px; border-radius: 8px;
+      flex: 1; padding: 5px 4px; border-radius: 7px;
       border: 1.5px solid #d1d5db; background: white;
-      font-size: 11px; font-weight: 700; color: #374151;
+      font-size: 10px; font-weight: 700; color: #374151;
       cursor: pointer; transition: all 0.15s; text-align: center;
-      white-space: nowrap;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .ps-role-btn:hover { border-color: #2563eb; color: #2563eb; }
     .ps-role-btn.active { background: #1e3a8a; border-color: #1e3a8a; color: white; }
@@ -4765,7 +4777,7 @@ const updateNote = currentMatchData?.score_update_note || '';
 
       const statsBarHtml = `
         <div class="ps-stats-bar">
-          <div class="ps-stat ${activeCount === MAX_PLAYERS ? 'ps-stat-good' : ''}">
+          <div class="ps-stat ${activeCount === MAX_PLAYERS ? 'ps-stat-good' : activeCount > 0 ? 'ps-stat-yellow' : ''}">
             <span class="ps-stat-val">${activeCount}/${MAX_PLAYERS}</span>
             <span class="ps-stat-lbl">Players</span>
           </div>
@@ -4791,7 +4803,6 @@ const updateNote = currentMatchData?.score_update_note || '';
 
       const roleFilterHtml = `
         <div class="ps-role-filter-row">
-          <button class="ps-role-btn ${playerRoleFilter==='all'?'active':''}" onclick="setRoleFilter('all')">All</button>
           <button class="ps-role-btn ${playerRoleFilter==='Batsman'?'active':''}" onclick="setRoleFilter('Batsman')">Batsman</button>
           <button class="ps-role-btn ${playerRoleFilter==='Bowler'?'active':''}" onclick="setRoleFilter('Bowler')">Bowler</button>
           <button class="ps-role-btn ${playerRoleFilter==='Wicket Keeper'?'active':''}" onclick="setRoleFilter('Wicket Keeper')">Wicketkeeper</button>
@@ -4800,14 +4811,6 @@ const updateNote = currentMatchData?.score_update_note || '';
 
       const impactSortClass = playerSortMode === 'impact_desc' ? 'sort-desc' : playerSortMode === 'impact_asc' ? 'sort-asc' : '';
       const budgetSortClass = playerSortMode === 'budget_desc' ? 'sort-desc' : playerSortMode === 'budget_asc' ? 'sort-asc' : '';
-
-      const colHeaderHtml = `
-        <div class="ps-col-header">
-          <div class="ps-col-header-left">Players</div>
-          <div class="ps-col-header-mid ${impactSortClass}" onclick="cycleSort('impact')">Impact Pts</div>
-          <div class="ps-col-header-right ${budgetSortClass}" onclick="cycleSort('budget')">Budget</div>
-          <div class="ps-col-header-add"></div>
-        </div>`;
 
       let filtered = allPlayers.filter(p => {
         if (playerTeamFilter !== 'all' && p.team_name !== playerTeamFilter) return false;
@@ -4842,7 +4845,8 @@ const updateNote = currentMatchData?.score_update_note || '';
           <div class="ps-role-section">
             <div class="ps-role-header">
               <span class="ps-role-label">${escapeHTML(roleLabels[role] || role)}</span>
-              <span class="ps-role-count">${players.length} available</span>
+              <button class="ps-role-sort-btn ${impactSortClass}" onclick="cycleSort('impact')">Impact Pts</button>
+              <button class="ps-role-sort-btn ${budgetSortClass}" onclick="cycleSort('budget')">Budget</button>
             </div>
             ${players.map(p => renderPlayerCard(p)).join('')}
           </div>`;
@@ -4853,7 +4857,7 @@ const updateNote = currentMatchData?.score_update_note || '';
         : sectionsHtml;
 
       document.getElementById('modalContent').innerHTML =
-        `${renderSubstitutionControlCard()}${statsBarHtml}${teamFilterHtml}${roleFilterHtml}${colHeaderHtml}<div class="ps-player-list">${listHtml}</div>`;
+        `${renderSubstitutionControlCard()}${statsBarHtml}${teamFilterHtml}${roleFilterHtml}<div class="ps-player-list">${listHtml}</div>`;
     }
 
     function renderPlayerCard(player) {
