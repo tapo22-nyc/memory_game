@@ -23,7 +23,7 @@
       background: #f8fafc;
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       color: #111827;
-      padding: 28px 20px 64px;
+      padding: 28px 20px 88px;
     }
 
     .page-wrap { max-width: 960px; margin: 0 auto; }
@@ -468,11 +468,37 @@
     .cc-pts.pos { color: #059669; }
 
     @media (max-width: 500px) {
-      body { padding: 18px 14px 52px; }
+      body { padding: 18px 14px 88px; }
       .logo-img { height: 34px; }
       .logo-text { font-size: 1rem; }
       .hero-title { letter-spacing: 0.5px; }
     }
+
+    /* ── Bottom Navigation Bar ── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 64px; background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      display: flex; align-items: stretch;
+      z-index: 600; box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
+    }
+    .bottom-nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 3px;
+      background: none; border: none; cursor: pointer;
+      text-decoration: none; color: #9ca3af;
+      padding: 8px 4px; transition: color 0.15s;
+      -webkit-tap-highlight-color: transparent; position: relative;
+    }
+    .bottom-nav-item:hover { color: #2563eb; }
+    .bottom-nav-item.active { color: #2563eb; }
+    .bottom-nav-item.active::after {
+      content: ''; position: absolute;
+      top: 0; left: 20%; right: 20%;
+      height: 2px; background: #2563eb; border-radius: 0 0 2px 2px;
+    }
+    .nav-icon  { font-size: 1.3rem; line-height: 1; }
+    .nav-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; }
   </style>
 </head>
 <body>
@@ -1085,5 +1111,25 @@
       loadMatchesForLeaderboard().then(() => { renderLeaderboardUpdateNote(); loadBottomLeaderboard(); });
     });
   </script>
+
+  <!-- ── Bottom Navigation Bar ── -->
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item" href="create-team.html">
+      <span class="nav-icon">🏏</span>
+      <span class="nav-label">Contest</span>
+    </a>
+    <a class="bottom-nav-item active" href="fantasy_leaderboard.html">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label">Leaderboard</span>
+    </a>
+    <a class="bottom-nav-item" href="player-stats.html">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">Stats</span>
+    </a>
+    <a class="bottom-nav-item" href="earnings.html">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Profile</span>
+    </a>
+  </nav>
 </body>
 </html>
