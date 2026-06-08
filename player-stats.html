@@ -29,27 +29,15 @@
 
     /* ── Header ── */
     .page-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 28px;
     }
-    .logo-wrap {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
+    .logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .logo-img  { height: 40px; width: auto; object-fit: contain; }
     .logo-text {
-      font-size: 1.15rem;
-      font-weight: 800;
-      letter-spacing: 0.5px;
+      font-size: 1.15rem; font-weight: 800; letter-spacing: 0.5px; line-height: 1;
       background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
 
     /* ── Hamburger ── */
@@ -79,141 +67,139 @@
     .hamburger-dropdown a.active-page { color: #2563eb; background: #eff6ff; font-weight: 700; }
 
     /* ── Hero ── */
-    .hero-section {
-      text-align: center;
-      margin-bottom: 32px;
-    }
+    .hero-section { text-align: center; margin-bottom: 32px; }
     .hero-title {
-      font-size: clamp(1.8rem, 5vw, 2.6rem);
-      font-weight: 800;
-      letter-spacing: 1px;
+      font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 800; letter-spacing: 1px;
       background: linear-gradient(135deg, #1e3a8a, #2563eb);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.15;
-      margin-bottom: 10px;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; line-height: 1.15; margin-bottom: 10px;
     }
-    .hero-subtitle {
-      font-size: 0.95rem;
-      color: #6b7280;
-      line-height: 1.7;
-      max-width: 480px;
-      margin: 0 auto;
-    }
+    .hero-subtitle { font-size: 0.92rem; color: #6b7280; line-height: 1.7; max-width: 480px; margin: 0 auto; }
 
     /* ── Section header ── */
-    .section-header {
-      display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
-    }
+    .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
     .section-label {
       font-size: 0.72rem; font-weight: 900; text-transform: uppercase;
       letter-spacing: 2px; color: #2563eb; white-space: nowrap;
     }
-    .section-line {
-      flex: 1; height: 1px;
-      background: linear-gradient(90deg, #d1d5db, transparent);
-    }
-    .content-section { margin-bottom: 32px; }
+    .section-line { flex: 1; height: 1px; background: linear-gradient(90deg, #d1d5db, transparent); }
 
-    /* ── Match chips ── */
-    .stats-match-chips {
-      display: flex; gap: 8px; flex-wrap: wrap;
-    }
-    .stats-match-chip {
-      padding: 9px 16px;
-      border: 1.5px solid #d1d5db;
-      border-radius: 20px;
-      background: #fff;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #374151;
-      cursor: pointer;
-      transition: all 0.15s;
-      white-space: nowrap;
-    }
-    .stats-match-chip:hover { border-color: #2563eb; color: #2563eb; }
-    .stats-match-chip.active { background: #2563eb; border-color: #2563eb; color: #fff; }
-
-    /* ── Player cards ── */
-    .stats-team-section { margin-bottom: 28px; }
-    .stats-team-label {
-      font-size: 0.7rem; font-weight: 900; text-transform: uppercase;
-      letter-spacing: 2px; color: #2563eb;
-      margin-bottom: 12px; padding-bottom: 8px;
-      border-bottom: 2px solid #e5e7eb;
-    }
-    .stats-player-grid { display: flex; flex-direction: column; gap: 10px; }
-
-    .stats-player-card {
+    /* ── Match result card ── */
+    .match-stat-card {
       background: #ffffff;
       border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 16px 18px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      transition: box-shadow 0.15s, transform 0.15s;
+      border-radius: 18px;
+      padding: 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 16px;
+      overflow: hidden;
     }
-    .stats-player-card:hover {
-      box-shadow: 0 4px 16px rgba(0,0,0,0.09);
-      transform: translateY(-1px);
+    .msc-header {
+      padding: 14px 18px 12px;
+      border-bottom: 1px solid #f0f4f8;
+      background: linear-gradient(135deg, #f8fafc, #f0f4ff);
     }
-    .stats-player-header {
-      display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
-    }
-    .stats-player-name  { font-size: 1rem; font-weight: 700; color: #111827; flex: 1; }
-    .stats-role-badge {
-      font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 0.8px; padding: 3px 9px; border-radius: 999px;
-      background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;
-      flex-shrink: 0;
-    }
-    .stats-player-meta {
-      font-size: 0.75rem; color: #6b7280; margin-bottom: 14px;
-      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    }
-    .stats-player-meta-sep { color: #d1d5db; }
-    .stats-format-tag {
-      display: inline-block; font-size: 0.6rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: 0.8px;
-      padding: 2px 7px; border-radius: 999px;
-      background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb;
-    }
-
-    .stats-row { display: flex; gap: 6px; margin-bottom: 12px; }
-    .stats-cell {
-      flex: 1; text-align: center; background: #f8fafc;
-      border: 1px solid #f0f0f0; border-radius: 10px; padding: 10px 4px;
-    }
-    .stats-val { font-size: 1.05rem; font-weight: 800; color: #111827; line-height: 1.2; }
-    .stats-key {
-      font-size: 0.58rem; font-weight: 700; color: #9ca3af;
-      text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px;
-    }
-    .stats-val.highlight { color: #2563eb; }
-    .stats-val.green     { color: #059669; }
-
-    .stats-impact-row {
+    .msc-top {
       display: flex; align-items: center; justify-content: space-between;
-      padding-top: 10px; border-top: 1px solid #f3f4f6;
+      margin-bottom: 6px;
     }
-    .stats-impact-label { font-size: 0.72rem; color: #9ca3af; font-weight: 600; }
-    .stats-impact-val   { font-size: 0.88rem; font-weight: 800; color: #2563eb; }
+    .msc-format {
+      font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1.2px; color: #6b7280;
+      background: #f3f4f6; border-radius: 999px; padding: 3px 10px;
+      border: 1px solid #e5e7eb;
+    }
+    .msc-completed { font-size: 0.68rem; font-weight: 700; color: #059669; }
+    .msc-title { font-size: 1.02rem; font-weight: 800; color: #111827; }
+    .msc-subtitle { font-size: 0.75rem; color: #9ca3af; margin-top: 2px; }
+
+    /* ── Players within a match card ── */
+    .msc-players { padding: 0 18px 14px; }
+    .msc-col-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 0 6px;
+      border-bottom: 1px solid #f0f4f8;
+      font-size: 0.6rem; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 1px; color: #9ca3af;
+    }
+    .msc-ch-name  { flex: 1; }
+    .msc-ch-pts   { min-width: 52px; text-align: right; }
+    .msc-ch-runs  { min-width: 40px; text-align: right; }
+    .msc-ch-wkts  { min-width: 40px; text-align: right; }
+
+    .msc-player-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 0;
+      border-bottom: 1px solid #f9fafb;
+    }
+    .msc-player-row:last-child { border-bottom: none; }
+
+    .msc-rank {
+      width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 800;
+    }
+    .msc-rank-1 { background: #fef3c7; color: #d97706; }
+    .msc-rank-2 { background: #f3f4f6; color: #6b7280; }
+    .msc-rank-3 { background: #fef9ee; color: #d97706; opacity:0.7; }
+
+    .msc-avatar {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: white;
+    }
+
+    .msc-info { flex: 1; min-width: 0; }
+    .msc-player-name {
+      font-size: 0.9rem; font-weight: 700; color: #111827;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .msc-player-meta { display: flex; align-items: center; gap: 6px; margin-top: 2px; flex-wrap: wrap; }
+    .msc-team-tag {
+      font-size: 0.62rem; font-weight: 700; color: #6b7280;
+      background: #f3f4f6; padding: 1px 6px; border-radius: 999px;
+    }
+    .msc-role-tag {
+      font-size: 0.58rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.5px; color: #1d4ed8;
+      background: #eff6ff; border: 1px solid #bfdbfe;
+      padding: 1px 6px; border-radius: 999px;
+    }
+
+    .msc-pts {
+      min-width: 52px; text-align: right; flex-shrink: 0;
+    }
+    .msc-pts-val  { font-size: 1rem; font-weight: 800; color: #2563eb; line-height: 1.2; }
+    .msc-pts-lbl  { font-size: 0.58rem; color: #9ca3af; font-weight: 600; margin-top: 1px; }
+
+    .msc-runs  { min-width: 40px; text-align: right; font-size: 0.82rem; font-weight: 700; color: #d97706; flex-shrink: 0; }
+    .msc-wkts  { min-width: 40px; text-align: right; font-size: 0.82rem; font-weight: 700; color: #059669; flex-shrink: 0; }
+
+    /* Fallback / impact mode */
+    .msc-impact-val { font-size: 1rem; font-weight: 800; color: #d97706; }
+    .msc-impact-lbl { font-size: 0.58rem; color: #9ca3af; font-weight: 600; margin-top: 1px; }
+
+    .fallback-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.62rem; font-weight: 700; color: #d97706;
+      background: #fffbeb; border: 1px solid #fde68a;
+      border-radius: 999px; padding: 2px 8px; margin-top: 4px;
+    }
 
     /* ── States ── */
-    .loading-row {
-      padding: 36px 20px; text-align: center;
-      color: #9ca3af; font-size: 0.9rem; font-weight: 600;
-    }
-    .error-row {
-      padding: 28px 20px; text-align: center;
-      color: #f87171; font-size: 0.88rem; font-weight: 600;
-      background: #fff1f2; border-radius: 12px;
-      border: 1px solid #fecaca;
+    .loading-state {
+      text-align: center; padding: 52px 20px;
+      color: #9ca3af; font-size: 0.95rem; font-weight: 600;
     }
     .empty-state {
-      padding: 32px 20px; text-align: center; color: #6b7280;
-      font-size: 0.85rem; background: #f8fafc; border-radius: 12px;
+      text-align: center; padding: 40px 20px; color: #6b7280;
+      font-size: 0.88rem; background: #f8fafc; border-radius: 14px;
       border: 1px solid #e5e7eb;
+    }
+    .error-state {
+      padding: 28px 20px; text-align: center; color: #dc2626;
+      font-size: 0.88rem; background: #fff1f2; border-radius: 12px;
+      border: 1px solid #fecaca;
     }
 
     /* ── Bottom Navigation Bar ── */
@@ -230,22 +216,17 @@
       background: none; border: none; cursor: pointer;
       text-decoration: none; color: #9ca3af;
       padding: 8px 4px; transition: color 0.15s;
-      -webkit-tap-highlight-color: transparent;
-      position: relative;
+      -webkit-tap-highlight-color: transparent; position: relative;
     }
     .bottom-nav-item:hover { color: #2563eb; }
     .bottom-nav-item.active { color: #2563eb; }
     .bottom-nav-item.active::after {
       content: ''; position: absolute;
       top: 0; left: 20%; right: 20%;
-      height: 2px; background: #2563eb;
-      border-radius: 0 0 2px 2px;
+      height: 2px; background: #2563eb; border-radius: 0 0 2px 2px;
     }
     .nav-icon  { font-size: 1.3rem; line-height: 1; }
-    .nav-label {
-      font-size: 0.62rem; font-weight: 700;
-      letter-spacing: 0.4px; text-transform: uppercase;
-    }
+    .nav-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; }
   </style>
 </head>
 <body>
@@ -253,7 +234,6 @@
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NGH76BBT"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
 
 <div class="page-wrap">
 
@@ -283,32 +263,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- ── Hero ── -->
   <section class="hero-section">
     <h1 class="hero-title">Player Stats</h1>
-    <p class="hero-subtitle">
-      Career stats for top players. Select a match to explore.
-    </p>
-  </section>
-
-  <!-- ── Match selector ── -->
-  <section class="content-section">
-    <div class="section-header">
-      <span class="section-label">Select Match</span>
-      <div class="section-line"></div>
-    </div>
-    <div id="matchSelectorWrap">
-      <div class="loading-row">Loading matches…</div>
-    </div>
+    <p class="hero-subtitle">Top performers from the last 5 completed matches</p>
   </section>
 
   <!-- ── Stats content ── -->
-  <section class="content-section">
-    <div class="section-header">
-      <span class="section-label" id="statsHeadingLabel">Player Career Stats</span>
-      <div class="section-line"></div>
-    </div>
-    <div id="statsContent">
-      <div class="loading-row">Select a match above to view stats.</div>
-    </div>
-  </section>
+  <div class="section-header">
+    <span class="section-label">Recent Match Performance</span>
+    <div class="section-line"></div>
+  </div>
+  <div id="statsContainer">
+    <div class="loading-state">⏳ Loading match stats…</div>
+  </div>
 
 </div><!-- /page-wrap -->
 
@@ -334,234 +299,200 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <script>
   /* ── Helpers ── */
-  function escapeHTML(s) {
+  function esc(s) {
     return String(s)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;')
       .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
       .replace(/'/g,'&#39;');
   }
 
-  function trackClick(key, extra) {
-    try {
-      fetch('/api/track-click', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key, page: 'player-stats', ...extra })
-      });
-    } catch (_) {}
+  const TEAM_COLORS = [
+    '#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6',
+    '#ec4899','#06b6d4','#84cc16','#f97316','#6366f1'
+  ];
+  let _colorMap = {};
+  function teamColor(team) {
+    if (!_colorMap[team]) {
+      const keys = Object.keys(_colorMap);
+      _colorMap[team] = TEAM_COLORS[keys.length % TEAM_COLORS.length];
+    }
+    return _colorMap[team];
   }
 
-  /* ── State ── */
-  let _allMatches  = [];
-  let _activeMatchId = null;
+  function initials(name) {
+    return String(name || '').split(' ').filter(Boolean).slice(0, 2)
+      .map(w => w[0].toUpperCase()).join('');
+  }
 
-  /* ── Boot ── */
-  document.addEventListener('DOMContentLoaded', loadMatches);
+  const fmtMap = { ipl:'T20', t20:'T20', odi:'ODI', test:'Test', odis:'ODI', t20i:'T20I' };
+  function formatLabel(raw) {
+    const k = String(raw || 'ipl').toLowerCase();
+    return fmtMap[k] || k.toUpperCase();
+  }
 
   /* ── Close hamburger on outside click ── */
   document.addEventListener('click', e => {
-    const wrapper = document.getElementById('hamburgerMenuBtn')?.closest('.hamburger-wrapper');
+    const wrapper  = document.getElementById('hamburgerMenuBtn')?.closest('.hamburger-wrapper');
     const dropdown = document.getElementById('hamburgerDropdown');
-    if (wrapper && dropdown && !wrapper.contains(e.target)) {
-      dropdown.classList.remove('open');
-    }
+    if (wrapper && dropdown && !wrapper.contains(e.target)) dropdown.classList.remove('open');
   });
 
-  /* ── Load matches ── */
-  async function loadMatches() {
-    const wrap = document.getElementById('matchSelectorWrap');
-    try {
-      const res  = await fetch('/api/get-fantasy-match');
-      const data = await res.json();
-      _allMatches = (data.matches || []);
+  /* ── Boot ── */
+  document.addEventListener('DOMContentLoaded', loadStats);
 
-      if (!_allMatches.length) {
-        wrap.innerHTML = '<div class="empty-state">No matches found.</div>';
+  async function loadStats() {
+    const container = document.getElementById('statsContainer');
+    try {
+      /* Step 1: load all matches */
+      const mRes  = await fetch('/api/get-fantasy-match');
+      const mData = await mRes.json();
+      const allMatches = mData.matches || [];
+
+      /* Step 2: filter completed (closed) matches, newest first, up to 5 */
+      const closed = allMatches
+        .filter(m => String(m.status || '').toLowerCase() === 'closed')
+        .sort((a, b) => Number(b.id) - Number(a.id))
+        .slice(0, 5);
+
+      if (!closed.length) {
+        container.innerHTML = `<div class="empty-state">
+          No completed matches yet. Check back after the first match closes.
+        </div>`;
         return;
       }
 
-      const chipsHtml = _allMatches.map((m, i) =>
-        `<button class="stats-match-chip${i === 0 ? ' active' : ''}"
-          onclick="onChipClick(${m.id}, this)">
-          ${escapeHTML(m.team_1)} vs ${escapeHTML(m.team_2)}
-        </button>`
-      ).join('');
-      wrap.innerHTML = `<div class="stats-match-chips">${chipsHtml}</div>`;
+      /* Step 3: for each closed match, load top players */
+      container.innerHTML = '<div class="loading-state">⏳ Loading performance data…</div>';
 
-      // Auto-load first match
-      await loadMatchStats(_allMatches[0].id, _allMatches[0]);
+      const results = await Promise.all(closed.map(m => loadMatchCard(m)));
+      container.innerHTML = results.join('');
+
     } catch (err) {
-      wrap.innerHTML = `<div class="error-row">Could not load matches. Please refresh.</div>`;
+      container.innerHTML = `<div class="error-state">Could not load stats. Please refresh the page.</div>`;
     }
   }
 
-  function onChipClick(matchId, chipEl) {
-    document.querySelectorAll('.stats-match-chip').forEach(c => c.classList.remove('active'));
-    chipEl.classList.add('active');
-    const m = _allMatches.find(x => x.id === matchId);
-    trackClick('stats_match_chip_click', { match_id: matchId });
-    loadMatchStats(matchId, m);
-  }
+  async function loadMatchCard(match) {
+    const fmt = formatLabel(match.match_format);
 
-  /* ── Load match stats ── */
-  async function loadMatchStats(matchId, matchMeta) {
-    _activeMatchId = matchId;
-    const contentEl  = document.getElementById('statsContent');
-    const headingEl  = document.getElementById('statsHeadingLabel');
-
-    if (matchMeta) {
-      headingEl.textContent = `${matchMeta.team_1} vs ${matchMeta.team_2}`;
-    }
-    contentEl.innerHTML = '<div class="loading-row">⏳ Loading player stats…</div>';
+    /* Try to get scored player data first */
+    let players = [];
+    let mode    = 'points'; // or 'impact'
 
     try {
-      const res     = await fetch(`/api/get-fantasy-match?fantasy_match_id=${matchId}`);
-      const data    = await res.json();
-      const players = data.players || [];
-      const match   = data.match   || {};
-
-      if (!players.length) {
-        contentEl.innerHTML = '<div class="empty-state">No players found for this match.</div>';
-        return;
+      const pRes  = await fetch(`/api/get-match-top-players?fantasy_match_id=${match.id}`);
+      const pData = await pRes.json();
+      if (pData.success && pData.players && pData.players.length >= 1) {
+        players = pData.players;
+        mode    = 'points';
       }
+    } catch (_) {}
 
-      /* Group by team, pick top 3 by impact_points */
-      const byTeam = {};
-      for (const p of players) {
-        const t = p.team_name || 'Unknown';
-        if (!byTeam[t]) byTeam[t] = [];
-        byTeam[t].push(p);
-      }
-
-      const topPlayers = [];
-      for (const [team, tp] of Object.entries(byTeam)) {
-        tp.sort((a, b) => (Number(b.impact_points) || 0) - (Number(a.impact_points) || 0));
-        topPlayers.push(...tp.slice(0, 3).map(p => ({ ...p, _team: team })));
-      }
-
-      contentEl.innerHTML = '<div class="loading-row">⏳ Fetching career stats…</div>';
-
-      /* Fetch career profiles in parallel */
-      const profiles = await Promise.all(
-        topPlayers.map(async p => {
-          try {
-            const r = await fetch(`/api/get-player-profile?player=${encodeURIComponent(p.player_name)}&limit=20`);
-            if (!r.ok) return { player: p, profile: null };
-            return { player: p, profile: await r.json() };
-          } catch { return { player: p, profile: null }; }
-        })
-      );
-
-      renderStats(profiles, match);
-    } catch (err) {
-      contentEl.innerHTML = `<div class="error-row">Could not load stats. Please try again.</div>`;
-    }
-  }
-
-  /* ── Render stat cards ── */
-  function renderStats(profiles, match) {
-    const contentEl = document.getElementById('statsContent');
-
-    if (!profiles.length) {
-      contentEl.innerHTML = '<div class="empty-state">No player data available.</div>';
-      return;
+    /* Fallback: use impact_points from the match player pool */
+    if (!players.length) {
+      try {
+        const fRes  = await fetch(`/api/get-fantasy-match?fantasy_match_id=${match.id}`);
+        const fData = await fRes.json();
+        const pool  = fData.players || [];
+        players = pool
+          .filter(p => p.player_name)
+          .sort((a, b) => (Number(b.impact_points) || 0) - (Number(a.impact_points) || 0))
+          .slice(0, 3)
+          .map(p => ({
+            player_name:   p.player_name,
+            team_name:     p.team_name || p.country || '',
+            role:          p.role || p.player_type || '',
+            fantasy_points: null,
+            impact_points:  Number(p.impact_points) || 100,
+            runs:           null,
+            wickets:        null,
+          }));
+        mode = 'impact';
+      } catch (_) {}
     }
 
-    /* Re-group by team */
-    const byTeam = {};
-    for (const { player, profile } of profiles) {
-      const t = player._team || player.team_name || 'Unknown';
-      if (!byTeam[t]) byTeam[t] = [];
-      byTeam[t].push({ player, profile });
+    if (!players.length) {
+      return `<div class="match-stat-card">
+        <div class="msc-header">
+          <div class="msc-top">
+            <span class="msc-format">${esc(fmt)}</span>
+            <span class="msc-completed">✓ Completed</span>
+          </div>
+          <div class="msc-title">${esc(match.team_1)} vs ${esc(match.team_2)}</div>
+        </div>
+        <div class="msc-players">
+          <div style="padding:20px 0;text-align:center;color:#9ca3af;font-size:0.85rem;">No player data available.</div>
+        </div>
+      </div>`;
     }
 
-    let html = '';
-    for (const [team, items] of Object.entries(byTeam)) {
-      html += `<div class="stats-team-section">
-        <div class="stats-team-label">${escapeHTML(team)}</div>
-        <div class="stats-player-grid">`;
+    const rankClasses = ['msc-rank-1', 'msc-rank-2', 'msc-rank-3'];
 
-      for (const { player, profile } of items) {
-        const cs        = computeCareerStats(profile);
-        const roleLabel = String(player.role || player.player_type || '').toUpperCase() || '—';
-        const fmtRaw    = String(match.match_format || 'ipl').toLowerCase();
-        const fmtMap    = { ipl:'T20', t20:'T20', odi:'ODI', test:'Test', odis:'ODI' };
-        const fmtLabel  = fmtMap[fmtRaw] || fmtRaw.toUpperCase();
+    const colHeader = mode === 'points'
+      ? `<div class="msc-col-header">
+           <span class="msc-ch-name">Player</span>
+           <span class="msc-ch-pts">Pts</span>
+           <span class="msc-ch-runs">Runs</span>
+           <span class="msc-ch-wkts">Wkts</span>
+         </div>`
+      : `<div class="msc-col-header">
+           <span class="msc-ch-name">Player</span>
+           <span class="msc-ch-pts">Impact</span>
+         </div>`;
 
-        html += `
-          <div class="stats-player-card">
-            <div class="stats-player-header">
-              <div class="stats-player-name">${escapeHTML(player.player_name)}</div>
-              <span class="stats-role-badge">${escapeHTML(roleLabel)}</span>
-            </div>
-            <div class="stats-player-meta">
-              <span>${escapeHTML(team)}</span>
-              <span class="stats-player-meta-sep">·</span>
-              <span class="stats-format-tag">${escapeHTML(fmtLabel)}</span>
-            </div>
-            <div class="stats-row">
-              <div class="stats-cell">
-                <div class="stats-val">${cs.matches}</div>
-                <div class="stats-key">Matches</div>
-              </div>
-              <div class="stats-cell">
-                <div class="stats-val highlight">${cs.totalRuns}</div>
-                <div class="stats-key">Runs</div>
-              </div>
-              <div class="stats-cell">
-                <div class="stats-val green">${cs.totalWickets}</div>
-                <div class="stats-key">Wickets</div>
-              </div>
-              <div class="stats-cell">
-                <div class="stats-val">${cs.avgRuns}</div>
-                <div class="stats-key">Avg Runs</div>
-              </div>
-              <div class="stats-cell">
-                <div class="stats-val">${cs.avgWickets}</div>
-                <div class="stats-key">Avg Wkts</div>
-              </div>
-            </div>
-            <div class="stats-impact-row">
-              <span class="stats-impact-label">Impact Points</span>
-              <span class="stats-impact-val">${Number(player.impact_points) || 100}</span>
-            </div>
-          </div>`;
-      }
-      html += `</div></div>`;
-    }
+    const fallbackNote = mode === 'impact'
+      ? `<div class="fallback-badge">⚡ Showing impact ratings — match scores pending</div>`
+      : '';
 
-    contentEl.innerHTML = html;
-  }
+    const rows = players.slice(0, 3).map((p, i) => {
+      const color = teamColor(p.team_name || '');
+      const ini   = initials(p.player_name || '');
+      const role  = String(p.role || '').replace('Wicket Keeper', 'WK')
+                                         .replace('All Rounder', 'AR')
+                                         .replace('Batsman', 'BAT')
+                                         .replace('Bowler', 'BOWL').toUpperCase();
 
-  /* ── Aggregate career stats ── */
-  function computeCareerStats(profile) {
-    const empty = { matches: '—', totalRuns: '—', totalWickets: '—', avgRuns: '—', avgWickets: '—' };
-    if (!profile || !profile.success || !profile.history) return empty;
+      const ptsBit = mode === 'points'
+        ? `<div class="msc-pts">
+             <div class="msc-pts-val">${p.fantasy_points != null ? Number(p.fantasy_points).toFixed(1) : '—'}</div>
+             <div class="msc-pts-lbl">pts</div>
+           </div>
+           <div class="msc-runs">${p.runs != null ? p.runs : '—'}</div>
+           <div class="msc-wkts">${p.wickets != null ? p.wickets : '—'}</div>`
+        : `<div class="msc-pts">
+             <div class="msc-impact-val">⚡ ${p.impact_points || 100}</div>
+             <div class="msc-impact-lbl">impact</div>
+           </div>`;
 
-    const allMatches = [
-      ...(profile.history.tests || []),
-      ...(profile.history.odis  || []),
-      ...(profile.history.t20s  || [])
-    ];
-    if (!allMatches.length) return empty;
+      return `<div class="msc-player-row">
+        <div class="msc-rank ${rankClasses[i] || ''}">#${i + 1}</div>
+        <div class="msc-avatar" style="background:${color};">${esc(ini)}</div>
+        <div class="msc-info">
+          <div class="msc-player-name">${esc(p.player_name || '—')}</div>
+          <div class="msc-player-meta">
+            ${p.team_name ? `<span class="msc-team-tag">${esc(p.team_name)}</span>` : ''}
+            ${role ? `<span class="msc-role-tag">${esc(role)}</span>` : ''}
+          </div>
+        </div>
+        ${ptsBit}
+      </div>`;
+    }).join('');
 
-    let totalRuns = 0, totalWickets = 0, batInnings = 0, bowlInnings = 0;
-    for (const m of allMatches) {
-      if (!m.totals) continue;
-      const runs    = m.totals.total_runs    || 0;
-      const balls   = m.totals.total_balls   || 0;
-      const wkts    = m.totals.total_wickets || 0;
-      const overs   = (m.bowling || []).reduce((s, r) => s + (Number(r.overs) || 0), 0);
-      totalRuns    += runs;
-      totalWickets += wkts;
-      if (balls   > 0) batInnings++;
-      if (overs   > 0) bowlInnings++;
-    }
-
-    const avgRuns    = batInnings  > 0 ? (totalRuns    / batInnings).toFixed(1)  : '—';
-    const avgWickets = bowlInnings > 0 ? (totalWickets / bowlInnings).toFixed(1) : '—';
-
-    return { matches: allMatches.length, totalRuns, totalWickets, avgRuns, avgWickets };
+    return `<div class="match-stat-card">
+      <div class="msc-header">
+        <div class="msc-top">
+          <span class="msc-format">${esc(fmt)}</span>
+          <span class="msc-completed">✓ Completed</span>
+        </div>
+        <div class="msc-title">${esc(match.team_1)} vs ${esc(match.team_2)}</div>
+        ${match.match_title ? `<div class="msc-subtitle">${esc(match.match_title)}</div>` : ''}
+        ${fallbackNote}
+      </div>
+      <div class="msc-players">
+        ${colHeader}
+        ${rows}
+      </div>
+    </div>`;
   }
 </script>
 </body>

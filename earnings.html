@@ -637,6 +637,7 @@
           <a href="prizes.html" onclick="trackClick('nav_prizes')">🏅 Prizes</a>
           <a href="index.html" onclick="trackClick('nav_main_home')">🏠 Main Home</a>
           <a href="contact.html" onclick="trackClick('contact_us_menu_click')">✉️ Contact Us</a>
+          <a href="#" onclick="trackClick('nav_logout'); doLogout(); return false;" style="color:#dc2626;border-top:1px solid #f3f4f6;margin-top:4px;">🚪 Logout</a>
         </nav>
       </div>
     </header>
@@ -735,6 +736,14 @@
     /* ── Auth helpers ── */
     function getCurrentUserId() { return localStorage.getItem(USER_ID_KEY); }
     function getCurrentUser()   { return { id: localStorage.getItem(USER_ID_KEY), name: localStorage.getItem(USER_NAME_KEY) }; }
+
+    function doLogout() {
+      localStorage.removeItem('mtgames_user_id');
+      localStorage.removeItem('mtgames_user_name');
+      localStorage.removeItem('mtgames_user_email');
+      document.getElementById('hamburgerDropdown').classList.remove('open');
+      window.location.href = 'index.html';
+    }
 
     function showUsernameModal() {
       const modal = document.getElementById('userModal');

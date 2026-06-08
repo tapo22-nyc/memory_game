@@ -1499,20 +1499,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       display: flex; align-items: center;
       padding: 7px 14px 6px;
       background: #f1f5f9; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;
-      position: sticky; top: 0; z-index: 2; gap: 6px;
+      position: sticky; top: 0; z-index: 2; gap: 10px;
     }
     .ps-role-label { font-size: 12px; font-weight: 700; color: #1e293b; letter-spacing: 0.5px; flex: 1; }
     /* .ps-role-count removed — no longer shown */
     .ps-role-sort-btn {
       font-size: 9px; font-weight: 900; color: #64748b; text-transform: uppercase;
       letter-spacing: 0.8px; cursor: pointer; white-space: nowrap;
-      display: flex; align-items: center; gap: 1px;
-      padding: 3px 6px; border-radius: 5px; border: 1px solid #e2e8f0; background: white;
+      display: flex; align-items: center; justify-content: center; gap: 1px;
+      padding: 3px 4px; border-radius: 5px; border: 1px solid #e2e8f0; background: white;
       transition: color 0.15s, border-color 0.15s;
     }
     .ps-role-sort-btn:hover { color: #2563eb; border-color: #93c5fd; }
     .ps-role-sort-btn.sort-asc::after  { content: ' ↑'; }
     .ps-role-sort-btn.sort-desc::after { content: ' ↓'; }
+    .ps-sort-impact { min-width: 58px; }
+    .ps-sort-price  { min-width: 52px; }
+    .ps-role-sort-spacer { width: 28px; flex-shrink: 0; }
 
     .ps-player-card {
       display: flex; align-items: center; gap: 10px;
@@ -3767,7 +3770,7 @@ function renderSubstituteBoosterCard() {
               <div class="player-tags">${tagHtml}${typeHtml}</div>
             </div>
             <div class="player-credits">
-              <div class="player-credit-val">$${formatNum(playerCost(p))}</div>
+              <div class="player-credit-val">${formatMoneyCompact(playerCost(p))}</div>
               <div class="player-credit-label"></div>
             </div>
             <button class="player-action-btn sub-btn" onclick="selectSubstituteFromPanel(${pid})">Set as Sub</button>
@@ -5252,7 +5255,7 @@ const updateNote = currentMatchData?.score_update_note || '';
             <span class="ps-stat-lbl">${escapeHTML(t2 || 'Team 2')}</span>
           </div>
           <div class="ps-stat ${left < 0 ? 'ps-stat-over' : left < 5 ? 'ps-stat-warn' : ''}">
-            <span class="ps-stat-val">${formatNum(left)}</span>
+            <span class="ps-stat-val">${formatMoneyCompact(left)}</span>
             <span class="ps-stat-lbl">Budget</span>
           </div>
         </div>`;
@@ -5306,8 +5309,9 @@ const updateNote = currentMatchData?.score_update_note || '';
           <div class="ps-role-section">
             <div class="ps-role-header">
               <span class="ps-role-label">${escapeHTML(roleLabels[role] || role)}</span>
-              <button class="ps-role-sort-btn ${impactSortClass}" onclick="cycleSort('impact')">IMPACT</button>
-              <button class="ps-role-sort-btn ${budgetSortClass}" onclick="cycleSort('budget')">PRICE</button>
+              <button class="ps-role-sort-btn ps-sort-impact ${impactSortClass}" onclick="cycleSort('impact')">IMPACT</button>
+              <button class="ps-role-sort-btn ps-sort-price ${budgetSortClass}" onclick="cycleSort('budget')">PRICE</button>
+              <div class="ps-role-sort-spacer"></div>
             </div>
             ${players.map(p => renderPlayerCard(p)).join('')}
           </div>`;
