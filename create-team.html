@@ -28,7 +28,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       background: #f8fafc;
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       color: #111827;
-      padding: 28px 20px 64px;
+      padding: 28px 20px 88px;
     }
 
     .page-wrap {
@@ -345,7 +345,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .match-grid {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
     
@@ -369,6 +369,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .closed-match-list.show {
       display: flex;
       flex-direction: column;
+      gap: 12px;
       animation: fadeIn 0.25s ease;
     }
 
@@ -2471,6 +2472,303 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .success-title { font-size: 20px; font-weight: 800; color: #15803d; margin-bottom: 8px; }
     .success-sub { font-size: 14px; color: #6b7280; line-height: 1.6; }
 
+    /* ══════════════════════════════════════════════════════
+       BOTTOM NAVIGATION BAR
+    ══════════════════════════════════════════════════════ */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      align-items: stretch;
+      z-index: 600;
+      box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
+    }
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      color: #9ca3af;
+      padding: 8px 4px;
+      transition: color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+    }
+    .bottom-nav-item:hover { color: #2563eb; background: #f8fafc; }
+    .bottom-nav-item.active { color: #2563eb; }
+    .bottom-nav-item.active::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 20%;
+      right: 20%;
+      height: 2px;
+      background: #2563eb;
+      border-radius: 0 0 2px 2px;
+    }
+    .nav-icon { font-size: 1.3rem; line-height: 1; }
+    .nav-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       PREMIUM MATCH CARDS
+    ══════════════════════════════════════════════════════ */
+    .match-card-premium {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 16px 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+      overflow: hidden;
+    }
+    .match-card-premium:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      border-color: #93c5fd;
+    }
+    .mcp-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .mcp-format-badge {
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #6b7280;
+      background: #f3f4f6;
+      border-radius: 999px;
+      padding: 2px 8px;
+    }
+    .mcp-teams-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .mcp-team {
+      flex: 1;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #111827;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mcp-team.right { text-align: right; }
+    .mcp-vs {
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      flex-shrink: 0;
+    }
+    .mcp-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+    .mcp-timer {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #d97706;
+      letter-spacing: 0.2px;
+    }
+    .mcp-timer.urgent { color: #dc2626; }
+    .mcp-timer.expired { color: #9ca3af; font-weight: 600; }
+    .mcp-btn {
+      padding: 9px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.12s, opacity 0.15s, background 0.15s;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+    .mcp-btn:active { transform: scale(0.97); }
+    .mcp-btn-open { background: #2563eb; color: #fff; box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
+    .mcp-btn-open:hover { background: #1d4ed8; }
+    .mcp-btn-locked { background: #fef3c7; color: #d97706; border: 1.5px solid #fde68a; }
+    .mcp-btn-locked:hover { background: #fde68a; }
+    .mcp-btn-closed { background: #f3f4f6; color: #6b7280; border: 1.5px solid #e5e7eb; }
+    .mcp-btn-closed:hover { background: #e5e7eb; color: #374151; }
+    .mcp-sw2-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.62rem;
+      font-weight: 800;
+      background: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      border-radius: 999px;
+      padding: 2px 8px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .mcp-locked-strip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #d97706;
+    }
+    .mcp-closed-strip {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       STATS TAB
+    ══════════════════════════════════════════════════════ */
+    .stats-hero {
+      text-align: center;
+      padding: 24px 0 20px;
+    }
+    .stats-hero-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+    }
+    .stats-hero-sub {
+      font-size: 0.88rem;
+      color: #6b7280;
+    }
+    .stats-match-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .stats-match-chip {
+      padding: 8px 14px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 20px;
+      background: #fff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #374151;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .stats-match-chip:hover { border-color: #2563eb; color: #2563eb; }
+    .stats-match-chip.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+    .stats-team-section { margin-bottom: 28px; }
+    .stats-team-label {
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #2563eb;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .stats-player-grid { display: flex; flex-direction: column; gap: 10px; }
+    .stats-player-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      transition: box-shadow 0.15s;
+    }
+    .stats-player-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.09); }
+    .stats-player-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+    .stats-player-name { font-size: 0.95rem; font-weight: 700; color: #111827; flex: 1; }
+    .stats-role-badge {
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      flex-shrink: 0;
+    }
+    .stats-player-team { font-size: 0.75rem; color: #6b7280; margin-bottom: 12px; }
+    .stats-row { display: flex; gap: 6px; margin-bottom: 10px; }
+    .stats-cell {
+      flex: 1;
+      text-align: center;
+      background: #f8fafc;
+      border: 1px solid #f0f0f0;
+      border-radius: 8px;
+      padding: 8px 4px;
+    }
+    .stats-val { font-size: 1rem; font-weight: 800; color: #111827; line-height: 1.2; }
+    .stats-key {
+      font-size: 0.58rem;
+      font-weight: 700;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+    .stats-impact-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 8px;
+      border-top: 1px solid #f3f4f6;
+    }
+    .stats-impact-label { font-size: 0.72rem; color: #9ca3af; font-weight: 600; }
+    .stats-impact-val { font-size: 0.85rem; font-weight: 800; color: #2563eb; }
+    .stats-loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: #9ca3af;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .stats-no-data {
+      text-align: center;
+      padding: 32px 20px;
+      color: #6b7280;
+      font-size: 0.85rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+    }
+
   </style>
 </head>
 
@@ -2528,6 +2826,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </nav>
       </div>
     </header>
+
+    <!-- ── Contest Tab (default) ── -->
+    <div id="tab-contest">
 
     <!-- ── Hero ── -->
 <!-- ── Hero ── -->
@@ -2629,7 +2930,51 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     
     <!-- Leaderboard moved to leaderboard.html -->
 
+    </div><!-- /tab-contest -->
+
+    <!-- ── Stats Tab ── -->
+    <div id="tab-stats" style="display:none">
+      <div class="stats-hero">
+        <div class="stats-hero-title">Player Stats</div>
+        <div class="stats-hero-sub">Career stats for top players in each match</div>
+      </div>
+      <section class="content-section">
+        <div class="section-header">
+          <span class="section-label">Select Match</span>
+          <div class="section-line"></div>
+        </div>
+        <div id="stats-match-selector">
+          <div class="loading-row">Loading matches…</div>
+        </div>
+      </section>
+      <section class="content-section" id="stats-content-section">
+        <div id="stats-content">
+          <div class="stats-loading">Select a match above to view player stats</div>
+        </div>
+      </section>
+    </div><!-- /tab-stats -->
+
   </div><!-- /page-wrap -->
+
+  <!-- ── Bottom Navigation Bar ── -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="bottom-nav-item active" id="nav-btn-contest" onclick="switchMainTab('contest')">
+      <span class="nav-icon">🏏</span>
+      <span class="nav-label">Contest</span>
+    </button>
+    <a class="bottom-nav-item" href="fantasy_leaderboard.html" onclick="trackClick('nav_bottom_leaderboard')">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label">Leaderboard</span>
+    </a>
+    <button class="bottom-nav-item" id="nav-btn-stats" onclick="switchMainTab('stats')">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">Stats</span>
+    </button>
+    <a class="bottom-nav-item" href="earnings.html" onclick="trackClick('nav_bottom_profile')">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Profile</span>
+    </a>
+  </nav>
 
 
   <!-- ── Legacy hidden elements (JS compatibility) ── -->
@@ -3792,30 +4137,43 @@ function renderSubstituteBoosterCard() {
             ? `data-deadline="${escapeHTML(match.match_date)}"`
             : '';
           const timerHtml = (status === 'open' && match.match_date)
-            ? `<div class="match-timer" id="timer-${Number(match.id)}">Loading…</div>`
+            ? `<div class="mcp-timer" id="timer-${Number(match.id)}">Loading…</div>`
             : '';
-
-          let statusIndicator = '';
-          if (status === 'locked') {
-            statusIndicator = `<span class="lock-icon">🔒</span>`;
-          } else if (status === 'closed') {
-            statusIndicator = `<div class="status-pill ${escapeHTML(cfg.pillClass)}">${escapeHTML(cfg.label)}</div>`;
-          }
 
           const isSuperWeekend2 = [72, 73, 74].includes(Number(match.id));
           const sw2BadgeHtml = isSuperWeekend2
-            ? `<span class="sw2-badge">🔥 Playoffs Week Contest</span>`
+            ? `<span class="mcp-sw2-badge">🔥 Playoffs Week</span>`
             : '';
 
+          const fmt = String(match.match_format || 'IPL').toUpperCase().replace('IPL', 'T20');
+          const formatBadge = `<span class="mcp-format-badge">${escapeHTML(fmt)}</span>`;
+
+          let footerLeft = '';
+          if (status === 'locked') {
+            footerLeft = `<div class="mcp-locked-strip">🔒 <span>Locked</span></div>`;
+          } else if (status === 'closed') {
+            footerLeft = `<div class="mcp-closed-strip">✓ Completed</div>`;
+          } else if (timerHtml) {
+            footerLeft = timerHtml;
+          }
+
+          const btnClass = status === 'open' ? 'mcp-btn-open' : (status === 'locked' ? 'mcp-btn-locked' : 'mcp-btn-closed');
+
           return `
-            <div class="match-card" ${deadlineAttr}>
-              ${statusIndicator}
-              <div class="match-card-info">
-                <div class="match-teams">${escapeHTML(match.team_1)} vs ${escapeHTML(match.team_2)}</div>
+            <div class="match-card-premium" ${deadlineAttr}>
+              <div class="mcp-header">
+                ${formatBadge}
                 ${sw2BadgeHtml}
-                ${timerHtml}
               </div>
-              <button class="match-card-btn ${escapeHTML(cfg.btnClass)}" onclick="trackClick('${buttonKey}', { fantasy_match_id: ${Number(match.id)}, match_status: '${escapeHTML(status)}', match_title: '${escapeHTML(match.match_title || '')}', team_1: '${escapeHTML(match.team_1 || '')}', team_2: '${escapeHTML(match.team_2 || '')}' }); openFantasyTeam(${Number(match.id)})">${escapeHTML(buttonText)}</button>
+              <div class="mcp-teams-row">
+                <div class="mcp-team">${escapeHTML(match.team_1 || '')}</div>
+                <div class="mcp-vs">vs</div>
+                <div class="mcp-team right">${escapeHTML(match.team_2 || '')}</div>
+              </div>
+              <div class="mcp-footer">
+                <div>${footerLeft}</div>
+                <button class="mcp-btn ${btnClass}" onclick="trackClick('${buttonKey}', { fantasy_match_id: ${Number(match.id)}, match_status: '${escapeHTML(status)}', match_title: '${escapeHTML(match.match_title || '')}', team_1: '${escapeHTML(match.team_1 || '')}', team_2: '${escapeHTML(match.team_2 || '')}' }); openFantasyTeam(${Number(match.id)})">${escapeHTML(buttonText)}</button>
+              </div>
             </div>
           `;
         }
@@ -3851,7 +4209,7 @@ function renderSubstituteBoosterCard() {
     function startMatchTimers() {
       Object.values(_timerIntervals).forEach(clearInterval);
 
-      document.querySelectorAll('.match-card[data-deadline]').forEach(card => {
+      document.querySelectorAll('.match-card[data-deadline], .match-card-premium[data-deadline]').forEach(card => {
         const deadline = new Date(card.dataset.deadline);
         const timerEl  = card.querySelector('[id^="timer-"]');
         if (!timerEl || isNaN(deadline.getTime())) return;
@@ -3861,7 +4219,7 @@ function renderSubstituteBoosterCard() {
 
           if (diff <= 0) {
             timerEl.textContent = 'Deadline passed — check back soon';
-            timerEl.className = 'match-timer expired';
+            timerEl.className = timerEl.classList.contains('mcp-timer') ? 'mcp-timer expired' : 'match-timer expired';
             clearInterval(_timerIntervals[timerEl.id]);
             return;
           }
@@ -3875,7 +4233,11 @@ function renderSubstituteBoosterCard() {
           parts.push(m > 0 ? `${m}m` : (h === 0 ? '< 1m' : '0m'));
 
           timerEl.textContent = `⏱ Team lock in ${parts.join(' ')}`;
-          timerEl.className = diff < 30 * 60 * 1000 ? 'match-timer urgent' : 'match-timer';
+          if (timerEl.classList.contains('mcp-timer')) {
+            timerEl.className = diff < 30 * 60 * 1000 ? 'mcp-timer urgent' : 'mcp-timer';
+          } else {
+            timerEl.className = diff < 30 * 60 * 1000 ? 'match-timer urgent' : 'match-timer';
+          }
         }
 
         tick();
@@ -6150,6 +6512,201 @@ const updateNote = currentMatchData?.score_update_note || '';
           ${battingHtml}${bowlingHtml}${noData}
         </div>`;
     }
+
+    /* ══════════════════════════════════════════════════════
+       BOTTOM NAV TAB SWITCHING
+    ══════════════════════════════════════════════════════ */
+    let _statsLoaded = false;
+
+    function switchMainTab(tab) {
+      const contestTab = document.getElementById('tab-contest');
+      const statsTab   = document.getElementById('tab-stats');
+      const contestBtn = document.getElementById('nav-btn-contest');
+      const statsBtn   = document.getElementById('nav-btn-stats');
+
+      if (tab === 'contest') {
+        contestTab.style.display = '';
+        statsTab.style.display   = 'none';
+        contestBtn.classList.add('active');
+        statsBtn.classList.remove('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (tab === 'stats') {
+        contestTab.style.display = 'none';
+        statsTab.style.display   = '';
+        contestBtn.classList.remove('active');
+        statsBtn.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (!_statsLoaded) loadStatsTab();
+      }
+    }
+
+    /* ══════════════════════════════════════════════════════
+       STATS TAB LOGIC
+    ══════════════════════════════════════════════════════ */
+    let _statsMatchesCache = null;
+
+    async function loadStatsTab() {
+      const selectorEl = document.getElementById('stats-match-selector');
+      const contentEl  = document.getElementById('stats-content');
+
+      try {
+        const res  = await fetch('/api/get-fantasy-match');
+        const data = await res.json();
+        _statsMatchesCache = (data.matches || []).filter(m =>
+          String(m.status || 'open').toLowerCase() !== 'closed'
+        );
+
+        if (!_statsMatchesCache.length) {
+          selectorEl.innerHTML = '<div class="loading-row">No matches available.</div>';
+          return;
+        }
+
+        const chipsHtml = _statsMatchesCache.map((m, i) =>
+          `<button class="stats-match-chip${i === 0 ? ' active' : ''}" onclick="loadStatsForMatch(${m.id}, this)">
+            ${escapeHTML(m.team_1)} vs ${escapeHTML(m.team_2)}
+          </button>`
+        ).join('');
+        selectorEl.innerHTML = `<div class="stats-match-chips">${chipsHtml}</div>`;
+
+        _statsLoaded = true;
+        await loadStatsForMatch(_statsMatchesCache[0].id, selectorEl.querySelector('.stats-match-chip'));
+      } catch (err) {
+        selectorEl.innerHTML = '<div class="loading-row" style="color:#f87171;">Could not load matches.</div>';
+      }
+    }
+
+    async function loadStatsForMatch(matchId, chipEl) {
+      document.querySelectorAll('.stats-match-chip').forEach(c => c.classList.remove('active'));
+      if (chipEl) chipEl.classList.add('active');
+
+      const contentEl = document.getElementById('stats-content');
+      contentEl.innerHTML = '<div class="stats-loading">⏳ Loading player stats…</div>';
+
+      try {
+        const res  = await fetch(`/api/get-fantasy-match?fantasy_match_id=${matchId}`);
+        const data = await res.json();
+        const players = data.players || [];
+
+        const byTeam = {};
+        for (const p of players) {
+          const t = p.team_name || 'Unknown';
+          if (!byTeam[t]) byTeam[t] = [];
+          byTeam[t].push(p);
+        }
+
+        const topPlayers = [];
+        for (const [team, tp] of Object.entries(byTeam)) {
+          tp.sort((a, b) => (Number(b.impact_points) || 0) - (Number(a.impact_points) || 0));
+          topPlayers.push(...tp.slice(0, 3).map(p => ({ ...p, _team: team })));
+        }
+
+        if (!topPlayers.length) {
+          contentEl.innerHTML = '<div class="stats-no-data">No player data available for this match.</div>';
+          return;
+        }
+
+        const profiles = await Promise.all(
+          topPlayers.map(async p => {
+            try {
+              const r = await fetch(`/api/get-player-profile?player=${encodeURIComponent(p.player_name)}&limit=20`);
+              if (!r.ok) return { player: p, profile: null };
+              const d = await r.json();
+              return { player: p, profile: d };
+            } catch { return { player: p, profile: null }; }
+          })
+        );
+
+        renderStatsCards(profiles);
+      } catch (err) {
+        contentEl.innerHTML = '<div class="stats-loading" style="color:#f87171;">Could not load stats. Please try again.</div>';
+      }
+    }
+
+    function renderStatsCards(profiles) {
+      const contentEl = document.getElementById('stats-content');
+      if (!profiles.length) {
+        contentEl.innerHTML = '<div class="stats-no-data">No player data available.</div>';
+        return;
+      }
+
+      const byTeam = {};
+      for (const { player, profile } of profiles) {
+        const t = player._team || player.team_name || 'Unknown';
+        if (!byTeam[t]) byTeam[t] = [];
+        byTeam[t].push({ player, profile });
+      }
+
+      let html = '';
+      for (const [team, items] of Object.entries(byTeam)) {
+        html += `<div class="stats-team-section">
+          <div class="stats-team-label">${escapeHTML(team)}</div>
+          <div class="stats-player-grid">`;
+        for (const { player, profile } of items) {
+          const s = computeCareerStats(profile);
+          const roleLabel = String(player.role || player.player_type || '').toUpperCase() || '—';
+          html += `
+            <div class="stats-player-card">
+              <div class="stats-player-header">
+                <div class="stats-player-name">${escapeHTML(player.player_name)}</div>
+                <span class="stats-role-badge">${escapeHTML(roleLabel)}</span>
+              </div>
+              <div class="stats-player-team">${escapeHTML(team)}</div>
+              <div class="stats-row">
+                <div class="stats-cell">
+                  <div class="stats-val">${s.matches}</div>
+                  <div class="stats-key">Matches</div>
+                </div>
+                <div class="stats-cell">
+                  <div class="stats-val">${s.totalRuns}</div>
+                  <div class="stats-key">Runs</div>
+                </div>
+                <div class="stats-cell">
+                  <div class="stats-val">${s.totalWickets}</div>
+                  <div class="stats-key">Wickets</div>
+                </div>
+                <div class="stats-cell">
+                  <div class="stats-val">${s.avgRuns > 0 ? s.avgRuns.toFixed(1) : '—'}</div>
+                  <div class="stats-key">Avg Runs</div>
+                </div>
+              </div>
+              <div class="stats-impact-row">
+                <span class="stats-impact-label">Impact Points</span>
+                <span class="stats-impact-val">${Number(player.impact_points) || 100}</span>
+              </div>
+            </div>`;
+        }
+        html += `</div></div>`;
+      }
+      contentEl.innerHTML = html;
+    }
+
+    function computeCareerStats(profile) {
+      const empty = { matches: '—', totalRuns: '—', totalWickets: '—', avgRuns: 0 };
+      if (!profile || !profile.success || !profile.history) return empty;
+
+      const allMatches = [
+        ...(profile.history.tests  || []),
+        ...(profile.history.odis   || []),
+        ...(profile.history.t20s   || [])
+      ];
+      if (!allMatches.length) return empty;
+
+      let totalRuns = 0, totalWickets = 0, battingMatches = 0;
+      for (const m of allMatches) {
+        if (m.totals) {
+          totalRuns     += m.totals.total_runs    || 0;
+          totalWickets  += m.totals.total_wickets || 0;
+          if ((m.totals.total_balls || 0) > 0) battingMatches++;
+        }
+      }
+      return {
+        matches:      allMatches.length,
+        totalRuns,
+        totalWickets,
+        avgRuns: battingMatches > 0 ? totalRuns / battingMatches : 0
+      };
+    }
+
   </script>
 
   <!-- ── Player History Modal ── -->
