@@ -1,0 +1,260 @@
+============================================================
+FILE: Impact_Budget_Explanation.txt
+PURPOSE: Plain English explanation of the 3 impact + budget
+         evaluation queries and what the outputs tell us.
+============================================================
+
+
+============================================================
+WHAT ARE WE TRYING TO DO — THE BIG PICTURE
+============================================================
+
+Every player in our fantasy game needs two numbers:
+
+  1. IMPACT SCORE (0 to 100)
+     How valuable is this player in a match?
+     Higher = better fantasy pick.
+
+  2. PLAYER BUDGET ($50,000 to $250,000)
+     How expensive is this player to pick in your team?
+     Better players cost more. Total team budget = $1,000,000
+     across 11 players.
+
+The challenge is that raw career stats (e.g. Virat Kohli has
+27,000+ international runs, Lahiru Kumara has 62 ODI runs)
+are on completely different scales. We can't just add them up.
+So we first NORMALISE every stat to a 0–100 scale before
+calculating scores. This is what the 3 queries do step by step.
+
+
+============================================================
+QUERY 1 — WHAT ARE THE NORMALIZED COMPONENT SCORES?
+============================================================
+
+PURPOSE:
+  Break each player's raw career stats into individual
+  "component scores" — each between 0 and 100 — so that
+  all stats are on a fair, comparable scale.
+
+HOW IT WORKS:
+
+  Step 1 — Assign a role to each player.
+  The query looks up each player's role (Batter, Bowler,
+  All Rounder, Wicketkeeper) from our cricket_player_pool
+  table. Players not in that table (most IPL players) get
+  role = "unknown" because cricapi_player_master has no
+  player_type column yet.
+
+  Step 2 — Unpivot the data.
+  Our career stats table has one wide row per player with
+  columns for ODI, T20, and Test all in one row. The query
+  splits this into 3 separate rows per player — one for T20,
+  one for ODI, one for Test. So a player like Virat Kohli
+  appears 3 times in the output.
+
+  Step 3 — Normalize using PERCENT_RANK.
+  For each stat (e.g. runs), we rank every player against
+  all other players IN THE SAME FORMAT. The player with the
+  most runs gets 100. The player with the least gets 0.
+  Everyone else is proportionally in between.
+
+  Example:
+    Virat Kohli has the most Test runs → runs_score = 100
+    A player with 0 Test runs → runs_score = 0
+    Someone in the middle → runs_score = ~50
+
+  IMPORTANT — Economy rate is INVERTED:
+    Lower economy = better bowler. So we flip it.
+    Economy rate of 6.0 (great) gets a HIGH economy_score.
+    Economy rate of 10.0 (terrible) gets a LOW economy_score.
+
+COMPONENT SCORES PRODUCED:
+  Batting:
+    runs_score          — how many total runs vs all players
+    batting_avg_score   — batting average vs all players
+    strike_rate_score   — strike rate vs all players
+    fifties_score       — number of 50s vs all players
+    hundreds_score      — number of 100s vs all players
+    boundary_score      — 4s + weighted 6s vs all players
+    sixes_score         — raw sixes vs all players
+    bat_experience_score— matches played as batter
+
+  Bowling:
+    wickets_score       — total wickets vs all players
+    economy_score       — economy rate (inverted, lower = better)
+    five_wicket_score   — 5-wicket hauls vs all players
+    ten_wicket_score    — 10-wicket match hauls (Test only)
+    bowl_experience_score— matches played as bowler
+
+OUTPUT:
+  One row per player per format (3 rows per player).
+  Shows the raw stat AND the normalized score side by side
+  so you can verify the normalization looks sensible.
+
+
+============================================================
+QUERY 2 — WHAT IS THE FINAL IMPACT SCORE AND BUDGET?
+============================================================
+
+PURPOSE:
+  Take all the component scores from Query 1 and combine
+  them into a single Impact Score and a single Budget number
+  for each player in each format.
+
+HOW IT WORKS:
+
+  Step 1 — Calculate a BATTING IMPACT SCORE per format.
+  Combines batting component scores using weights:
+
+    T20:  Runs (30%) + Strike Rate (30%) + Boundaries (20%) + Sixes (20%)
+    ODI:  Runs (40%) + Batting Avg (30%) + Strike Rate (30%)
+    Test: 100s (40%) + 50s (30%) + Runs (30%)
+
+  The logic: in T20, how fast you score and how many
+  boundaries you hit matters as much as total runs. In Tests,
+  centuries and fifties signal quality more than sheer volume.
+
+  Step 2 — Calculate a BOWLING IMPACT SCORE per format.
+  Combines bowling component scores using weights:
+
+    T20:  Wickets (50%) + Economy (50%)
+    ODI:  Wickets (55%) + Economy (45%)
+    Test: Wickets (40%) + 5-wicket hauls (35%) + 10-wicket hauls (25%)
+
+  The logic: in T20, economy matters as much as wickets.
+  In Tests, 5-wicket and 10-wicket hauls are the mark of
+  a great bowler.
+
+  Step 3 — Combine batting + bowling by ROLE.
+  This is where the player's role is used:
+
+    Batter / Wicketkeeper → Final Impact = Batting Impact only
+    Bowler               → Final Impact = Bowling Impact only
+    All Rounder          → Final Impact = 50% Batting + 50% Bowling
+    Unknown              → Final Impact = average of both (fallback)
+
+  Step 4 — Convert to Budget ($50k–$250k).
+  The same role-weighted score is used as the budget input.
+  It is then scaled linearly:
+    Score of 0   → Budget = $50,000
+    Score of 100 → Budget = $250,000
+    Score of 50  → Budget = $150,000
+  Budget is rounded to the nearest $5,000.
+
+OUTPUT:
+  One row per player per format.
+  Shows: batting_impact_score, bowling_impact_score,
+         final_impact_score, raw_budget_score, final_player_budget.
+
+
+============================================================
+QUERY 3 — DISTRIBUTION CHECK
+============================================================
+
+PURPOSE:
+  A summary view to check whether the scores and budgets
+  produced by Query 2 are spread out sensibly across all
+  players. This is a validation step — not used in the app.
+
+HOW IT WORKS:
+  Groups all players by FORMAT and ROLE, then shows:
+    - How many players are in each group
+    - Min, P25, Median, P75, Max of impact scores
+    - Min, P25, Median, P75, Max of budgets
+
+  P25 = bottom 25% of players
+  Median = middle player (50th percentile)
+  P75 = top 25% of players
+
+WHAT GOOD LOOKS LIKE:
+  Impact median around 40–60 per group (well spread)
+  Budget median around $130k–$160k (middle of the range)
+  P25 budget above $80k (even weak players aren't dirt cheap)
+  P75 budget below $220k (stars expensive but not always $250k)
+
+WHAT WE SAW IN THE OUTPUT:
+  - "unknown" role has a very high player count — this is
+    because most IPL players have no player_type in
+    cricapi_player_master. They are all being scored as
+    "unknown" and getting an average of batting + bowling.
+    This needs to be fixed before scores are meaningful
+    for IPL players.
+  - SL/WI players (batter, bowler, all_rounder) are scoring
+    correctly because their roles ARE in cricket_player_pool.
+
+
+============================================================
+KNOWN ISSUE — VIRAT KOHLI SCORES LOWER THAN ALL-ROUNDERS
+============================================================
+
+This is a real problem with the current formula and it is
+worth fixing before deploying.
+
+WHY IT HAPPENS:
+  Virat Kohli is a "batter". His final impact score is based
+  on his BATTING impact only.
+
+  All-rounders like Kyle Jamieson and Jason Holder get
+  BOTH their batting AND bowling scores averaged together.
+  If Jason Holder has a moderate bowling impact (say 65)
+  and a moderate batting impact (say 45), his all-rounder
+  score is 55. Virat's pure batting impact in Test might
+  also calculate to around 55 due to the normalization
+  pool including ALL 149 players — many of whom are heavy
+  run-scorers too.
+
+ROOT CAUSES:
+  1. The normalization pool includes ALL 149 players across
+     all roles. Batters are being ranked against bowlers who
+     also bat. This pulls elite batters down.
+  2. All-rounders get credit for BOTH disciplines. A decent
+     all-rounder with mediocre batting AND mediocre bowling
+     can outscore a great specialist batter whose bowling
+     contribution is zero.
+  3. Test format has hundreds_score weighted at 40%, but
+     because so many players in the pool have 0 Test 100s,
+     even players with 5–10 hundreds cluster together near
+     the top — the differentiation is lost.
+
+HOW TO FIX (to discuss in next session):
+  Option A — Normalize within role groups, not globally.
+    Rank batters only against other batters, bowlers only
+    against other bowlers. This way Virat is ranked against
+    Rohit, Root, Warner — not against Bumrah.
+
+  Option B — Add a floor boost for elite players.
+    Players with Test average > 50 or 10,000+ runs get a
+    bonus score added on top. This is a manual tier system.
+
+  Option C — Separate "volume" from "quality" stats.
+    Weight batting average and strike rate more heavily
+    than raw runs. Virat's avg of 48+ is elite. Raw runs
+    inflate players who just played more games.
+
+  Option D — Give all-rounders a slight penalty.
+    Instead of 50/50 split, use 45% batting + 45% bowling
+    with a 10% cap — so they never exceed what a true
+    specialist would score at peak.
+
+The right fix is most likely Option A combined with C.
+We will address this in the next session before deploying
+the formula into the app.
+
+
+============================================================
+NEXT STEPS
+============================================================
+
+1. Add player_type column to cricapi_player_master so IPL
+   players get proper roles (not "unknown").
+
+2. Fix the Virat Kohli / all-rounder issue by normalizing
+   within role groups (Option A above).
+
+3. Once scores look sensible, build the API:
+   api/calculate-player-impact-budget.js
+   which will save the results into:
+     - fantasy_player_impact_points (impact scores)
+     - cricket_player_pool.budget and cricapi_player_master.budget
+
+============================================================
