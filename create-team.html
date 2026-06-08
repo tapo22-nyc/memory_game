@@ -3132,6 +3132,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       return n % 1 === 0 ? String(n) : n.toFixed(2);
     }
 
+    function formatMoneyCompact(val) {
+      const n = Number(val);
+      const abs = Math.abs(n);
+      const sign = n < 0 ? '-' : '';
+      if (abs >= 1000000) return sign + '$' + (abs / 1000000 % 1 === 0 ? (abs / 1000000) : (abs / 1000000).toFixed(1)) + 'M';
+      if (abs >= 1000)    return sign + '$' + Math.round(abs / 1000) + 'K';
+      return sign + '$' + abs;
+    }
+
     function getSelectedBoosterCost() {
       let cost = 0;
       // Only charge for boosters not already paid on a prior submission
@@ -3360,7 +3369,7 @@ function renderSubstituteBoosterCard() {
       if (!player) return;
       if (getTotalCoinsUsed() + playerCost(player) > budget) {
         setFooterMsg(
-          `Not enough budget to choose ${player.player_name} as substitute. You have $${formatNum(budget - getTotalCoinsUsed())} left.`,
+          `Not enough budget to choose ${player.player_name} as substitute. You have ${formatMoneyCompact(budget - getTotalCoinsUsed())} left.`,
           'error'
         );
         return;
@@ -4315,7 +4324,6 @@ function renderLeaderboardUpdateNote() {
     /* ── Summary bar (open state) ── */
     function updateSummaryBar() {
       const bar = document.getElementById('summaryBar');
-      if (modalStep === 1) { bar.style.display = 'none'; return; }
       bar.style.display = '';
       if (!document.getElementById('statPlayers') || !document.getElementById('statSubstitute')) {
         const overseasStatHtml = isInternationalMatch()
@@ -4347,7 +4355,7 @@ function renderLeaderboardUpdateNote() {
       const oEl=document.getElementById('statOverseas'); if(oEl){oEl.textContent=`${oc}/${MAX_OVERSEAS}`;oEl.className='summary-stat-val'+(oc===MAX_OVERSEAS?' warn':'');}
       const t1El=document.getElementById('statTeam1'); const t1c=tc[t1]||0; t1El.textContent=`${t1c}/${MAX_PER_TEAM}`; t1El.className='summary-stat-val'+(t1c===MAX_PER_TEAM?' warn':''); document.getElementById('statTeam1Label').textContent=t1||'Team 1';
       const t2El=document.getElementById('statTeam2'); const t2c=tc[t2]||0; t2El.textContent=`${t2c}/${MAX_PER_TEAM}`; t2El.className='summary-stat-val'+(t2c===MAX_PER_TEAM?' warn':''); document.getElementById('statTeam2Label').textContent=t2||'Team 2';
-      const cEl=document.getElementById('statCredits'); cEl.textContent='$'+formatNum(left); cEl.className='summary-stat-val'+(left<0?' over':left<50000?' warn':'');
+      const cEl=document.getElementById('statCredits'); cEl.textContent=formatMoneyCompact(left); cEl.className='summary-stat-val'+(left<0?' over':left<100000?' warn':'');
     }
 
     /* ── Summary bar (results state) ── */
@@ -4716,7 +4724,7 @@ const updateNote = currentMatchData?.score_update_note || '';
           fa.innerHTML = `<button class="footer-btn outline" onclick="openPreview()">Team Preview</button><button class="footer-btn primary" onclick="closeTeamModal()">Done</button>`;
           return;
         }
-        fa.innerHTML=`<button class="footer-btn outline" onclick="openPreview()">Team Preview</button><button class="footer-btn primary" id="nextBtn" onclick="goToStep2()">Next &rarr;</button>`;
+        fa.innerHTML=`<button class="footer-btn outline" onclick="resetTeam()">Reset</button><button class="footer-btn primary" id="nextBtn" onclick="goToStep2()">Next &rarr;</button>`;
         document.getElementById('nextBtn').disabled = getActivePlayerCount() < MAX_PLAYERS;
       } else if (modalStep===2) {
         fa.innerHTML=`<button class="footer-btn outline" onclick="goToStep1()">&#8592; Back</button><button class="footer-btn primary" id="nextBtn2" onclick="goToStep3()">Next &rarr;</button>`;
@@ -4729,6 +4737,17 @@ const updateNote = currentMatchData?.score_update_note || '';
 
     function renderCloseOnlyFooter() {
       document.getElementById('footerActions').innerHTML=`<button class="footer-btn close-btn" onclick="closeTeamModal()">Close</button>`;
+    }
+
+    function resetTeam() {
+      selectedPlayers = [];
+      substitutePlayerId = null;
+      captainId = null;
+      viceCaptainId = null;
+      setFooterMsg('');
+      updateSummaryBar();
+      renderTeamSections();
+      renderFooter();
     }
 
     function handleBackBtn() { if(modalStep===3) goToStep2(); else if(modalStep===2) goToStep1(); else closeTeamModal(); }
@@ -4846,8 +4865,8 @@ const updateNote = currentMatchData?.score_update_note || '';
           <div class="ps-role-section">
             <div class="ps-role-header">
               <span class="ps-role-label">${escapeHTML(roleLabels[role] || role)}</span>
-              <button class="ps-role-sort-btn ${impactSortClass}" onclick="cycleSort('impact')">Impact Pts</button>
-              <button class="ps-role-sort-btn ${budgetSortClass}" onclick="cycleSort('budget')">Budget</button>
+              <button class="ps-role-sort-btn ${impactSortClass}" onclick="cycleSort('impact')">IMPACT</button>
+              <button class="ps-role-sort-btn ${budgetSortClass}" onclick="cycleSort('budget')">PRICE</button>
             </div>
             ${players.map(p => renderPlayerCard(p)).join('')}
           </div>`;
@@ -4883,8 +4902,8 @@ const updateNote = currentMatchData?.score_update_note || '';
             <div class="ps-player-name">${escapeHTML(player.player_name)}${isSubstitute ? '<span class="ps-sub-badge">Sub</span>' : ''}</div>
             ${statsBtn}
           </div>
-          <div class="ps-impact">${impactPts}</div>
-          <div class="ps-cost">$${formatNum(cost)}</div>
+          <div class="ps-impact">⚡ ${impactPts}</div>
+          <div class="ps-cost">${formatMoneyCompact(cost)}</div>
           ${addBtn}
         </div>`;
     }
@@ -4945,7 +4964,7 @@ const updateNote = currentMatchData?.score_update_note || '';
             <div class="player-name">${escapeHTML(player.player_name)}${isSubstitute ? '<span class="substitute-badge">Sub</span>' : ''}</div>
             <div class="player-tags">${tagHtml}${typeHtml}</div>
           </div>
-          <div class="player-credits"><div class="player-credit-val">$${formatNum(cost)}</div><div class="player-credit-label"></div></div>
+          <div class="player-credits"><div class="player-credit-val">${formatMoneyCompact(cost)}</div><div class="player-credit-label"></div></div>
           ${statsBtn}
           ${btnHtml}
         </div>`;
@@ -5006,7 +5025,7 @@ const updateNote = currentMatchData?.score_update_note || '';
         if (shouldPickSubstitute) {
           if (getTotalCoinsUsed() + playerCost(player) > budget) {
             setFooterMsg(
-              `Not enough budget to choose ${player.player_name} as substitute. You have $${formatNum(budget - getTotalCoinsUsed())} left.`,
+              `Not enough budget to choose ${player.player_name} as substitute. You have ${formatMoneyCompact(budget - getTotalCoinsUsed())} left.`,
               'error'
             );
             return;
@@ -5256,7 +5275,7 @@ const updateNote = currentMatchData?.score_update_note || '';
         <div class="preview-stat"><div class="preview-stat-val">${subPlayer ? '1/1' : substituteBoosterEnabled ? '0/1' : '--'}</div><div class="preview-stat-label">Substitute</div></div>
         <div class="preview-stat"><div class="preview-stat-val">${oc}/${MAX_OVERSEAS}</div><div class="preview-stat-label">Overseas Players</div></div>
         ${teams.map(t=>`<div class="preview-stat"><div class="preview-stat-val">${tc[t]||0}/${MAX_PER_TEAM}</div><div class="preview-stat-label">${escapeHTML(t)} Players</div></div>`).join('')}
-        <div class="preview-stat"><div class="preview-stat-val" style="color:${left<0?'#fb7185':'#facc15'}">$${formatNum(left)}</div><div class="preview-stat-label">Budget Left</div></div>
+        <div class="preview-stat"><div class="preview-stat-val" style="color:${left<0?'#fb7185':'#facc15'}">${formatMoneyCompact(left)}</div><div class="preview-stat-label">Budget Left</div></div>
       </div>`;
 
       const playerRows=activeIds.map(pid=>{
@@ -5466,7 +5485,7 @@ const updateNote = currentMatchData?.score_update_note || '';
 
         document.getElementById('summaryBar').style.display='';
         document.getElementById('modalTitle').textContent=currentMatchData.match_title||'Create Your Fantasy XI';
-        document.getElementById('modalSubtitle').textContent=`${currentMatchData.team_1} vs ${currentMatchData.team_2} · Budget - $${formatNum(budget)}`;
+        document.getElementById('modalSubtitle').textContent=`${currentMatchData.team_1} vs ${currentMatchData.team_2} · Budget - ${formatMoneyCompact(budget)}`;
         if(currentMatchData.match_start_time) startCountdown(new Date(currentMatchData.match_start_time));
         await loadSavedFantasyTeam(fantasyMatchId);
         await loadLiveFantasyScore(fantasyMatchId);
@@ -5590,10 +5609,10 @@ const updateNote = currentMatchData?.score_update_note || '';
         setFooterMsg('You do not have enough coins for the selected boosters.', 'error');
         return;
       }
-      if (totalUsed > budget) { setFooterMsg(`Budget exceeded. Used $${formatNum(totalUsed)} of $${formatNum(budget)}.`, 'error'); return; }
+      if (totalUsed > budget) { setFooterMsg(`Budget exceeded. Used ${formatMoneyCompact(totalUsed)} of ${formatMoneyCompact(budget)}.`, 'error'); return; }
       if (substituteBoosterEnabled && totalRosterUsed > budget) {
         setFooterMsg(
-          `Budget exceeded including substitute. Used $${formatNum(totalRosterUsed)} of $${formatNum(budget)}.`,
+          `Budget exceeded including substitute. Used ${formatMoneyCompact(totalRosterUsed)} of ${formatMoneyCompact(budget)}.`,
           'error'
         );
         return;
