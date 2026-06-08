@@ -45,18 +45,25 @@ module.exports = async function handler(req, res) {
 
     // Unified player query: handles both ipl_player_master and cricket_player_pool.
     // player_source column on fantasy_match_players determines which table to JOIN.
+    // player_cost_coins uses match-level budget from match_player_budgets when available,
+    // falling back to global player_cost_coins so old matches still work unchanged.
     const players = await sql`
       SELECT
-        fmp.player_id                                          AS id,
-        COALESCE(ipm.player_name, cpp.player_name)            AS player_name,
-        COALESCE(ipm.team_code,   cpp.country)                AS team_name,
-        COALESCE(ipm.player_tag,  cpp.player_tag)             AS role,
-        COALESCE(ipm.player_type, cpp.player_type)            AS player_type,
-        COALESCE(ipm.auction_price_cr, cpp.player_cost_coins) AS auction_price_cr,
-        COALESCE(ipm.player_cost_coins, cpp.player_cost_coins) AS player_cost_coins,
-        COALESCE(fmp.player_source, 'ipl')                    AS player_source,
-        cpp.country                                           AS country,
-        COALESCE(ip.impact_points, 100)                       AS impact_points
+        fmp.player_id                                                       AS id,
+        COALESCE(ipm.player_name, cpp.player_name)                         AS player_name,
+        COALESCE(ipm.team_code,   cpp.country)                             AS team_name,
+        COALESCE(ipm.player_tag,  cpp.player_tag)                          AS role,
+        COALESCE(ipm.player_type, cpp.player_type)                         AS player_type,
+        COALESCE(ipm.auction_price_cr, cpp.player_cost_coins)              AS auction_price_cr,
+        COALESCE(
+          mpb.final_player_budget,
+          ipm.player_cost_coins,
+          cpp.player_cost_coins
+        )                                                                   AS player_cost_coins,
+        COALESCE(fmp.player_source, 'ipl')                                 AS player_source,
+        cpp.country                                                        AS country,
+        COALESCE(ip.impact_points, mpb.final_impact_score, 100)            AS impact_points,
+        mpb.budget_tier
       FROM fantasy_match_players fmp
       LEFT JOIN ipl_player_master ipm
         ON ipm.id = fmp.player_id
@@ -67,6 +74,10 @@ module.exports = async function handler(req, res) {
       LEFT JOIN fantasy_player_impact_points ip
         ON ip.fantasy_player_id = fmp.player_id
         AND ip.fantasy_match_id = fmp.fantasy_match_id
+      LEFT JOIN match_player_budgets mpb
+        ON mpb.fantasy_match_id = fmp.fantasy_match_id
+        AND mpb.player_id       = fmp.player_id
+        AND mpb.player_source   = COALESCE(fmp.player_source, 'ipl')
       WHERE fmp.fantasy_match_id = ${Number(fantasy_match_id)}
         AND COALESCE(fmp.is_active, TRUE) = TRUE
       ORDER BY team_name, player_name
