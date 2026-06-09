@@ -21,7 +21,8 @@ module.exports = async function handler(req, res) {
           fm.budget_coins,
           fm.score_update_note,
           COALESCE(fm.match_format, 'ipl') AS match_format,
-          im.match_date
+          COALESCE(im.match_date, fm.match_start_time) AS match_date,
+          fm.match_start_time
         FROM fantasy_matches fm
         LEFT JOIN ipl_matches im ON im.id = fm.ipl_match_id
         ORDER BY fm.id ASC
