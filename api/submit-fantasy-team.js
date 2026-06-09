@@ -58,37 +58,6 @@ module.exports = async function handler(req, res) {
       ? Number(substitute_player_id)
       : null;
 
-    // ── Player count / duplicate / captain checks ─────────────
-    if (cleanActivePlayerIds.length !== teamSize) {
-      return res.status(400).json({
-        error: `You must select exactly ${teamSize} active players.`
-      });
-    }
-
-    if (new Set(cleanActivePlayerIds).size !== teamSize) {
-      return res.status(400).json({
-        error: 'Duplicate active players are not allowed.'
-      });
-    }
-
-    if (!cleanActivePlayerIds.includes(captainId)) {
-      return res.status(400).json({
-        error: `Captain must be one of your ${teamSize} active players.`
-      });
-    }
-
-    if (!cleanActivePlayerIds.includes(viceCaptainId)) {
-      return res.status(400).json({
-        error: `Vice-captain must be one of your ${teamSize} active players.`
-      });
-    }
-
-    if (captainId === viceCaptainId) {
-      return res.status(400).json({
-        error: 'Captain and vice-captain cannot be the same player.'
-      });
-    }
-
     // ── Substitute booster basic checks ──────────────────────
     if (subBoosterOn) {
       if (!substitutePlayerId) {
@@ -129,6 +98,37 @@ module.exports = async function handler(req, res) {
     const teamSize   = Number(match.fantasy_team_size)    || (isIPL ? 11 : 8);
     const minPerTeam = Number(match.min_players_per_team) || (isIPL ? 4  : 3);
     const maxPerTeam = Number(match.max_players_per_team) || (isIPL ? 7  : 5);
+
+    // ── Player count / duplicate / captain checks ─────────────
+    if (cleanActivePlayerIds.length !== teamSize) {
+      return res.status(400).json({
+        error: `You must select exactly ${teamSize} active players.`
+      });
+    }
+
+    if (new Set(cleanActivePlayerIds).size !== teamSize) {
+      return res.status(400).json({
+        error: 'Duplicate active players are not allowed.'
+      });
+    }
+
+    if (!cleanActivePlayerIds.includes(captainId)) {
+      return res.status(400).json({
+        error: `Captain must be one of your ${teamSize} active players.`
+      });
+    }
+
+    if (!cleanActivePlayerIds.includes(viceCaptainId)) {
+      return res.status(400).json({
+        error: `Vice-captain must be one of your ${teamSize} active players.`
+      });
+    }
+
+    if (captainId === viceCaptainId) {
+      return res.status(400).json({
+        error: 'Captain and vice-captain cannot be the same player.'
+      });
+    }
 
     // ── Load player costs and team codes from DB ──────────────
     const allSelectedPlayerIds = subBoosterOn
