@@ -1457,6 +1457,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .ps-stat.ps-stat-warn   .ps-stat-val { color: #f97316; }
     .ps-stat.ps-stat-over   .ps-stat-val { color: #dc2626; }
 
+    /* Non-IPL rule hint and split warning */
+    .ps-rules-hint {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      padding: 8px 14px 4px;
+      font-size: 11px; font-weight: 600; color: #6366f1;
+      letter-spacing: 0.2px;
+    }
+    .ps-rules-divider { color: #d1d5db; }
+    .ps-split-warning {
+      margin: 0 14px 4px;
+      padding: 8px 12px;
+      background: #fef3c7; border: 1px solid #fbbf24; border-radius: 8px;
+      font-size: 12px; font-weight: 600; color: #92400e;
+    }
+
     .ps-filter-row {
       display: flex; align-items: center; gap: 8px;
       padding: 10px 14px 6px;
@@ -3370,9 +3385,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     let alreadyPaidVCBooster       = false;
     let alreadyPaidSubBooster      = false;
 
-    const MAX_PLAYERS  = 11;
+    // These three are reset on every match open from match config.
+    // IPL defaults: 11 players, max 7 per team, min 4 per team.
+    // Non-IPL:       8 players, max 5 per team, min 3 per team.
+    let MAX_PLAYERS  = 11;
+    let MAX_PER_TEAM = 7;
+    let MIN_PER_TEAM = 4;
+    let isIPLMatch   = true;
     const MAX_OVERSEAS = 4;
-    const MAX_PER_TEAM = 7;
 
     /* ── Player selection UI state ── */
     let playerTeamFilter  = 'all';
@@ -3549,6 +3569,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       return !['ipl', 'mlc', 'bbl', ''].includes(fmt);
     }
 
+    // True only for IPL — used for team-size branching.
+    function getIsIPLMatch() {
+      return String(currentMatchData?.match_format || 'ipl').toLowerCase() === 'ipl';
+    }
+
+    // Non-IPL: each team must have at least MIN_PER_TEAM active players.
+    // IPL has no enforced minimum per team, so always returns true.
+    function isTeamSplitValid() {
+      if (isIPLMatch) return true;
+      const tc = getTeamCounts();
+      const teams = getTeams();
+      if (teams.length < 2) return true;
+      return teams.every(t => (tc[t] || 0) >= MIN_PER_TEAM);
+    }
+
     function playerCost(p) { return Number(p.player_cost_coins||p.auction_price_cr||0); }
 
     function formatNum(val) {
@@ -3610,7 +3645,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function getRequiredPlayerCount() {
-      return substituteBoosterEnabled ? 12 : 11;
+      return substituteBoosterEnabled ? MAX_PLAYERS + 1 : MAX_PLAYERS;
     }
 
     async function loadUserCoinBalance() {
@@ -3691,7 +3726,7 @@ function renderSubstituteBoosterCard() {
              Remove Booster${wasPaid ? ' (Refund 100 coins)' : ''}
            </button>
            <span style="margin-left:8px;font-size:11px;color:#94a3b8;">
-             Active: ${activeCount}/11 · Sub: ${subPlayer ? escapeHTML(subPlayer.player_name) : 'Not selected'}
+             Active: ${activeCount}/${MAX_PLAYERS} · Sub: ${subPlayer ? escapeHTML(subPlayer.player_name) : 'Not selected'}
            </span>
          </div>`
       : `<div class="booster-deselect-row"><span class="booster-locked-msg">Locked — match has started</span></div>`;
@@ -3943,6 +3978,12 @@ function renderSubstituteBoosterCard() {
 
     /* ── Scoring Rules Modal ── */
     function openScoringModal() {
+      const noteEl = document.querySelector('#scoringModal .scoring-note[style*="4B0082"]');
+      if (noteEl) {
+        noteEl.textContent = isIPLMatch
+          ? 'Choose 11 players within a total budget of $1,000,000.'
+          : `Choose ${MAX_PLAYERS} players within a total budget of $1,000,000. Minimum ${MIN_PER_TEAM} from each team.`;
+      }
       document.getElementById('scoringModal').classList.add('show');
     }
     function closeScoringModal() {
@@ -4772,20 +4813,26 @@ function renderLeaderboardUpdateNote() {
       if (!document.getElementById('statPlayers') || !document.getElementById('statSubstitute')) {
         const overseasStatHtml = isInternationalMatch()
           ? ''
-          : `<div class="summary-stat"><div class="summary-stat-val" id="statOverseas">0/4</div><div class="summary-stat-label">Overseas</div></div>`;
+          : `<div class="summary-stat"><div class="summary-stat-val" id="statOverseas">0/${MAX_OVERSEAS}</div><div class="summary-stat-label">Overseas</div></div>`;
         bar.innerHTML = `
-          <div class="summary-stat"><div class="summary-stat-val" id="statPlayers">0/11</div><div class="summary-stat-label">Active</div></div>
+          <div class="summary-stat"><div class="summary-stat-val" id="statPlayers">0/${MAX_PLAYERS}</div><div class="summary-stat-label">Players</div></div>
           <div class="summary-stat"><div class="summary-stat-val" id="statSubstitute">--</div><div class="summary-stat-label">Sub</div></div>
           ${overseasStatHtml}
-          <div class="summary-stat"><div class="summary-stat-val" id="statTeam1">0/7</div><div class="summary-stat-label" id="statTeam1Label">Team 1</div></div>
-          <div class="summary-stat"><div class="summary-stat-val" id="statTeam2">0/7</div><div class="summary-stat-label" id="statTeam2Label">Team 2</div></div>
-          <div class="summary-stat"><div class="summary-stat-val" id="statCredits">75</div><div class="summary-stat-label">Budget Left</div></div>
+          <div class="summary-stat"><div class="summary-stat-val" id="statTeam1">0/${MAX_PER_TEAM}</div><div class="summary-stat-label" id="statTeam1Label">Team 1</div></div>
+          <div class="summary-stat"><div class="summary-stat-val" id="statTeam2">0/${MAX_PER_TEAM}</div><div class="summary-stat-label" id="statTeam2Label">Team 2</div></div>
+          <div class="summary-stat"><div class="summary-stat-val" id="statCredits">$1M</div><div class="summary-stat-label">Budget Left</div></div>
         `;
       }
       const teams=getTeams(), tc=getTeamCounts(), oc=getOverseasCount(), used=getTotalCoinsUsed(), left=budget-used;
       const activeCount = getActivePlayerCount();
       const t1=teams[0]||'', t2=teams[1]||'';
-      const pEl=document.getElementById('statPlayers'); pEl.textContent=`${activeCount}/${MAX_PLAYERS}`; pEl.className='summary-stat-val'+(activeCount===MAX_PLAYERS?' good':'');
+      const splitOk = isTeamSplitValid();
+      const pEl=document.getElementById('statPlayers');
+      pEl.textContent=`${activeCount}/${MAX_PLAYERS}`;
+      pEl.className='summary-stat-val' + (
+        activeCount === MAX_PLAYERS && splitOk ? ' good' :
+        activeCount > 0 ? ' warn' : ''
+      );
       const sEl=document.getElementById('statSubstitute');
       if (sEl) {
           if (substitutionUsed) {
@@ -4797,8 +4844,20 @@ function renderLeaderboardUpdateNote() {
           }
       }
       const oEl=document.getElementById('statOverseas'); if(oEl){oEl.textContent=`${oc}/${MAX_OVERSEAS}`;oEl.className='summary-stat-val'+(oc===MAX_OVERSEAS?' warn':'');}
-      const t1El=document.getElementById('statTeam1'); const t1c=tc[t1]||0; t1El.textContent=`${t1c}/${MAX_PER_TEAM}`; t1El.className='summary-stat-val'+(t1c===MAX_PER_TEAM?' warn':''); document.getElementById('statTeam1Label').textContent=t1||'Team 1';
-      const t2El=document.getElementById('statTeam2'); const t2c=tc[t2]||0; t2El.textContent=`${t2c}/${MAX_PER_TEAM}`; t2El.className='summary-stat-val'+(t2c===MAX_PER_TEAM?' warn':''); document.getElementById('statTeam2Label').textContent=t2||'Team 2';
+      const t1El=document.getElementById('statTeam1'); const t1c=tc[t1]||0;
+      t1El.textContent=`${t1c}/${MAX_PER_TEAM}`;
+      t1El.className='summary-stat-val' + (
+        t1c === MAX_PER_TEAM ? ' warn' :
+        (!isIPLMatch && activeCount === MAX_PLAYERS && t1c < MIN_PER_TEAM) ? ' warn' : ''
+      );
+      document.getElementById('statTeam1Label').textContent=t1||'Team 1';
+      const t2El=document.getElementById('statTeam2'); const t2c=tc[t2]||0;
+      t2El.textContent=`${t2c}/${MAX_PER_TEAM}`;
+      t2El.className='summary-stat-val' + (
+        t2c === MAX_PER_TEAM ? ' warn' :
+        (!isIPLMatch && activeCount === MAX_PLAYERS && t2c < MIN_PER_TEAM) ? ' warn' : ''
+      );
+      document.getElementById('statTeam2Label').textContent=t2||'Team 2';
       const cEl=document.getElementById('statCredits'); cEl.textContent=formatMoneyCompact(left); cEl.className='summary-stat-val'+(left<0?' over':left<100000?' warn':'');
     }
 
@@ -5169,7 +5228,8 @@ const updateNote = currentMatchData?.score_update_note || '';
           return;
         }
         fa.innerHTML=`<button class="footer-btn outline" onclick="resetTeam()">Reset</button><button class="footer-btn primary" id="nextBtn" onclick="goToStep2()">Next &rarr;</button>`;
-        document.getElementById('nextBtn').disabled = getActivePlayerCount() < MAX_PLAYERS;
+        const canProceed = getActivePlayerCount() === MAX_PLAYERS && isTeamSplitValid();
+        document.getElementById('nextBtn').disabled = !canProceed;
       } else if (modalStep===2) {
         fa.innerHTML=`<button class="footer-btn outline" onclick="goToStep1()">&#8592; Back</button><button class="footer-btn primary" id="nextBtn2" onclick="goToStep3()">Next &rarr;</button>`;
         const nb2 = document.getElementById('nextBtn2');
@@ -5239,26 +5299,52 @@ const updateNote = currentMatchData?.score_update_note || '';
           <span class="ps-stat-lbl">Overseas</span>
         </div>`;
 
+      const splitOk = isTeamSplitValid();
+      const playerStatClass = activeCount === MAX_PLAYERS && splitOk
+        ? 'ps-stat-good'
+        : activeCount > 0 ? 'ps-stat-yellow' : '';
+
+      const t1StatClass = t1c >= MAX_PER_TEAM ? 'ps-stat-warn'
+        : (!isIPLMatch && activeCount === MAX_PLAYERS && t1c < MIN_PER_TEAM) ? 'ps-stat-warn'
+        : '';
+      const t2StatClass = t2c >= MAX_PER_TEAM ? 'ps-stat-warn'
+        : (!isIPLMatch && activeCount === MAX_PLAYERS && t2c < MIN_PER_TEAM) ? 'ps-stat-warn'
+        : '';
+
+      // Show a rule hint for non-IPL matches and a split warning when needed
+      const nonIplRulesHtml = !isIPLMatch ? `
+        <div class="ps-rules-hint">
+          <span>Pick ${MAX_PLAYERS} players</span>
+          <span class="ps-rules-divider">·</span>
+          <span>Minimum ${MIN_PER_TEAM} from each team</span>
+        </div>` : '';
+      const splitWarningHtml = (!isIPLMatch && activeCount === MAX_PLAYERS && !splitOk) ? `
+        <div class="ps-split-warning">
+          ⚠ Select at least ${MIN_PER_TEAM} players from each team
+        </div>` : '';
+
       const statsBarHtml = `
+        ${nonIplRulesHtml}
         <div class="ps-stats-bar">
-          <div class="ps-stat ${activeCount === MAX_PLAYERS ? 'ps-stat-good' : activeCount > 0 ? 'ps-stat-yellow' : ''}">
+          <div class="ps-stat ${playerStatClass}">
             <span class="ps-stat-val">${activeCount}/${MAX_PLAYERS}</span>
             <span class="ps-stat-lbl">Players</span>
           </div>
           ${overseasStat}
-          <div class="ps-stat ${t1c >= MAX_PER_TEAM ? 'ps-stat-warn' : ''}">
+          <div class="ps-stat ${t1StatClass}">
             <span class="ps-stat-val">${t1c}/${MAX_PER_TEAM}</span>
             <span class="ps-stat-lbl">${escapeHTML(t1 || 'Team 1')}</span>
           </div>
-          <div class="ps-stat ${t2c >= MAX_PER_TEAM ? 'ps-stat-warn' : ''}">
+          <div class="ps-stat ${t2StatClass}">
             <span class="ps-stat-val">${t2c}/${MAX_PER_TEAM}</span>
             <span class="ps-stat-lbl">${escapeHTML(t2 || 'Team 2')}</span>
           </div>
-          <div class="ps-stat ${left < 0 ? 'ps-stat-over' : left < 5 ? 'ps-stat-warn' : ''}">
+          <div class="ps-stat ${left < 0 ? 'ps-stat-over' : left < 100000 ? 'ps-stat-warn' : ''}">
             <span class="ps-stat-val">${formatMoneyCompact(left)}</span>
             <span class="ps-stat-lbl">Budget</span>
           </div>
-        </div>`;
+        </div>
+        ${splitWarningHtml}`;
 
       const teamFilterHtml = `
         <div class="ps-team-filter-row">
@@ -5482,8 +5568,8 @@ const updateNote = currentMatchData?.score_update_note || '';
         } else {
           if (activeCount >= MAX_PLAYERS) {
             const msg = substituteBoosterEnabled
-              ? 'You already selected 11 active players and 1 substitute.'
-              : 'You can only select 11 players.';
+              ? `You already selected ${MAX_PLAYERS} active players and 1 substitute.`
+              : `You can only select ${MAX_PLAYERS} players.`;
             setFooterMsg(msg, 'error');
             return;
           }
@@ -5495,7 +5581,11 @@ const updateNote = currentMatchData?.score_update_note || '';
           trackClick('player_added', { fantasy_match_id: currentFantasyMatchId, player_name: player.player_name, player_id: pid, player_team: player.team_name, player_type: player.player_type });
 
           if (getActivePlayerCount() === MAX_PLAYERS) {
-            setFooterMsg('11 players selected! Tap Next to choose your captain.', 'info');
+            if (!isIPLMatch && !isTeamSplitValid()) {
+              setFooterMsg(`${MAX_PLAYERS} players selected but one team has fewer than ${MIN_PER_TEAM} — adjust your team split to continue.`, 'warn');
+            } else {
+              setFooterMsg(`${MAX_PLAYERS} players selected! Tap Next to choose your captain.`, 'info');
+            }
           }
         }
       }
@@ -5507,7 +5597,8 @@ const updateNote = currentMatchData?.score_update_note || '';
 
     /* ── Step 2: Captain / VC ── */
     function goToStep2() {
-      if (getActivePlayerCount() !== MAX_PLAYERS) { setFooterMsg('Please select exactly 11 active players first.','error'); return; }
+      if (getActivePlayerCount() !== MAX_PLAYERS) { setFooterMsg(`Please select exactly ${MAX_PLAYERS} players first.`, 'error'); return; }
+      if (!isIPLMatch && !isTeamSplitValid()) { setFooterMsg(`Select at least ${MIN_PER_TEAM} players from each team before continuing.`, 'error'); return; }
       trackClick('modal_step_2_captain', { fantasy_match_id: currentFantasyMatchId, players_selected: getActivePlayerCount() });
       modalStep=2;
       document.getElementById('modalTitle').textContent = 'Captain & Vice-Captain';
@@ -5895,7 +5986,14 @@ const updateNote = currentMatchData?.score_update_note || '';
         if (!res.ok) throw new Error(data.error||'Could not load fantasy match.');
 
         currentMatchData=data.match; allPlayers=data.players||[];
-        budget=Number(currentMatchData.budget_coins||75);
+        budget=Number(currentMatchData.budget_coins||1000000);
+
+        // Set per-match team config — used throughout the modal
+        const _fmt    = String(currentMatchData.match_format || 'ipl').toLowerCase();
+        isIPLMatch    = _fmt === 'ipl';
+        MAX_PLAYERS   = Number(currentMatchData.fantasy_team_size)    || (isIPLMatch ? 11 : 8);
+        MAX_PER_TEAM  = Number(currentMatchData.max_players_per_team) || (isIPLMatch ? 7  : 5);
+        MIN_PER_TEAM  = Number(currentMatchData.min_players_per_team) || (isIPLMatch ? 4  : 3);
         await loadUserCoinBalance();
         const status=String(currentMatchData.status||'open').toLowerCase();
         const isLive=status==='locked';
@@ -5929,7 +6027,7 @@ const updateNote = currentMatchData?.score_update_note || '';
         }
 
         document.getElementById('summaryBar').style.display='';
-        document.getElementById('modalTitle').textContent=currentMatchData.match_title||'Create Your Fantasy XI';
+        document.getElementById('modalTitle').textContent=currentMatchData.match_title||(isIPLMatch?'Create Your Fantasy XI':'Create Your Fantasy 8');
         document.getElementById('modalSubtitle').textContent=`${currentMatchData.team_1} vs ${currentMatchData.team_2} · Budget - ${formatMoneyCompact(budget)}`;
         if(currentMatchData.match_start_time) startCountdown(new Date(currentMatchData.match_start_time));
         await loadSavedFantasyTeam(fantasyMatchId);
@@ -6044,7 +6142,8 @@ const updateNote = currentMatchData?.score_update_note || '';
       setFooterMsg('');
 
       if (!userId) { showUsernameModal(); setFooterMsg('Please sign in to save your team.', 'error'); return; }
-      if (activePlayerIds.length !== MAX_PLAYERS) { setFooterMsg('Please select exactly 11 active players.', 'error'); return; }
+      if (activePlayerIds.length !== MAX_PLAYERS) { setFooterMsg(`Please select exactly ${MAX_PLAYERS} active players.`, 'error'); return; }
+      if (!isIPLMatch && !isTeamSplitValid()) { setFooterMsg(`Select at least ${MIN_PER_TEAM} players from each team.`, 'error'); return; }
       if (substituteBoosterEnabled && !substitutePlayerId) { setFooterMsg('Please choose your substitute player.', 'error'); return; }
       // Only check cost for NEW (unpaid) boosters; pending refunds offset new costs
       const pendingRefund = (!captainBoosterSelected && alreadyPaidCaptainBooster ? 300 : 0)
@@ -6065,8 +6164,8 @@ const updateNote = currentMatchData?.score_update_note || '';
       if (!captainId) { setFooterMsg('Please choose a captain (tap C next to a player).', 'error'); return; }
       if (!viceCaptainId) { setFooterMsg('Please choose a vice-captain (tap VC next to a player).', 'error'); return; }
       if (captainId === viceCaptainId) { setFooterMsg('Captain and vice-captain cannot be the same player.', 'error'); return; }
-      if (!activePlayerIds.includes(Number(captainId))) { setFooterMsg('Captain must be one of your 11 active players.', 'error'); return; }
-      if (!activePlayerIds.includes(Number(viceCaptainId))) { setFooterMsg('Vice-captain must be one of your 11 active players.', 'error'); return; }
+      if (!activePlayerIds.includes(Number(captainId))) { setFooterMsg(`Captain must be one of your ${MAX_PLAYERS} active players.`, 'error'); return; }
+      if (!activePlayerIds.includes(Number(viceCaptainId))) { setFooterMsg(`Vice-captain must be one of your ${MAX_PLAYERS} active players.`, 'error'); return; }
 
       const capPlayer = allPlayers.find(p => Number(p.id) === captainId);
       const vcPlayer  = allPlayers.find(p => Number(p.id) === viceCaptainId);
@@ -6136,7 +6235,7 @@ const updateNote = currentMatchData?.score_update_note || '';
             </svg>
           </div>
           <div class="success-title">Team Created Successfully!</div>
-          <div class="success-sub">Your Fantasy XI has been saved.<br>Good luck this match!</div>
+          <div class="success-sub">Your Fantasy ${isIPLMatch ? 'XI' : '8'} has been saved.<br>Good luck this match!</div>
         </div>`;
       setTimeout(() => {
         closeTeamModal();
