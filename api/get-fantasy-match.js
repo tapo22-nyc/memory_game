@@ -33,7 +33,19 @@ module.exports = async function handler(req, res) {
     const matches = await sql`
       SELECT
         *,
-        COALESCE(match_format, 'ipl') AS match_format
+        COALESCE(match_format, 'ipl') AS match_format,
+        COALESCE(
+          fantasy_team_size,
+          CASE WHEN LOWER(COALESCE(match_format, 'ipl')) = 'ipl' THEN 11 ELSE 8 END
+        ) AS fantasy_team_size,
+        COALESCE(
+          min_players_per_team,
+          CASE WHEN LOWER(COALESCE(match_format, 'ipl')) = 'ipl' THEN 4 ELSE 3 END
+        ) AS min_players_per_team,
+        COALESCE(
+          max_players_per_team,
+          CASE WHEN LOWER(COALESCE(match_format, 'ipl')) = 'ipl' THEN 7 ELSE 5 END
+        ) AS max_players_per_team
       FROM fantasy_matches
       WHERE id = ${Number(fantasy_match_id)}
       LIMIT 1

@@ -59,13 +59,13 @@ module.exports = async function handler(req, res) {
       : null;
 
     // ── Player count / duplicate / captain checks ─────────────
-    if (cleanActivePlayerIds.length !== 11) {
+    if (cleanActivePlayerIds.length !== teamSize) {
       return res.status(400).json({
-        error: 'You must select exactly 11 active players.'
+        error: `You must select exactly ${teamSize} active players.`
       });
     }
 
-    if (new Set(cleanActivePlayerIds).size !== 11) {
+    if (new Set(cleanActivePlayerIds).size !== teamSize) {
       return res.status(400).json({
         error: 'Duplicate active players are not allowed.'
       });
@@ -73,13 +73,13 @@ module.exports = async function handler(req, res) {
 
     if (!cleanActivePlayerIds.includes(captainId)) {
       return res.status(400).json({
-        error: 'Captain must be one of your 11 active players.'
+        error: `Captain must be one of your ${teamSize} active players.`
       });
     }
 
     if (!cleanActivePlayerIds.includes(viceCaptainId)) {
       return res.status(400).json({
-        error: 'Vice-captain must be one of your 11 active players.'
+        error: `Vice-captain must be one of your ${teamSize} active players.`
       });
     }
 
@@ -123,6 +123,13 @@ module.exports = async function handler(req, res) {
       });
     }
 
+    // ── Derive per-match team config ─────────────────────────────
+    const fmt        = String(match.match_format || 'ipl').toLowerCase();
+    const isIPL      = fmt === 'ipl';
+    const teamSize   = Number(match.fantasy_team_size)    || (isIPL ? 11 : 8);
+    const minPerTeam = Number(match.min_players_per_team) || (isIPL ? 4  : 3);
+    const maxPerTeam = Number(match.max_players_per_team) || (isIPL ? 7  : 5);
+
     // ── Load player costs and team codes from DB ──────────────
     const allSelectedPlayerIds = subBoosterOn
       ? [...cleanActivePlayerIds, substitutePlayerId]
@@ -159,9 +166,9 @@ module.exports = async function handler(req, res) {
       ? players.find(p => Number(p.id) === substitutePlayerId)
       : null;
 
-    if (activePlayers.length !== 11) {
+    if (activePlayers.length !== teamSize) {
       return res.status(400).json({
-        error: 'Could not validate your 11 active players.'
+        error: `Could not validate your ${teamSize} active players.`
       });
     }
 
@@ -171,16 +178,25 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // ── Max 7 players per team rule ───────────────────────────
+    // ── Per-team player count rules ───────────────────────────
     const teamCounts = activePlayers.reduce((acc, p) => {
       acc[p.team_code] = (acc[p.team_code] || 0) + 1;
       return acc;
     }, {});
 
-    if (Object.values(teamCounts).some(count => count > 7)) {
+    if (Object.values(teamCounts).some(count => count > maxPerTeam)) {
       return res.status(400).json({
-        error: 'You can select a maximum of 7 active players from one team.'
+        error: `You can select a maximum of ${maxPerTeam} active players from one team.`
       });
+    }
+
+    // Non-IPL: each team must have at least minPerTeam players
+    if (!isIPL) {
+      if (Object.values(teamCounts).some(count => count < minPerTeam)) {
+        return res.status(400).json({
+          error: `You must select at least ${minPerTeam} players from each team.`
+        });
+      }
     }
 
     // ── Budget checks ─────────────────────────────────────────
@@ -513,8 +529,8 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({
       success:                   true,
       fantasy_user_team_id:      fantasyUserTeamId,
-      selected_players:          subBoosterOn ? 12 : 11,
-      active_players:            11,
+      selected_players:          subBoosterOn ? teamSize + 1 : teamSize,
+      active_players:            teamSize,
       substitute_player_id:      subBoosterOn ? substitutePlayerId : null,
       substitute_booster_used:   subBoosterOn,
       captain_booster_used:      captainBoosterOn,
