@@ -50,7 +50,7 @@ module.exports = async function handler(req, res) {
             )
         ),
         with_scores AS (
-          SELECT
+          SELECT DISTINCT ON (ap.fantasy_match_id, ap.player_id, ap.player_source)
             ap.*,
             COALESCE(pfs.role,                 'unknown') AS role,
             COALESCE(pfs.final_impact_score,   50.0)      AS final_impact_score,
@@ -61,6 +61,8 @@ module.exports = async function handler(req, res) {
           LEFT JOIN player_format_scores pfs
             ON  LOWER(pfs.player_name) = LOWER(ap.player_name)
             AND pfs.format = ap.score_format
+          ORDER BY ap.fantasy_match_id, ap.player_id, ap.player_source,
+                   pfs.raw_budget_score DESC NULLS LAST
         ),
         with_side AS (
           SELECT *,
