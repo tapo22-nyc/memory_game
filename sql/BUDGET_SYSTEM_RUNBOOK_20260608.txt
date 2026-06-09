@@ -1,0 +1,262 @@
+============================================================
+BUDGET SYSTEM RUNBOOK
+3-Layer Player Valuation System
+Last updated: 2026-06-08
+============================================================
+
+WHAT WE BUILT AND WHY
+---------------------
+Problem: Player budgets were calculated globally against ALL
+players in the database. This made too many players expensive,
+so users couldn't build a valid 11-player team within $1M.
+
+Fix: We added a 3rd layer. Global scores still exist, but the
+FINAL DOLLAR PRICE is now calculated only within the 24 active
+players of each specific match. Every match now guarantees:
+  - 4 premium players  ($200K-$250K)
+  - 8 mid players      ($120K-$190K)
+  - 12 value players   ($50K-$120K)
+
+This means users can always pick mostly value/mid players and
+stay within the $1M budget. The stars are expensive, but
+there are always 12 affordable options.
+
+
+THE 3 LAYERS
+------------
+Layer 1: player_career_stats_master
+  The master table. Stores career batting and bowling stats
+  across T20, ODI, and Test for every player.
+  You manually update this table when stats change.
+
+Layer 2: player_format_scores
+  One row per player per format (t20 / odi / test).
+  Stores all the percentile scores and calculated impact scores.
+  Players are ranked GLOBALLY against all players in the same
+  role and format group. This is the input to Layer 3.
+  Refresh this whenever Layer 1 changes.
+
+Layer 3: match_player_budgets
+  One row per player per fantasy match.
+  Final dollar budget calculated ONLY within the 24 active
+  players in that specific match. This is what the Create Team
+  page now reads for player prices.
+  Refresh this whenever Layer 2 changes, or for new matches.
+
+
+FILES CREATED
+-------------
+SQL files (run in Neon):
+  sql/01_create_master_player_career_stats.sql
+  sql/02_create_player_format_scores.sql
+  sql/03_create_match_player_budgets.sql
+  sql/04_verify_player_budget_system.sql
+
+API files (deploy to Vercel):
+  api/refresh-player-format-scores.js   → GET endpoint
+  api/refresh-match-player-budgets.js   → GET endpoint
+
+Updated file (deploy to Vercel):
+  api/get-fantasy-match.js              → now reads match-level budget
+
+
+============================================================
+INITIAL SETUP — RUN THESE STEPS ONCE
+============================================================
+
+STEP 1 — Run in Neon SQL Editor
+File: sql/01_create_master_player_career_stats.sql
+
+What it does:
+  - Adds player_role and created_at columns to the existing
+    player_career_stats_master table (safe if they already exist)
+  - Backfills player_role for all existing players by joining
+    cricket_player_pool and cricapi_player_master
+  - Adds indexes
+
+What to check after running:
+  - Look for the query result "players_with_null_role"
+  - Should be 0 or very close to 0
+  - If some players still have null role, you can set them
+    manually: UPDATE player_career_stats_master SET player_role
+    = 'batter' WHERE player_name = 'X' AND country = 'Y';
+
+
+STEP 2 — Run in Neon SQL Editor
+File: sql/02_create_player_format_scores.sql
+
+What it does:
+  - Creates the player_format_scores table (new table)
+  - Immediately runs the refresh: deletes and reinserts all
+    player scores using the full percentile calculation
+  - One row per player per format = 3x your player count
+
+What to check after running:
+  - The verify query at the bottom shows row counts by format
+  - You should see t20/odi/test each with the same player count
+  - avg_impact median should be around 40-60 for each role group
+
+
+STEP 3 — Run in Neon SQL Editor
+File: sql/03_create_match_player_budgets.sql
+
+What it does:
+  - Creates the match_player_budgets table (new table)
+  - Immediately populates it for all fantasy_matches with
+    status = 'open'
+  - Assigns tiers: top 2 batting-side + top 2 bowling-side
+    become premium, next 8 become mid, remaining 12 become value
+  - Calculates final dollar budget within each tier
+
+What to check after running:
+  - The verify query at the bottom shows per-match tier counts
+  - Every match should show: premium=4, mid=8, value=12
+  - If you see different numbers, check FILE 4 Section C2-C4
+
+
+STEP 4 — Run in Neon SQL Editor (verification only)
+File: sql/04_verify_player_budget_system.sql
+
+What it does:
+  - This file is ONLY verification queries. It does not modify
+    any data. Run the sections you care about.
+
+Key sections to run:
+  Section C2: matches without exactly 4 premium players → should be empty
+  Section C3: matches without exactly 8 mid players     → should be empty
+  Section C4: matches without exactly 12 value players  → should be empty
+  Section C5: budgets below $50K                        → should be empty
+  Section C6: budgets above $250K                       → should be empty
+  Section C7: budgets not rounded to $5K                → should be empty
+  Section C13: minimum 11-player team cost              → should be under $1M
+  Section C14: players defaulted to score=50            → investigate any rows here
+                                                          (means name mismatch in master table)
+
+IMPORTANT: In C11 and C12, replace "fantasy_match_id = 1"
+with your actual match ID before running.
+
+
+STEP 5 — Deploy to Vercel
+Deploy these 3 files:
+  api/refresh-player-format-scores.js   (new)
+  api/refresh-match-player-budgets.js   (new)
+  api/get-fantasy-match.js              (updated)
+
+The updated get-fantasy-match.js now reads player_cost_coins
+from match_player_budgets first, then falls back to the old
+global player_cost_coins if no match budget exists yet.
+So old matches still work even before you run the refresh.
+
+
+STEP 6 — Final API call to activate
+After deploying, call this URL in your browser or Postman:
+
+  GET /api/refresh-match-player-budgets
+
+No parameters needed. This refreshes all open matches.
+You should see a JSON response like:
+  { "success": true, "rows_upserted": 48, "matches_refreshed": [1, 2] }
+
+Then open Create Team and confirm player prices look correct.
+Premium players should show $200K-$250K range.
+Value players should show $50K-$120K range.
+
+
+============================================================
+ONGOING WORKFLOW — AFTER INITIAL SETUP
+============================================================
+
+Whenever you manually change stats in player_career_stats_master:
+
+  Step 1: Call GET /api/refresh-player-format-scores
+          Recomputes all global percentile scores.
+          Takes 1-3 seconds.
+
+  Step 2: Call GET /api/refresh-match-player-budgets
+          Recomputes match-level tiers for all open matches.
+          Takes 1-3 seconds.
+
+  Done. No Neon SQL needed for routine stat updates.
+
+
+For a NEW match (just added to fantasy_matches):
+
+  Step 1: Make sure players are added to fantasy_match_players
+  Step 2: Call GET /api/refresh-match-player-budgets?fantasy_match_id=<id>
+          Replace <id> with the actual match ID.
+          This calculates budgets for just that one match.
+
+
+For manually updating one player's stats:
+
+  Option A (recommended):
+    Run the sample UPDATE query from FILE 1 Step 5 in Neon,
+    then call the two refresh APIs above.
+
+  Option B:
+    Use the UPSERT template in FILE 1 Step 6 to insert a
+    new player or fully replace their stats.
+
+
+============================================================
+TROUBLESHOOTING
+============================================================
+
+Problem: Players still showing old global prices
+  Fix: make sure get-fantasy-match.js was deployed, then call
+       GET /api/refresh-match-player-budgets
+
+Problem: A match shows premium=2 instead of premium=4
+  Cause: One side (batting or bowling) has fewer than 2 players
+  Fix:   Check that match's player pool. There may be too many
+         all-rounders classified to the same side. You can
+         manually override a player's role in
+         player_career_stats_master to rebalance.
+
+Problem: Players showing budget_tier = null
+  Cause: match_player_budgets was not refreshed for that match
+  Fix:   Call GET /api/refresh-match-player-budgets?fantasy_match_id=<id>
+
+Problem: A player defaulted to $125,000 (score=50, mid tier)
+  Cause: Name mismatch between ipl_player_master / cricket_player_pool
+         and player_career_stats_master
+  Fix:   Run FILE 4 Section C14 to find mismatched players.
+         Check for spelling differences. Fix the name in
+         player_career_stats_master to match exactly.
+
+Problem: Minimum team cost still over $1M (FILE 4 Section C13)
+  Cause: Not enough value players in the match
+  Fix:   Verify there are 24 active players (FILE 4 Section C10).
+         If a side has unusual role distribution, some mid players
+         may be priced near $190K. Check the tier composition.
+
+
+============================================================
+BUDGET RANGES REFERENCE
+============================================================
+
+Tier      Players   Budget range    Selection method
+--------  --------  --------------  ---------------------------
+Premium   4 total   $200K - $250K   Top 2 batting-side by score
+                                    + Top 2 bowling-side by score
+
+Mid       8 total   $120K - $190K   Next 8 highest score overall
+                                    (after premium removed)
+
+Value     12 total  $50K  - $120K   Remaining 12 players
+
+Batting side = batter, wicket_keeper, batting-heavy all_rounder
+Bowling side = bowler, bowling-heavy all_rounder
+
+All_rounder side is determined by:
+  batting_budget_score >= bowling_budget_score → batting side
+  otherwise → bowling side
+
+Within each tier:
+  Budget is scaled linearly from floor to ceiling based on
+  each player's raw_budget_score relative to the tier's min/max.
+  Rounded to nearest $5,000.
+  Clamped within tier range.
+
+Team budget cap: $1,000,000 for 11 players.
+============================================================
