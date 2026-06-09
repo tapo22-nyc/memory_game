@@ -2528,10 +2528,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       color: #d97706;
       letter-spacing: 0.2px;
     }
-    .mc2-status.urgent  { color: #dc2626; }
-    .mc2-status.expired { color: #9ca3af; font-weight: 600; }
-    .mc2-status.locked  { color: #d97706; }
-    .mc2-status.closed  { color: #9ca3af; letter-spacing: 0.3px; font-weight: 600; }
+    .mc2-status.urgent    { color: #dc2626; font-weight: 700; }
+    .mc2-status.expired   { color: #9ca3af; font-weight: 600; }
+    .mc2-status.locked    { color: #d97706; }
+    .mc2-status.closed    { color: #9ca3af; letter-spacing: 0.3px; font-weight: 600; }
+    .mc2-status.countdown { color: #d97706; font-weight: 700; }
+    .mc2-status.date {
+      color: #6b7280;
+      font-weight: 600;
+      font-size: 0.66rem;
+      letter-spacing: 0;
+      text-align: right;
+      line-height: 1.5;
+      white-space: normal;
+      max-width: 68%;
+    }
     .mc2-title {
       font-size: 1.08rem;
       font-weight: 800;
@@ -4327,6 +4338,27 @@ function renderSubstituteBoosterCard() {
 
     const _timerIntervals = {};
 
+    // Format a Date into "🗓 Sat, Jun 14 • 10:00 AM ET | 7:30 PM IST"
+    function formatMatchDateTime(d) {
+      const etParts = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York',
+        weekday: 'short', month: 'short', day: 'numeric',
+        hour: 'numeric', minute: '2-digit', hour12: true
+      }).formatToParts(d);
+
+      const get = type => (etParts.find(p => p.type === type) || {}).value || '';
+      const etTime = `${get('hour')}:${get('minute')} ${get('dayPeriod')} ET`;
+      const etDate = `${get('weekday')}, ${get('month')} ${get('day')}`;
+
+      // IST — just the time portion
+      const istTime = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Kolkata',
+        hour: 'numeric', minute: '2-digit', hour12: true
+      }).format(d).replace('\u202f', ' ');  // narrow no-break space → regular space
+
+      return `🗓 ${etDate} • ${etTime} | ${istTime} IST`;
+    }
+
     function startMatchTimers() {
       Object.values(_timerIntervals).forEach(clearInterval);
 
@@ -4339,32 +4371,36 @@ function renderSubstituteBoosterCard() {
 
         function tick() {
           const diff = deadline.getTime() - Date.now();
+          const baseClass = isMc2 ? 'mc2-status' : 'match-timer';
 
           if (diff <= 0) {
-            timerEl.textContent = 'Deadline passed';
-            timerEl.className = isMc2 ? 'mc2-status expired' : 'match-timer expired';
+            timerEl.textContent = '🔒 Game Locked';
+            timerEl.className = `${baseClass} locked`;
             clearInterval(_timerIntervals[timerEl.id]);
             return;
           }
 
-          const totalMin = Math.floor(diff / 60000);
-          const h = Math.floor(totalMin / 60);
-          const m = totalMin % 60;
-
-          const parts = [];
-          if (h > 0) parts.push(`${h}h`);
-          parts.push(m > 0 ? `${m}m` : (h === 0 ? '< 1m' : '0m'));
-
-          timerEl.textContent = `⏱ Team lock in ${parts.join(' ')}`;
-          if (isMc2) {
-            timerEl.className = diff < 30 * 60 * 1000 ? 'mc2-status urgent' : 'mc2-status';
+          if (diff > 24 * 60 * 60 * 1000) {
+            // > 24 h — show formatted date + time in ET and IST
+            timerEl.textContent = formatMatchDateTime(deadline);
+            timerEl.className = `${baseClass} date`;
+          } else if (diff > 60 * 60 * 1000) {
+            // 1 h – 24 h — countdown with hours
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            timerEl.textContent = `⏰ Starts in ${h}h ${m}m`;
+            timerEl.className = `${baseClass} countdown`;
           } else {
-            timerEl.className = diff < 30 * 60 * 1000 ? 'match-timer urgent' : 'match-timer';
+            // < 1 h — urgent countdown in minutes
+            const m = Math.floor(diff / 60000);
+            timerEl.textContent = m > 0 ? `🔴 Starts in ${m}m` : '🔴 Starting now';
+            timerEl.className = `${baseClass} urgent`;
           }
         }
 
         tick();
-        _timerIntervals[timerEl.id] = setInterval(tick, 1000);
+        // 30 s is granular enough — saves battery vs 1 s for cards that are days away
+        _timerIntervals[timerEl.id] = setInterval(tick, 30000);
       });
     }
 
