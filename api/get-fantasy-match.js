@@ -53,7 +53,7 @@ module.exports = async function handler(req, res) {
         COALESCE(ipm.player_name, cpp.player_name)                         AS player_name,
         COALESCE(ipm.team_code,   cpp.country)                             AS team_name,
         COALESCE(ipm.player_tag,  cpp.player_tag)                          AS role,
-        COALESCE(ipm.player_type, cpp.player_type)                         AS player_type,
+        COALESCE(ipm.player_type, cpp.player_tag)                          AS player_type,
         COALESCE(ipm.auction_price_cr, cpp.player_cost_coins)              AS auction_price_cr,
         COALESCE(
           mpb.final_player_budget,
