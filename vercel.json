@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/lock-fantasy-match",
-      "schedule": "59 9 24 5 *"
+      "schedule": "0 8 13 6 *"
     },
 
     {
@@ -12,7 +12,7 @@
 
     {
       "path": "/api/cron-sync-fantasy-score",
-      "schedule": "0 */2 * * *"
+      "schedule": "*/15 * * * *"
     }
   ]
 }
