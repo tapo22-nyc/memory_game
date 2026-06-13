@@ -18,11 +18,11 @@ module.exports = async function handler(req, res) {
 
     const players = await sql`
       SELECT
-        pm.id,
-        pm.player_name,
-        pm.team_code,
-        pm.player_tag,
-        pm.player_type,
+        futp.player_id                                        AS id,
+        COALESCE(ipm.player_name, cpp.player_name)           AS player_name,
+        COALESCE(ipm.team_code,   cpp.country)               AS team_code,
+        COALESCE(ipm.player_tag,  cpp.player_tag)            AS player_tag,
+        COALESCE(ipm.player_type, cpp.player_tag)            AS player_type,
 
         fpms.runs,
         fpms.balls_faced,
@@ -42,8 +42,8 @@ module.exports = async function handler(req, res) {
         fpms.fantasy_points,
 
         CASE
-          WHEN fut.captain_player_id = pm.id THEN 'C'
-          WHEN fut.vice_captain_player_id = pm.id THEN 'VC'
+          WHEN fut.captain_player_id      = futp.player_id THEN 'C'
+          WHEN fut.vice_captain_player_id = futp.player_id THEN 'VC'
           ELSE ''
         END AS captain_role
 
@@ -51,10 +51,17 @@ module.exports = async function handler(req, res) {
       JOIN fantasy_user_team_players futp
         ON fut.id = futp.fantasy_user_team_id
       JOIN fantasy_player_match_stats fpms
-        ON fpms.player_id = futp.player_id
+        ON fpms.player_id        = futp.player_id
        AND fpms.fantasy_match_id = fut.fantasy_match_id
-      JOIN ipl_player_master pm
-        ON pm.id = futp.player_id
+      LEFT JOIN fantasy_match_players fmp
+        ON fmp.player_id        = futp.player_id
+       AND fmp.fantasy_match_id = fut.fantasy_match_id
+      LEFT JOIN ipl_player_master ipm
+        ON ipm.id = futp.player_id
+       AND COALESCE(fmp.player_source, 'ipl') = 'ipl'
+      LEFT JOIN cricket_player_pool cpp
+        ON cpp.id = futp.player_id
+       AND fmp.player_source = 'cricket'
       WHERE fut.user_id = ${Number(user_id)}
         AND fut.fantasy_match_id = ${Number(fantasy_match_id)}
         AND futp.is_active = TRUE

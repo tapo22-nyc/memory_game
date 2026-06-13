@@ -28,27 +28,34 @@ module.exports = async function handler(req, res) {
 
     const players = await sql`
       SELECT
-        pm.id,
-        pm.player_name,
-        pm.team_code AS team_name,
-        pm.player_tag AS role,
-        pm.player_type,
-        pm.auction_price_cr,
-        pm.player_cost_coins,
+        futp.player_id                                          AS id,
+        COALESCE(ipm.player_name, cpp.player_name)             AS player_name,
+        COALESCE(ipm.team_code,   cpp.country)                 AS team_name,
+        COALESCE(ipm.player_tag,  cpp.player_tag)              AS role,
+        COALESCE(ipm.player_type, cpp.player_tag)              AS player_type,
+        COALESCE(ipm.auction_price_cr, cpp.player_cost_coins)  AS auction_price_cr,
+        COALESCE(ipm.player_cost_coins, cpp.player_cost_coins) AS player_cost_coins,
 
         futp.player_slot,
         futp.is_active,
         futp.activated_at,
         futp.deactivated_at
       FROM fantasy_user_team_players futp
-      JOIN ipl_player_master pm
-        ON pm.id = futp.player_id
+      LEFT JOIN fantasy_match_players fmp
+        ON fmp.player_id        = futp.player_id
+       AND fmp.fantasy_match_id = ${team[0].fantasy_match_id}
+      LEFT JOIN ipl_player_master ipm
+        ON ipm.id = futp.player_id
+       AND COALESCE(fmp.player_source, 'ipl') = 'ipl'
+      LEFT JOIN cricket_player_pool cpp
+        ON cpp.id = futp.player_id
+       AND fmp.player_source = 'cricket'
       WHERE futp.fantasy_user_team_id = ${team[0].id}
       ORDER BY
         futp.is_active DESC,
         futp.player_slot,
-        pm.team_code,
-        pm.player_name
+        COALESCE(ipm.team_code, cpp.country),
+        COALESCE(ipm.player_name, cpp.player_name)
     `;
 
     return res.status(200).json({
