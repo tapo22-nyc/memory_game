@@ -23,7 +23,20 @@ module.exports = async function handler(req, res) {
             p.player_name,
             p.country,
             COALESCE(
-              p.player_role,
+              -- Normalise player_role to the canonical 4 values.
+              -- Handles variants like 'wicketkeeper' (from manual CSV imports).
+              CASE LOWER(p.player_role)
+                WHEN 'batter'        THEN 'batter'
+                WHEN 'batsman'       THEN 'batter'
+                WHEN 'bowler'        THEN 'bowler'
+                WHEN 'all_rounder'   THEN 'all_rounder'
+                WHEN 'all-rounder'   THEN 'all_rounder'
+                WHEN 'allrounder'    THEN 'all_rounder'
+                WHEN 'wicket_keeper' THEN 'wicket_keeper'
+                WHEN 'wicketkeeper'  THEN 'wicket_keeper'
+                ELSE NULL
+              END,
+              -- Fallback: resolve from cricket_player_pool (SL, WI, IND, AFG, BAN, ...)
               CASE COALESCE(cpp.player_type, ipm.player_type)
                 WHEN 'Batsman'      THEN 'batter'
                 WHEN 'Bowler'       THEN 'bowler'
@@ -38,6 +51,9 @@ module.exports = async function handler(req, res) {
             AND cpp.country = CASE p.country
                   WHEN 'Sri Lanka'   THEN 'SL'
                   WHEN 'West Indies' THEN 'WI'
+                  WHEN 'India'       THEN 'IND'
+                  WHEN 'Afghanistan' THEN 'AFG'
+                  WHEN 'Bangladesh'  THEN 'BAN'
                   ELSE NULL END
           LEFT JOIN cricapi_player_master ipm
             ON  LOWER(ipm.player_name) = LOWER(p.player_name)
@@ -50,21 +66,25 @@ module.exports = async function handler(req, res) {
             COALESCE(p.t20_bat_50s,0) AS bat_50s, COALESCE(p.t20_bat_100s,0) AS bat_100s,
             COALESCE(p.t20_bat_4s,0) AS bat_4s, COALESCE(p.t20_bat_6s,0) AS bat_6s,
             COALESCE(p.t20_bowl_matches,0) AS bowl_matches, COALESCE(p.t20_bowl_wickets,0) AS bowl_wickets,
-            COALESCE(p.t20_bowl_economy,99) AS bowl_economy, COALESCE(p.t20_bowl_5wi,0) AS bowl_5wi, 0 AS bowl_10wi
+            CASE WHEN COALESCE(p.t20_bowl_economy,0) = 0 THEN 99 ELSE p.t20_bowl_economy END AS bowl_economy,
+            COALESCE(p.t20_bowl_5wi,0) AS bowl_5wi, 0 AS bowl_10wi
           FROM player_career_stats_master p JOIN player_roles r USING (player_name, country)
           UNION ALL
           SELECT p.player_name, p.country, p.player_pool_source, r.role, 'odi',
             COALESCE(p.odi_bat_matches,0), COALESCE(p.odi_bat_runs,0), COALESCE(p.odi_bat_avg,0),
             COALESCE(p.odi_bat_strike_rate,0), COALESCE(p.odi_bat_50s,0), COALESCE(p.odi_bat_100s,0),
             COALESCE(p.odi_bat_4s,0), COALESCE(p.odi_bat_6s,0), COALESCE(p.odi_bowl_matches,0),
-            COALESCE(p.odi_bowl_wickets,0), COALESCE(p.odi_bowl_economy,99), COALESCE(p.odi_bowl_5wi,0), 0
+            COALESCE(p.odi_bowl_wickets,0),
+            CASE WHEN COALESCE(p.odi_bowl_economy,0) = 0 THEN 99 ELSE p.odi_bowl_economy END,
+            COALESCE(p.odi_bowl_5wi,0), 0
           FROM player_career_stats_master p JOIN player_roles r USING (player_name, country)
           UNION ALL
           SELECT p.player_name, p.country, p.player_pool_source, r.role, 'test',
             COALESCE(p.test_bat_matches,0), COALESCE(p.test_bat_runs,0), COALESCE(p.test_bat_avg,0),
             COALESCE(p.test_bat_strike_rate,0), COALESCE(p.test_bat_50s,0), COALESCE(p.test_bat_100s,0),
             COALESCE(p.test_bat_4s,0), COALESCE(p.test_bat_6s,0), COALESCE(p.test_bowl_matches,0),
-            COALESCE(p.test_bowl_wickets,0), COALESCE(p.test_bowl_economy,99),
+            COALESCE(p.test_bowl_wickets,0),
+            CASE WHEN COALESCE(p.test_bowl_economy,0) = 0 THEN 99 ELSE p.test_bowl_economy END,
             COALESCE(p.test_bowl_5wi,0), COALESCE(p.test_bowl_10wi,0)
           FROM player_career_stats_master p JOIN player_roles r USING (player_name, country)
         ),
