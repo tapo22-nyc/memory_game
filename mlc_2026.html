@@ -344,33 +344,230 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .match-footer { padding: 10px 12px; }
     .match-countdown { font-size: 0.68rem; }
   }
+
+  /* ── Scrollable scoring modal ── */
+  .scoring-modal-box {
+    max-height: 88dvh; display: flex; flex-direction: column; overflow: hidden;
+  }
+  .scoring-modal-body {
+    overflow-y: auto; flex: 1; padding: 16px; -webkit-overflow-scrolling: touch;
+  }
+  .scoring-modal-body::-webkit-scrollbar { width: 4px; }
+  .scoring-modal-body::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+  .scoring-section {
+    background: #f9fafb; border: 1px solid #e5e7eb;
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 10px;
+  }
+  .scoring-section:last-child { margin-bottom: 0; }
+  .scoring-section-title {
+    font-size: 0.88rem; font-weight: 800; color: #111827;
+    padding-bottom: 10px; margin-bottom: 6px; border-bottom: 1px solid #e5e7eb;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .scoring-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 5px 0; border-bottom: 1px solid #f3f4f6; font-size: 0.82rem;
+  }
+  .scoring-row:last-child { border-bottom: none; }
+  .s-label { color: #374151; }
+  .s-pts   { font-weight: 700; color: #374151; }
+  .scoring-row.s-exact .s-label { color: #059669; font-weight: 800; }
+  .scoring-row.s-exact .s-pts   { color: #059669; font-weight: 800; }
+  .scoring-row.s-zero  .s-label { color: #9ca3af; }
+  .scoring-row.s-zero  .s-pts   { color: #9ca3af; font-weight: 600; }
+
+  /* ── Green scoring button ── */
+  .action-btn-score { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+  .action-btn-score:hover { background: #dcfce7; }
+
+  /* ── New prediction modal: section tabs ── */
+  .pred-section-tabs {
+    display: flex; border-bottom: 2px solid #f3f4f6;
+    background: #fff; flex-shrink: 0; position: sticky; top: 0; z-index: 5;
+  }
+  .pred-section-tab {
+    flex: 1; padding: 13px 8px; font-size: 0.78rem; font-weight: 800;
+    border: none; background: transparent; cursor: pointer;
+    color: #9ca3af; border-bottom: 3px solid transparent;
+    margin-bottom: -2px; transition: color 0.15s; text-align: center;
+    letter-spacing: 0.3px;
+  }
+  .pred-section-tab.active { color: #c8102e; border-bottom-color: #c8102e; }
+
+  /* ── New prediction modal: progress ── */
+  .pred-progress-bar {
+    padding: 10px 20px; display: flex; align-items: center; justify-content: space-between;
+    background: #fff1f2; border-bottom: 1px solid #fecdd3; flex-shrink: 0;
+  }
+  .pred-progress-label { font-size: 0.75rem; color: #c8102e; font-weight: 700; }
+  .pred-progress-counter { font-size: 0.82rem; font-weight: 900; color: #c8102e; }
+
+  /* ── New prediction modal: question card ── */
+  .pred-q-wrapper { flex: 1; overflow-y: auto; padding: 20px; }
+  .pred-q-text {
+    font-size: 1rem; font-weight: 700; color: #111827; line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .pred-q-lock-notice {
+    font-size: 0.78rem; color: #9ca3af; margin-bottom: 14px;
+    background: #f9fafb; padding: 8px 12px; border-radius: 8px;
+    border: 1px solid #f3f4f6;
+  }
+  .pred-q-status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .pred-q-locked { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+  .pred-q-closed { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+  .pred-q-empty {
+    text-align: center; padding: 32px 20px; color: #9ca3af; font-size: 0.88rem;
+  }
+
+  /* ── Answer inputs: single ── */
+  .pred-answer-input {
+    width: 100%; padding: 18px; border: 2px solid #e5e7eb;
+    border-radius: 14px; font-size: 1.5rem; font-weight: 800; text-align: center;
+    outline: none; transition: border-color 0.15s; -moz-appearance: textfield;
+    margin-top: 8px;
+  }
+  .pred-answer-input:focus { border-color: #1a3a6b; }
+  .pred-answer-input:disabled { background: #f9fafb; color: #9ca3af; cursor: not-allowed; }
+  .pred-answer-input::-webkit-outer-spin-button,
+  .pred-answer-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  /* ── Answer inputs: dual (runs/wickets) ── */
+  .pred-dual-wrap { display: flex; gap: 14px; margin-top: 8px; }
+  .pred-dual-col { flex: 1; text-align: center; }
+  .pred-dual-col label {
+    font-size: 0.75rem; color: #6b7280; font-weight: 700; display: block;
+    margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .pred-dual-input {
+    width: 100%; padding: 16px; border: 2px solid #e5e7eb;
+    border-radius: 12px; font-size: 1.3rem; font-weight: 800; text-align: center;
+    outline: none; transition: border-color 0.15s; -moz-appearance: textfield;
+  }
+  .pred-dual-input:focus { border-color: #1a3a6b; }
+  .pred-dual-input:disabled { background: #f9fafb; color: #9ca3af; cursor: not-allowed; }
+  .pred-dual-input::-webkit-outer-spin-button,
+  .pred-dual-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  /* ── Navigation bar ── */
+  .pred-nav-bar {
+    padding: 14px 20px; display: flex; gap: 10px;
+    border-top: 1px solid #f3f4f6; flex-shrink: 0; background: #fff;
+  }
+  .pred-nav-back {
+    padding: 12px 20px; border-radius: 10px; border: 1.5px solid #e5e7eb;
+    font-size: 0.88rem; font-weight: 700; cursor: pointer;
+    background: transparent; color: #6b7280; flex-shrink: 0;
+    min-width: 80px; transition: background 0.15s;
+  }
+  .pred-nav-back:hover { background: #f3f4f6; }
+  .pred-nav-next {
+    flex: 1; padding: 12px; border-radius: 10px; border: none;
+    font-size: 0.9rem; font-weight: 800; cursor: pointer;
+    background: linear-gradient(90deg, #1a3a6b, #c8102e); color: #fff;
+    transition: opacity 0.15s;
+  }
+  .pred-nav-next:hover { opacity: 0.9; }
+  .pred-nav-submit {
+    flex: 1; padding: 12px; border-radius: 10px; border: none;
+    font-size: 0.9rem; font-weight: 800; cursor: pointer;
+    background: linear-gradient(90deg, #15803d, #16a34a); color: #fff;
+    transition: opacity 0.15s;
+  }
+  .pred-nav-submit:hover { opacity: 0.9; }
+  .pred-nav-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+  .pred-submit-feedback {
+    padding: 10px 16px; border-radius: 8px; font-size: 0.8rem; font-weight: 600;
+    margin-top: 10px; display: none; width: 100%;
+  }
+  .pred-submit-feedback.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .pred-submit-feedback.success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
 </style>
 </head>
 <body>
 
 <!-- ── Scoring modal ── -->
 <div class="info-modal-overlay" id="scoringModal">
-  <div class="info-modal-box">
+  <div class="info-modal-box scoring-modal-box">
     <div class="info-modal-header">
-      <span class="info-modal-header-title">🏆 Scoring Guide</span>
+      <span class="info-modal-header-title">📊 Scoring Guide</span>
       <button class="info-modal-close-btn" onclick="closeInfoModal('scoringModal')">✕</button>
     </div>
-    <div class="info-modal-body">
-      <table class="scoring-table">
-        <thead>
-          <tr><th>Question Type</th><th>Max Pts</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>6-over team score</td><td class="pts">100</td></tr>
-          <tr><td>12-over team score</td><td class="pts">100</td></tr>
-          <tr><td>Final innings total</td><td class="pts">100</td></tr>
-          <tr><td>Batter runs</td><td class="pts">150</td></tr>
-          <tr><td>Bowler wickets</td><td class="pts">100</td></tr>
-          <tr><td>Total match sixes</td><td class="pts">100</td></tr>
-        </tbody>
-      </table>
-      <div class="scoring-note">
-        💡 <strong>Closer = more points.</strong> Your score decreases the further your prediction is from the actual result. Exact match earns full points. Answer every question — partial credit always counts!
+    <div class="scoring-modal-body">
+      <div class="scoring-section">
+        <div class="scoring-section-title">🏏 Team Score (75 runs + 25 wickets)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact runs + Exact wickets</span><span class="s-pts">100 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Runs: max(75 − diff, 0); zero if diff ≥ 40</span><span class="s-pts">runs part</span></div>
+        <div class="scoring-row"><span class="s-label">Wickets exact → 25, off by 1 → 20, by 2 → 10</span><span class="s-pts">wickets part</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">Runs diff ≥ 40 or wickets off by 3+</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">🧢 Batter Runs (50 pts)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">50 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by N runs</span><span class="s-pts">max(50 − N, 0) pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">30+ runs away</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">💥 Batter Sixes (20 pts)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact or off by 1</span><span class="s-pts">20 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by 2</span><span class="s-pts">10 pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">Off by 3+</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">🎳 Bowler Wickets (30 pts)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">30 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by 1</span><span class="s-pts">20 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by 2</span><span class="s-pts">10 pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">Off by 3+</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">⚡ Death Overs — Runs (40 pts)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">40 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by N runs</span><span class="s-pts">max(40 − N, 0) pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">20+ runs away</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">⚡ Death Overs — Wickets (15 pts)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">15 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by 1</span><span class="s-pts">10 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by 2</span><span class="s-pts">5 pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">Off by 3+</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">⚡ Death Overs — Sixes &amp; Dot Balls (10 pts)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">10 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by N</span><span class="s-pts">max(10 − N, 0) pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">4+ away</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">🏆 Playoffs / Categorical</div>
+        <div class="scoring-row s-exact"><span class="s-label">Correct choice</span><span class="s-pts">100 pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">Wrong choice</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">🏏 Legacy: Team Score</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">100 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Within ±5 runs</span><span class="s-pts">90 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Within ±10 runs</span><span class="s-pts">80 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Within ±20 runs</span><span class="s-pts">60 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Within ±30 runs</span><span class="s-pts">40 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Within ±40 runs</span><span class="s-pts">20 pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">±41+ runs away</span><span class="s-pts">0 pts</span></div>
+      </div>
+      <div class="scoring-section">
+        <div class="scoring-section-title">🧢 Legacy: Batter Runs</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">150 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Within ±5 runs</span><span class="s-pts">130 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Within ±10 runs</span><span class="s-pts">110 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Within ±15 runs</span><span class="s-pts">90 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Within ±20 runs</span><span class="s-pts">70 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Within ±30 runs</span><span class="s-pts">40 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Within ±40 runs</span><span class="s-pts">20 pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">±41+ runs away</span><span class="s-pts">0 pts</span></div>
       </div>
     </div>
   </div>
@@ -381,30 +578,41 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <div class="predict-modal-box">
     <div class="predict-modal-header">
       <span class="predict-modal-title" id="predictModalTitle">Make Your Predictions</span>
-      <button class="predict-modal-close" onclick="closePredictModal()">✕</button>
+      <button class="predict-modal-close" onclick="closePredictModal()" aria-label="Close">✕</button>
     </div>
 
     <div class="predict-modal-body" id="predictModalBody">
 
-      <!-- Step: username not set -->
+      <!-- Step: username -->
       <div id="stepUsername" class="predict-step" style="display:none">
         <label class="username-label">Enter your username to predict</label>
         <p class="username-hint">Use the same username every time to track your score.</p>
         <input id="usernameInput" class="username-input" type="text"
                placeholder="e.g. mlc_fan_2026" maxlength="30"
                onkeydown="if(event.key==='Enter') saveUsername()" />
-        <p class="username-error" id="usernameError">Username must be at least 3 letters/numbers.</p>
+        <p class="username-error" id="usernameError" style="display:none">Username must be at least 3 letters/numbers.</p>
       </div>
 
-      <!-- Step: loading questions -->
+      <!-- Step: loading -->
       <div id="stepLoading" class="predict-loading" style="display:none">
         <div class="predict-loading-spinner"></div>
         <p>Loading questions…</p>
       </div>
 
-      <!-- Step: questions list -->
-      <div id="stepQuestions" style="display:none">
-        <div id="questionsList"></div>
+      <!-- Step: questions (one at a time) -->
+      <div id="stepQuestions" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
+        <!-- Section tabs: Pregame | During Game -->
+        <div class="pred-section-tabs">
+          <button class="pred-section-tab active" id="tabPregame" onclick="switchSection('pregame')">📋 Pregame</button>
+          <button class="pred-section-tab" id="tabDuringGame" onclick="switchSection('during_game')">⚡ During Game</button>
+        </div>
+        <!-- Progress bar -->
+        <div class="pred-progress-bar" id="predProgressBar">
+          <span class="pred-progress-label" id="predProgressLabel">Pregame Questions</span>
+          <span class="pred-progress-counter" id="predProgressCounter">1 / 1</span>
+        </div>
+        <!-- Single question display area -->
+        <div class="pred-q-wrapper" id="predQWrapper"></div>
       </div>
 
       <!-- Step: success -->
@@ -416,10 +624,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     </div><!-- /.predict-modal-body -->
 
+    <!-- Action bar (shown per step) -->
     <div class="predict-action-bar" id="predictActionBar" style="display:none">
-      <button id="btnNext"   class="btn-next-step"          onclick="saveUsername()"      style="display:none">Continue →</button>
-      <button id="btnSubmit" class="btn-submit-predictions" onclick="submitPredictions()" style="display:none">Submit Predictions</button>
-      <div    id="submitFeedback" class="submit-feedback"></div>
+      <!-- Username step -->
+      <button id="btnNext" class="btn-next-step" onclick="saveUsername()" style="display:none">Continue →</button>
+      <!-- Question nav -->
+      <div id="predNavBar" class="pred-nav-bar" style="display:none">
+        <button class="pred-nav-back" id="predNavBack" onclick="prevQuestion()">← Back</button>
+        <button class="pred-nav-next" id="predNavNext" onclick="nextQuestion()">Next →</button>
+        <button class="pred-nav-submit" id="predNavSubmit" onclick="submitPredictions()" style="display:none">Submit All</button>
+      </div>
+      <div id="submitFeedback" class="pred-submit-feedback"></div>
     </div>
 
   </div>
@@ -470,7 +685,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <!-- ── Action bar ── -->
   <div class="action-bar">
-    <button class="action-btn action-btn-play" onclick="openInfoModal('scoringModal'); trackClick('mlc_scoring_btn')">🏆 Scoring</button>
+    <button class="action-btn action-btn-score" onclick="openInfoModal('scoringModal'); trackClick('mlc_scoring_btn')">📊 Scoring</button>
     <a href="mlc2026-leaderboard.html" class="action-btn action-btn-lb" onclick="trackClick('mlc_leaderboard_btn')">📊 MLC 2026 Leaderboard</a>
   </div>
 
@@ -491,59 +706,43 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   const USER_ID_KEY   = 'mtgames_user_id';
   const USER_NAME_KEY = 'mtgames_user_name';
 
-  /* ── Team Logo / Emoji Maps ── */
+  /* ── Team Logo Map ── */
   const TEAM_LOGO_MAP = {
     'sf unicorns': 'team_logos/sf_unicorns.png', 'san francisco unicorns': 'team_logos/sf_unicorns.png', 'sfu': 'team_logos/sf_unicorns.png',
     'texas super kings': 'team_logos/texas_sk.png', 'tsk': 'team_logos/texas_sk.png',
     'washington freedom': 'team_logos/washington_freedom.png', 'wf': 'team_logos/washington_freedom.png',
     'seattle orcas': 'team_logos/seattle_orcas.png', 'seo': 'team_logos/seattle_orcas.png',
-    'mi new york': 'team_logos/mi_ny.png', 'mi new york cricket': 'team_logos/mi_ny.png', 'miny': 'team_logos/mi_ny.png',
+    'mi new york': 'team_logos/mi_ny.png', 'miny': 'team_logos/mi_ny.png',
     'los angeles knight riders': 'team_logos/la_kr.png', 'la knight riders': 'team_logos/la_kr.png', 'lakr': 'team_logos/la_kr.png',
   };
   const TEAM_EMOJI_MAP = {
-    'sf unicorns': '🦄', 'sfu': '🦄',
-    'texas super kings': '👑', 'tsk': '👑',
-    'washington freedom': '🦅', 'wf': '🦅',
-    'seattle orcas': '🐋', 'seo': '🐋',
-    'mi new york': '🗽', 'miny': '🗽',
-    'los angeles knight riders': '⚔️', 'lakr': '⚔️',
+    'sf unicorns':'🦄','texas super kings':'👑','washington freedom':'🦅',
+    'seattle orcas':'🐋','mi new york':'🗽','los angeles knight riders':'⚔️','la knight riders':'⚔️',
   };
   const CODE_TO_NAME = {
     'SFU': 'SF Unicorns', 'TSK': 'Texas Super Kings',
-    'WF':  'Washington Freedom', 'SEO': 'Seattle Orcas',
-    'MINY':'MI New York', 'LAKR':'Los Angeles Knight Riders',
+    'WF': 'Washington Freedom', 'SEO': 'Seattle Orcas',
+    'MINY': 'MI New York', 'LAKR': 'LA Knight Riders',
   };
 
   function getTeamLogo(name) { return TEAM_LOGO_MAP[name.toLowerCase().trim()] || null; }
   function getTeamEmoji(name) { return TEAM_EMOJI_MAP[name.toLowerCase().trim()] || '🏏'; }
 
-  // Filter: only show MLC matches
   const MLC_TITLE_PATTERN = /MLC 2026/i;
 
-  // Global map of matchId → match object (avoids embedding titles in onclick attributes)
   let matchesById = {};
-
-  /* ─────────────────────────────────────────────────────────────────
-   * COUNTDOWN TIMERS
-   * ───────────────────────────────────────────────────────────────── */
   const countdownIntervals = {};
 
   function startCountdown(matchId, lockMs) {
     const el = document.getElementById('cd-' + matchId);
     if (!el) return;
-
     function tick() {
       const diff = lockMs - Date.now();
       if (diff <= 0) {
-        el.textContent = '🔒 Locked';
-        el.classList.add('expired');
+        el.textContent = '🔒 Locked'; el.classList.add('expired');
         clearInterval(countdownIntervals[matchId]);
         const btn = document.getElementById('predict-btn-' + matchId);
-        if (btn) {
-          btn.className = 'btn-predict btn-predict-disabled';
-          btn.removeAttribute('onclick');
-          btn.setAttribute('tabindex', '-1');
-        }
+        if (btn) { btn.className = 'btn-predict btn-predict-disabled'; btn.removeAttribute('onclick'); btn.setAttribute('tabindex', '-1'); }
         return;
       }
       const h = Math.floor(diff / 3600000);
@@ -551,18 +750,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       const s = Math.floor((diff % 60000) / 1000);
       el.textContent = h > 0 ? `⏱ Closes in ${h}h ${m}m ${s}s` : `⏱ Closes in ${m}m ${s}s`;
     }
-
     tick();
     countdownIntervals[matchId] = setInterval(tick, 1000);
   }
 
-  /* ─────────────────────────────────────────────────────────────────
-   * MATCH CARD RENDERING
-   * ───────────────────────────────────────────────────────────────── */
   function statusBadge(status, matchId) {
-    if (status === 'open') {
-      return `<span class="match-countdown" id="cd-${matchId}">Loading…</span>`;
-    }
+    if (status === 'open') return `<span class="match-countdown" id="cd-${matchId}">Loading…</span>`;
     const map = {
       upcoming: '<span class="match-status-badge badge-upcoming">🕐 Upcoming</span>',
       locked:   '<span class="match-status-badge badge-locked">🔒 Locked</span>',
@@ -573,16 +766,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   function predictBtn(status, matchId) {
     if (status === 'open') {
-      return `<button id="predict-btn-${matchId}" class="btn-predict"
-                onclick="openPredictModal(${matchId}); trackClick('mlc_match${matchId}_predict')">
-                Predict →
-              </button>`;
+      return `<button id="predict-btn-${matchId}" class="btn-predict" onclick="openPredictModal(${matchId}); trackClick('mlc_match${matchId}_predict')">Predict →</button>`;
     }
     if (status === 'locked') {
-      return `<button id="predict-btn-${matchId}" class="btn-predict"
-                onclick="openPredictModal(${matchId}); trackClick('mlc_match${matchId}_view')">
-                View Picks →
-              </button>`;
+      return `<button id="predict-btn-${matchId}" class="btn-predict" onclick="openPredictModal(${matchId}); trackClick('mlc_match${matchId}_view')">View Picks →</button>`;
     }
     return `<button id="predict-btn-${matchId}" class="btn-predict btn-predict-disabled" tabindex="-1">Predict →</button>`;
   }
@@ -591,28 +778,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     const logoSrc = getTeamLogo(teamName);
     const emoji   = getTeamEmoji(teamName);
     const imgId   = `logo_${side}_${matchId}_${abbr.replace(/[^a-z0-9]/gi,'').toLowerCase()}`;
-    const imgTag  = logoSrc
-      ? `<img id="${imgId}" src="${logoSrc}" alt="${teamName}" class="team-logo"
-             onerror="document.getElementById('${imgId}').style.display='none';document.getElementById('fb_${imgId}').style.display='block';" />`
-      : '';
+    const imgTag  = logoSrc ? `<img id="${imgId}" src="${logoSrc}" alt="${teamName}" class="team-logo" onerror="document.getElementById('${imgId}').style.display='none';document.getElementById('fb_${imgId}').style.display='block';" />` : '';
     const fbStyle = logoSrc ? 'display:none;' : '';
-    return `
-      <div class="team-block">
-        <div class="team-logo-wrap">
-          ${imgTag}
-          <span id="fb_${imgId}" class="team-emoji-fallback" style="${fbStyle}">${emoji}</span>
-        </div>
-        <div class="team-name">${teamName}</div>
-        <div class="team-abbr">${abbr}</div>
-      </div>`;
+    return `<div class="team-block"><div class="team-logo-wrap">${imgTag}<span id="fb_${imgId}" class="team-emoji-fallback" style="${fbStyle}">${emoji}</span></div><div class="team-name">${teamName}</div><div class="team-abbr">${abbr}</div></div>`;
   }
 
   function renderMatches(matches) {
     const grid = document.getElementById('matchesGrid');
-    if (!matches.length) {
-      grid.innerHTML = '<div class="matches-empty">No matches scheduled yet. Check back soon!</div>';
-      return;
-    }
+    if (!matches.length) { grid.innerHTML = '<div class="matches-empty">No matches scheduled yet. Check back soon!</div>'; return; }
     grid.innerHTML = matches.map(m => `
       <div class="match-card">
         <div class="match-card-inner">
@@ -620,15 +793,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div class="vs-divider"><span class="vs-text">VS</span></div>
           ${teamHtml(m.team2, m.abbr2, 'away', m.id)}
         </div>
-        <div class="match-footer">
-          ${statusBadge(m.status, m.id)}
-          ${predictBtn(m.status, m.id)}
-        </div>
+        <div class="match-footer">${statusBadge(m.status, m.id)}${predictBtn(m.status, m.id)}</div>
       </div>`).join('');
-
-    matches.forEach(m => {
-      if (m.status === 'open' && m.lockMs) startCountdown(m.id, m.lockMs);
-    });
+    matches.forEach(m => { if (m.status === 'open' && m.lockMs) startCountdown(m.id, m.lockMs); });
   }
 
   async function loadMatches() {
@@ -641,14 +808,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       const filtered = (matches || [])
         .filter(m => MLC_TITLE_PATTERN.test(m.match_title))
         .map(m => ({
-          id:     m.id,
-          title:  m.match_title,
-          team1:  CODE_TO_NAME[m.team_1] || m.team_1,
-          abbr1:  m.team_1,
-          team2:  CODE_TO_NAME[m.team_2] || m.team_2,
-          abbr2:  m.team_2,
-          status: m.status,
-          lockMs: m.match_date_ms ? Number(m.match_date_ms) : null,
+          id: m.id, title: m.match_title,
+          team1: CODE_TO_NAME[m.team_1] || m.team_1, abbr1: m.team_1,
+          team2: CODE_TO_NAME[m.team_2] || m.team_2, abbr2: m.team_2,
+          status: m.status, lockMs: m.match_date_ms ? Number(m.match_date_ms) : null,
         }));
       matchesById = {};
       filtered.forEach(m => { matchesById[m.id] = m; });
@@ -658,34 +821,37 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
   }
 
-  /* ─────────────────────────────────────────────────────────────────
-   * PREDICTION MODAL
-   * ───────────────────────────────────────────────────────────────── */
+  /* ── Prediction modal state ── */
   let predictMatchId    = null;
   let predictMatchTitle = '';
-  let predictQuestions  = [];
+  let allQuestions      = [];
+  let pregameQs         = [];
+  let duringGameQs      = [];
+  let currentSection    = 'pregame';
+  let currentQIndex     = 0;
+  let answers           = {};
 
   function openPredictModal(matchId) {
     const match       = matchesById[matchId] || {};
     predictMatchId    = matchId;
     predictMatchTitle = match.title || '';
+    answers           = {};
+    currentSection    = 'pregame';
+    currentQIndex     = 0;
     document.getElementById('predictModalTitle').textContent = match.title || 'Your Predictions';
     document.getElementById('predictModal').classList.add('show');
     document.body.style.overflow = 'hidden';
 
     const userName = localStorage.getItem(USER_NAME_KEY);
-    if (!userName) {
-      showStep('username');
-    } else {
-      fetchAndRenderQuestions(matchId, userName);
-    }
+    if (!userName) showStep('username');
+    else fetchAndRenderQuestions(matchId, userName);
   }
 
   function closePredictModal() {
     document.getElementById('predictModal').classList.remove('show');
     document.body.style.overflow = '';
     predictMatchId = null;
-    predictQuestions = [];
+    allQuestions = [];
   }
 
   function handlePredictOverlayClick(e) {
@@ -694,11 +860,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   function showStep(step) {
     ['stepUsername','stepLoading','stepQuestions','stepSuccess'].forEach(id => {
-      document.getElementById(id).style.display = 'none';
+      const el = document.getElementById(id);
+      el.style.display = 'none';
     });
     document.getElementById('predictActionBar').style.display = 'none';
-    document.getElementById('btnNext').style.display   = 'none';
-    document.getElementById('btnSubmit').style.display = 'none';
+    document.getElementById('btnNext').style.display = 'none';
+    document.getElementById('predNavBar').style.display = 'none';
     document.getElementById('submitFeedback').style.display = 'none';
 
     if (step === 'username') {
@@ -709,9 +876,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     } else if (step === 'loading') {
       document.getElementById('stepLoading').style.display = 'block';
     } else if (step === 'questions') {
-      document.getElementById('stepQuestions').style.display = 'block';
+      const sq = document.getElementById('stepQuestions');
+      sq.style.display = 'flex';
       document.getElementById('predictActionBar').style.display = 'block';
-      document.getElementById('btnSubmit').style.display = 'block';
+      document.getElementById('predNavBar').style.display = 'flex';
     } else if (step === 'success') {
       document.getElementById('stepSuccess').style.display = 'block';
     }
@@ -730,115 +898,188 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   async function fetchAndRenderQuestions(matchId, userName) {
     showStep('loading');
     try {
-      const url = `/api/get-closest-call-questions?closest_call_match_id=${matchId}&user_name=${encodeURIComponent(userName)}`;
+      const url  = `/api/get-closest-call-questions?closest_call_match_id=${matchId}&user_name=${encodeURIComponent(userName)}`;
       const resp = await fetch(url);
       if (!resp.ok) throw new Error('Failed to load questions');
       const data = await resp.json();
-      predictQuestions = data.questions || [];
+      allQuestions = data.questions || [];
 
-      if (!predictQuestions.length) {
-        document.getElementById('questionsList').innerHTML =
-          '<div style="padding:24px 20px;text-align:center;color:#9ca3af;font-size:0.88rem;">No questions available for this match yet.</div>';
-        showStep('questions');
-        document.getElementById('btnSubmit').style.display = 'none';
-        return;
+      pregameQs    = allQuestions.filter(q => (q.phase || 'pre_match') === 'pre_match');
+      duringGameQs = allQuestions.filter(q => ['powerplay','mid_innings','final'].includes(q.phase));
+
+      allQuestions.forEach(q => {
+        if (q.user_prediction != null || q.user_predicted_runs != null) {
+          answers[q.id] = {
+            predicted_value:    q.user_prediction != null ? q.user_prediction : undefined,
+            predicted_runs:     q.user_predicted_runs != null ? q.user_predicted_runs : undefined,
+            predicted_wickets:  q.user_predicted_wickets != null ? q.user_predicted_wickets : undefined,
+          };
+        }
+      });
+
+      if (!allQuestions.length) {
+        document.getElementById('predQWrapper').innerHTML = '<div class="pred-q-empty">No questions available for this match yet.</div>';
       }
-      renderQuestions(predictQuestions);
+
+      currentSection = 'pregame';
+      currentQIndex  = 0;
+      updateSectionTabs();
+      showQuestion();
       showStep('questions');
     } catch (e) {
-      document.getElementById('questionsList').innerHTML =
-        `<div style="padding:24px 20px;text-align:center;color:#dc2626;font-size:0.88rem;">Could not load questions. Please try again.</div>`;
+      document.getElementById('predQWrapper').innerHTML = `<div class="pred-q-empty" style="color:#dc2626;">Could not load questions. Please try again.</div>`;
       showStep('questions');
-      document.getElementById('btnSubmit').style.display = 'none';
+      document.getElementById('predNavBar').style.display = 'none';
     }
   }
 
-  const PHASE_LABELS = {
-    pre_match:   '📋 Pre-Match',
-    powerplay:   '⚡ Powerplay (Overs 1–6)',
-    mid_innings: '🏏 Mid Innings (Overs 7–12)',
-    final:       '🔥 Final Stage (Overs 13–20)',
-  };
+  function switchSection(section) {
+    saveCurrentAnswer();
+    currentSection = section;
+    currentQIndex  = 0;
+    updateSectionTabs();
+    showQuestion();
+  }
 
-  function renderQuestions(questions) {
-    const list = document.getElementById('questionsList');
-    const phaseOrder = ['pre_match', 'powerplay', 'mid_innings', 'final'];
-    const byPhase = {};
-    questions.forEach(q => {
-      const p = q.phase || 'pre_match';
-      if (!byPhase[p]) byPhase[p] = [];
-      byPhase[p].push(q);
-    });
+  function updateSectionTabs() {
+    document.getElementById('tabPregame').classList.toggle('active', currentSection === 'pregame');
+    document.getElementById('tabDuringGame').classList.toggle('active', currentSection === 'during_game');
+  }
 
-    let html = '';
-    phaseOrder.forEach(phase => {
-      if (!byPhase[phase] || !byPhase[phase].length) return;
-      html += `<div class="phase-header">${PHASE_LABELS[phase] || phase}</div>`;
-      byPhase[phase].forEach(q => {
-        const isDualInput = ['TEAM_SCORE_SPLIT_75_25','TEAM_SCORE_INNINGS'].includes(q.scoring_rule_code);
-        const isEditable  = q.is_editable;
-        const lockReason  = q.lock_reason || '';
+  function getCurrentQuestions() {
+    return currentSection === 'pregame' ? pregameQs : duringGameQs;
+  }
 
-        if (isDualInput) {
-          const existingRuns    = q.user_predicted_runs    != null ? q.user_predicted_runs    : '';
-          const existingWickets = q.user_predicted_wickets != null ? q.user_predicted_wickets : '';
-          html += `
-            <div class="question-row" data-qid="${q.id}" data-type="dual">
-              <div class="question-text">
-                ${q.question_text}
-                ${lockReason ? `<div class="question-locked-reason">🔒 ${lockReason}</div>` : ''}
-              </div>
-              <div style="display:flex;flex-direction:column;gap:4px;align-items:center;flex-shrink:0;">
-                <input class="question-input" style="width:60px;" type="number" min="0" max="300"
-                       data-field="runs" value="${existingRuns}"
-                       placeholder="Runs" ${isEditable ? '' : 'disabled'} />
-                <input class="question-input" style="width:60px;" type="number" min="0" max="10"
-                       data-field="wickets" value="${existingWickets}"
-                       placeholder="Wkts" ${isEditable ? '' : 'disabled'} />
-              </div>
-            </div>`;
-        } else {
-          const existingVal = q.user_prediction != null ? q.user_prediction : '';
-          html += `
-            <div class="question-row" data-qid="${q.id}" data-type="single">
-              <div class="question-text">
-                ${q.question_text}
-                ${lockReason ? `<div class="question-locked-reason">🔒 ${lockReason}</div>` : ''}
-              </div>
-              <input class="question-input" type="number" min="0" max="500"
-                     value="${existingVal}" placeholder="—"
-                     ${isEditable ? '' : 'disabled'} />
-            </div>`;
-        }
-      });
-    });
+  function saveCurrentAnswer() {
+    const qs = getCurrentQuestions();
+    if (!qs.length || currentQIndex >= qs.length) return;
+    const q = qs[currentQIndex];
+    if (!q.is_editable) return;
 
-    list.innerHTML = html;
+    const isDual = ['TEAM_SCORE_SPLIT_75_25','TEAM_SCORE_INNINGS'].includes(q.scoring_rule_code);
+    if (isDual) {
+      const runsEl    = document.getElementById('inputRuns');
+      const wicketsEl = document.getElementById('inputWickets');
+      if (runsEl && runsEl.value !== '') {
+        answers[q.id] = {
+          predicted_runs:    parseInt(runsEl.value, 10),
+          predicted_wickets: wicketsEl && wicketsEl.value !== '' ? parseInt(wicketsEl.value, 10) : 0,
+        };
+      } else {
+        delete answers[q.id];
+      }
+    } else {
+      const inputEl = document.getElementById('inputSingle');
+      if (inputEl && inputEl.value !== '') {
+        answers[q.id] = { predicted_value: parseInt(inputEl.value, 10) };
+      } else {
+        delete answers[q.id];
+      }
+    }
+  }
+
+  function showQuestion() {
+    const qs      = getCurrentQuestions();
+    const total   = qs.length;
+    const wrapper = document.getElementById('predQWrapper');
+    const back    = document.getElementById('predNavBack');
+    const next    = document.getElementById('predNavNext');
+    const submit  = document.getElementById('predNavSubmit');
+
+    const sectionLabel = currentSection === 'pregame' ? 'Pregame Questions' : 'During Game Questions';
+    document.getElementById('predProgressLabel').textContent = sectionLabel;
+    document.getElementById('predProgressCounter').textContent = total ? `${currentQIndex + 1} / ${total}` : '0 / 0';
+
+    if (!total) {
+      wrapper.innerHTML = `<div class="pred-q-empty">No ${sectionLabel.toLowerCase()} available for this match.</div>`;
+      back.style.display = next.style.display = submit.style.display = 'none';
+      return;
+    }
+
+    const q         = qs[currentQIndex];
+    const isFirst   = currentQIndex === 0;
+    const isLast    = currentQIndex === total - 1;
+    const isDual    = ['TEAM_SCORE_SPLIT_75_25','TEAM_SCORE_INNINGS'].includes(q.scoring_rule_code);
+    const isEditable = q.is_editable;
+
+    let statusBadgeHtml = '';
+    if (q.status === 'locked') statusBadgeHtml = '<span class="pred-q-status-badge pred-q-locked">🔒 Locked</span>';
+    else if (q.status === 'scored') statusBadgeHtml = '<span class="pred-q-status-badge pred-q-closed">✅ Scored</span>';
+    else if (q.status === 'void') statusBadgeHtml = '<span class="pred-q-status-badge pred-q-closed">— Void</span>';
+
+    const lockHtml = (!isEditable && q.lock_reason) ? `<div class="pred-q-lock-notice">🔒 ${q.lock_reason}</div>` : '';
+
+    const savedAns = answers[q.id] || {};
+
+    let inputHtml;
+    if (isDual) {
+      const existingRuns    = savedAns.predicted_runs    != null ? savedAns.predicted_runs    : (q.user_predicted_runs    != null ? q.user_predicted_runs    : '');
+      const existingWickets = savedAns.predicted_wickets != null ? savedAns.predicted_wickets : (q.user_predicted_wickets != null ? q.user_predicted_wickets : '');
+      inputHtml = `
+        <div class="pred-dual-wrap">
+          <div class="pred-dual-col">
+            <label>Runs</label>
+            <input id="inputRuns" class="pred-dual-input" type="number" min="0" max="300"
+                   value="${existingRuns}" placeholder="0" ${isEditable ? '' : 'disabled'} />
+          </div>
+          <div class="pred-dual-col">
+            <label>Wickets</label>
+            <input id="inputWickets" class="pred-dual-input" type="number" min="0" max="10"
+                   value="${existingWickets}" placeholder="0" ${isEditable ? '' : 'disabled'} />
+          </div>
+        </div>`;
+    } else {
+      const existing = savedAns.predicted_value != null ? savedAns.predicted_value : (q.user_prediction != null ? q.user_prediction : '');
+      inputHtml = `<input id="inputSingle" class="pred-answer-input" type="number" min="0" max="500"
+                          value="${existing}" placeholder="Enter your prediction"
+                          ${isEditable ? '' : 'disabled'} />`;
+    }
+
+    wrapper.innerHTML = `
+      <div class="pred-q-text">${q.question_text || ''}</div>
+      ${statusBadgeHtml}
+      ${lockHtml}
+      ${inputHtml}`;
+
+    if (isEditable) {
+      const inp = document.getElementById('inputSingle') || document.getElementById('inputRuns');
+      if (inp) setTimeout(() => inp.focus(), 80);
+    }
+
+    back.style.display   = isFirst ? 'none' : '';
+    next.style.display   = isLast  ? 'none' : '';
+    submit.style.display = isLast  ? ''     : 'none';
+  }
+
+  function nextQuestion() {
+    saveCurrentAnswer();
+    const qs = getCurrentQuestions();
+    if (currentQIndex < qs.length - 1) {
+      currentQIndex++;
+      showQuestion();
+    }
+  }
+
+  function prevQuestion() {
+    saveCurrentAnswer();
+    if (currentQIndex > 0) {
+      currentQIndex--;
+      showQuestion();
+    }
   }
 
   async function submitPredictions() {
+    saveCurrentAnswer();
     const userName = localStorage.getItem(USER_NAME_KEY);
     if (!userName || !predictMatchId) return;
 
     const predictions = [];
-    document.querySelectorAll('#questionsList .question-row').forEach(row => {
-      const qid  = Number(row.dataset.qid);
-      const type = row.dataset.type;
-      if (type === 'dual') {
-        const runsInput    = row.querySelector('[data-field="runs"]');
-        const wicketsInput = row.querySelector('[data-field="wickets"]');
-        if (runsInput && !runsInput.disabled && runsInput.value !== '') {
-          predictions.push({
-            question_id:       qid,
-            predicted_runs:    parseInt(runsInput.value, 10),
-            predicted_wickets: parseInt(wicketsInput ? wicketsInput.value || '0' : '0', 10),
-          });
-        }
-      } else {
-        const input = row.querySelector('.question-input');
-        if (input && !input.disabled && input.value !== '') {
-          predictions.push({ question_id: qid, predicted_value: parseInt(input.value, 10) });
-        }
+    Object.entries(answers).forEach(([qidStr, ans]) => {
+      const qid = Number(qidStr);
+      if (ans.predicted_value != null) {
+        predictions.push({ question_id: qid, predicted_value: ans.predicted_value });
+      } else if (ans.predicted_runs != null) {
+        predictions.push({ question_id: qid, predicted_runs: ans.predicted_runs, predicted_wickets: ans.predicted_wickets || 0 });
       }
     });
 
@@ -847,9 +1088,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       return;
     }
 
-    const btn = document.getElementById('btnSubmit');
-    btn.disabled = true;
-    btn.textContent = 'Saving…';
+    const submitBtn = document.getElementById('predNavSubmit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Saving…';
 
     try {
       const resp = await fetch('/api/submit-closest-call-predictions', {
@@ -862,8 +1103,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       trackClick('mlc_predictions_submitted', { match_id: predictMatchId, count: predictions.length });
       showStep('success');
     } catch (e) {
-      btn.disabled = false;
-      btn.textContent = 'Submit Predictions';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit All';
       showFeedback(e.message || 'Something went wrong. Please try again.', 'error');
     }
   }
@@ -871,7 +1112,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   function showFeedback(msg, type) {
     const el = document.getElementById('submitFeedback');
     el.textContent = msg;
-    el.className = `submit-feedback ${type}`;
+    el.className = `pred-submit-feedback ${type}`;
     el.style.display = 'block';
   }
 
@@ -900,9 +1141,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
 
   /* ── Hamburger ── */
-  function toggleHamburgerMenu() {
-    document.getElementById('hamburgerDropdown').classList.toggle('open');
-  }
+  function toggleHamburgerMenu() { document.getElementById('hamburgerDropdown').classList.toggle('open'); }
   document.addEventListener('click', function(e) {
     const btn = document.getElementById('hamburgerMenuBtn');
     const dd  = document.getElementById('hamburgerDropdown');
@@ -916,7 +1155,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
   });
 
-  /* Boot */
   document.addEventListener('DOMContentLoaded', loadMatches);
 </script>
 

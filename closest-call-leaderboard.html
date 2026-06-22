@@ -85,19 +85,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .section-label   { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #2563eb; white-space: nowrap; }
   .section-line    { flex: 1; min-width: 80px; height: 1px; background: linear-gradient(90deg, #d1d5db, transparent); }
 
-  /* ── Tabs ── */
-  .lb-tabs {
-    display: inline-flex; gap: 6px; padding: 4px;
-    border-radius: 999px; background: #f3f4f6; border: 1px solid #e5e7eb; flex-shrink: 0;
-  }
-  .lb-tab-btn {
-    border: none; border-radius: 999px; padding: 6px 14px;
-    background: transparent; color: #6b7280;
-    font-size: 0.72rem; font-weight: 800; letter-spacing: 0.4px;
-    cursor: pointer; transition: background 0.15s, color 0.15s; white-space: nowrap;
-  }
-  .lb-tab-btn.active { background: #2563eb; color: #fff; }
-
   /* ── Refresh ── */
   .lb-refresh-btn {
     font-size: 0.78rem; color: #2563eb; background: #dbeafe;
@@ -105,6 +92,39 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     cursor: pointer; font-weight: 600; transition: background 0.15s;
   }
   .lb-refresh-btn:hover { background: #bfdbfe; }
+
+  /* ── Tournament selector buttons ── */
+  .tourney-selector {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .tourney-btn {
+    flex: 1; min-width: 140px; padding: 14px 12px;
+    border-radius: 14px; border: 2px solid transparent;
+    font-size: 0.82rem; font-weight: 800; cursor: pointer;
+    text-align: center; transition: all 0.18s;
+    letter-spacing: 0.3px; position: relative; overflow: hidden;
+  }
+  .tourney-btn-label { font-size: 0.68rem; font-weight: 600; opacity: 0.8; margin-top: 3px; display: block; }
+  /* Overall */
+  .tourney-btn-overall { background: #f8fafc; border-color: #e5e7eb; color: #374151; }
+  .tourney-btn-overall.active { background: #1e3a8a; border-color: #1e3a8a; color: #fff; }
+  .tourney-btn-overall:hover:not(.active) { background: #eff6ff; border-color: #bfdbfe; color: #1e3a8a; }
+  /* India vs England */
+  .tourney-btn-ind { background: #fff7ed; border-color: #fed7aa; color: #c2410c; }
+  .tourney-btn-ind.active { background: linear-gradient(135deg, #FF9933, #138808); border-color: transparent; color: #fff; }
+  .tourney-btn-ind:hover:not(.active) { background: #ffedd5; border-color: #fb923c; }
+  /* Women's World Cup */
+  .tourney-btn-wwc { background: #fdf2f8; border-color: #fbcfe8; color: #be185d; }
+  .tourney-btn-wwc.active { background: linear-gradient(135deg, #e91e8c, #9c27b0); border-color: transparent; color: #fff; }
+  .tourney-btn-wwc:hover:not(.active) { background: #fce7f3; border-color: #f472b6; }
+  /* MLC 2026 */
+  .tourney-btn-mlc { background: #eff6ff; border-color: #bfdbfe; color: #1a3a6b; }
+  .tourney-btn-mlc.active { background: linear-gradient(135deg, #1a3a6b, #c8102e); border-color: transparent; color: #fff; }
+  .tourney-btn-mlc:hover:not(.active) { background: #dbeafe; border-color: #93c5fd; }
+  @media (max-width: 480px) {
+    .tourney-btn { min-width: calc(50% - 5px); flex: none; padding: 12px 8px; font-size: 0.76rem; }
+  }
 
   /* ── Match strip ── */
   .lb-match-strip {
@@ -322,13 +342,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <div class="section-header">
       <span class="section-label">Leaderboard</span>
       <div class="section-line"></div>
-      <div class="lb-tabs" role="tablist">
-        <button class="lb-tab-btn active" id="tabOverall"  onclick="switchTab('overall')">Overall</button>
-        <button class="lb-tab-btn"        id="tabIndEng"   onclick="switchTab('ind_eng')">Ind vs Eng</button>
-        <button class="lb-tab-btn"        id="tabWWC"      onclick="switchTab('wwc')">Women's T20 WC</button>
-        <button class="lb-tab-btn"        id="tabMLC"      onclick="switchTab('mlc')">MLC 2026</button>
-      </div>
       <button class="lb-refresh-btn" onclick="refreshLeaderboard()">↺ Refresh</button>
+    </div>
+
+    <!-- Tournament selector buttons -->
+    <div class="tourney-selector" role="tablist" aria-label="Tournament leaderboards">
+      <button class="tourney-btn tourney-btn-overall active" id="tabOverall"
+              onclick="switchTab('overall')" aria-pressed="true">
+        🏆 Overall<span class="tourney-btn-label">All Tournaments</span>
+      </button>
+      <button class="tourney-btn tourney-btn-ind" id="tabIndEng"
+              onclick="switchTab('ind_eng')" aria-pressed="false">
+        🏏 India vs England<span class="tourney-btn-label">T20 Series</span>
+      </button>
+      <button class="tourney-btn tourney-btn-wwc" id="tabWWC"
+              onclick="switchTab('wwc')" aria-pressed="false">
+        🏅 Women's World Cup<span class="tourney-btn-label">T20 WC 2026</span>
+      </button>
+      <button class="tourney-btn tourney-btn-mlc" id="tabMLC"
+              onclick="switchTab('mlc')" aria-pressed="false">
+        🏟️ MLC 2026<span class="tourney-btn-label">Major League Cricket</span>
+      </button>
     </div>
 
     <div class="lb-match-strip" id="matchStrip"></div>
@@ -424,25 +458,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   /* ── Tabs ── */
   function switchTab(tab) {
     activeTab = tab;
-    selectedMatchId = null;  // Reset match selection on every tab switch
-    // Update tab button styles
-    TOURNAMENT_TABS.forEach(function(t) {
-      const el = document.getElementById(TOURNAMENT_TAB_IDS[t]);
-      if (el) el.classList.toggle('active', t === tab);
+    selectedMatchId = null;
+    /* Update button active states */
+    const tabMap = { overall: 'tabOverall', ind_eng: 'tabIndEng', wwc: 'tabWWC', mlc: 'tabMLC' };
+    Object.entries(tabMap).forEach(([t, id]) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.toggle('active', t === tab);
+        el.setAttribute('aria-pressed', t === tab ? 'true' : 'false');
+      }
     });
 
     const strip = document.getElementById('matchStrip');
     if (tab !== 'overall') {
       strip.classList.add('show');
       renderMatchChips();
-      // Auto-select first match for this tournament
-      if (!selectedMatchId) {
-        const tourneyMatches = getTournamentMatches(tab);
-        if (tourneyMatches.length) {
-          selectMatch(tourneyMatches[0].id);
-          return;
-        }
-      }
+      /* Don't auto-select a match; show tournament aggregate instead */
     } else {
       strip.classList.remove('show');
       selectedMatchId = null;
@@ -501,8 +532,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     try {
       let url = '/api/get-closest-call-leaderboard';
       if (selectedMatchId) {
+        /* Per-match view */
         url += `?closest_call_match_id=${selectedMatchId}`;
+      } else if (activeTab !== 'overall') {
+        /* Tournament aggregate: send all match IDs for this tournament */
+        const tourneyMatches = getTournamentMatches(activeTab);
+        if (!tourneyMatches.length) {
+          body.innerHTML = '<div class="lb-empty">No matches found for this tournament yet.</div>';
+          return;
+        }
+        const matchIds = tourneyMatches.map(m => m.id).join(',');
+        url += `?match_ids=${matchIds}`;
       }
+      /* else: overall — no params */
+
       const res  = await fetch(url);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not load leaderboard.');
