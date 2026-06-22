@@ -356,38 +356,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
 
   /* ─────────────────────────────────────────────────────────────────
-   * MATCHES DATA
-   * To add a new match, add an object to this array.
-   * status: 'upcoming' | 'open' | 'locked' | 'closed'
+   * TEAM CODE → DISPLAY NAME
+   * Maps DB short codes (team_1 / team_2) to full display names.
+   * Matches are loaded dynamically from /api/get-closest-call-matches
+   * so you never need to edit this file to add new games.
    * ───────────────────────────────────────────────────────────────── */
-  const MATCHES = [
-    {
-      id: 1,
-      team1: 'SF Unicorns',        abbr1: 'SFU',
-      team2: 'Texas Super Kings',  abbr2: 'TSK',
-      status: 'upcoming'
-    },
-    {
-      id: 2,
-      team1: 'Washington Freedom', abbr1: 'WF',
-      team2: 'Seattle Orcas',      abbr2: 'SEO',
-      status: 'upcoming'
-    },
-    {
-      id: 3,
-      team1: 'MI New York',        abbr1: 'MINY',
-      team2: 'Texas Super Kings',  abbr2: 'TSK',
-      status: 'upcoming'
-    },
-    /* ── Add more matches below: ──
-    {
-      id: 4,
-      team1: 'Seattle Orcas',      abbr1: 'SEO',
-      team2: 'MI New York',        abbr2: 'MINY',
-      status: 'upcoming'
-    },
-    */
-  ];
+  const CODE_TO_NAME = {
+    'SFU':  'SF Unicorns',
+    'TSK':  'Texas Super Kings',
+    'WF':   'Washington Freedom',
+    'SEO':  'Seattle Orcas',
+    'MINY': 'MI New York',
+    'LAKR': 'Los Angeles Knight Riders',
+  };
+
+  // Matches are fetched from the API — no static list needed.
+  const MLC_TITLE_PATTERN = /MLC 2026/i;
 
   /* ─────────────────────────────────────────────────────────────────
    * RENDERER
@@ -432,13 +416,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </div>`;
   }
 
-  function renderMatches() {
+  function renderMatches(matches) {
     const grid = document.getElementById('matchesGrid');
-    if (!MATCHES.length) {
+    if (!matches.length) {
       grid.innerHTML = '<div class="matches-empty">No matches scheduled yet. Check back soon!</div>';
       return;
     }
-    grid.innerHTML = MATCHES.map(m => `
+    grid.innerHTML = matches.map(m => `
       <div class="match-card">
         <div class="match-card-inner">
           ${teamHtml(m.team1, m.abbr1, 'home')}
@@ -452,6 +436,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           ${predictBtn(m.status, m.id)}
         </div>
       </div>`).join('');
+  }
+
+  async function loadMatches() {
+    const grid = document.getElementById('matchesGrid');
+    grid.innerHTML = '<div class="matches-empty">Loading matches…</div>';
+    try {
+      const resp = await fetch('/api/get-closest-call-matches');
+      if (!resp.ok) throw new Error('API error ' + resp.status);
+      const { matches } = await resp.json();
+      const filtered = (matches || [])
+        .filter(m => MLC_TITLE_PATTERN.test(m.match_title))
+        .map(m => ({
+          id:    m.id,
+          team1: CODE_TO_NAME[m.team_1] || m.team_1,
+          abbr1: m.team_1,
+          team2: CODE_TO_NAME[m.team_2] || m.team_2,
+          abbr2: m.team_2,
+          status: m.status,
+        }));
+      renderMatches(filtered);
+    } catch (e) {
+      grid.innerHTML = '<div class="matches-empty">Could not load matches. Please try again later.</div>';
+    }
   }
 
   /* ─────────────────────────────────────────────────────────────────
@@ -506,7 +513,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   });
 
   /* Boot */
-  document.addEventListener('DOMContentLoaded', renderMatches);
+  document.addEventListener('DOMContentLoaded', loadMatches);
 </script>
 
 </body>
