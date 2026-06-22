@@ -424,6 +424,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   /* ── Tabs ── */
   function switchTab(tab) {
     activeTab = tab;
+    selectedMatchId = null;  // Reset match selection on every tab switch
     // Update tab button styles
     TOURNAMENT_TABS.forEach(function(t) {
       const el = document.getElementById(TOURNAMENT_TAB_IDS[t]);
@@ -487,7 +488,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     try {
       const res  = await fetch('/api/get-closest-call-matches');
       const data = await res.json();
-      allMatches = (data.matches || []).filter(m => m.status === 'closed' || m.status === 'locked');
+      allMatches = data.matches || [];  // API already filters to open/locked/closed
     } catch {
       allMatches = [];
     }
@@ -499,7 +500,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     try {
       let url = '/api/get-closest-call-leaderboard';
-      if (activeTab === 'match' && selectedMatchId) {
+      if (selectedMatchId) {
         url += `?closest_call_match_id=${selectedMatchId}`;
       }
       const res  = await fetch(url);
@@ -522,7 +523,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         const qs      = Number(p.questions_answered || 0);
         const mp      = p.matches_played !== undefined ? Number(p.matches_played) : null;
         const uid     = Number(p.user_id || 0);
-        const mId     = (activeTab === 'match' && selectedMatchId) ? selectedMatchId : '';
+        const mId     = selectedMatchId || '';
         return `
           <div class="lb-data-row lb-row-clickable"
             data-uid="${uid}"

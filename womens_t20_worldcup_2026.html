@@ -30,16 +30,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   /* ── Header ── */
   .page-header {
-    display: flex; align-items: center; justify-content: space-between;
+    display: flex; align-items: center; justify-content: flex-end;
     margin-bottom: 36px;
-  }
-  .logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .logo-img  { height: 40px; width: auto; object-fit: contain; }
-  .logo-text {
-    font-size: 1.15rem; font-weight: 800; letter-spacing: 0.5px;
-    background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text; line-height: 1;
   }
 
   /* ── Hamburger ── */
@@ -107,7 +99,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .action-btn-lb    { background: #fdf2f8; border-color: #fbcfe8; color: #be185d; }
   .action-btn-lb:hover    { background: #fce7f3; }
 
-  /* ── How to Play modal ── */
+  /* ── Info modals (Scoring, etc.) ── */
   .info-modal-overlay {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.45); z-index: 2500;
@@ -133,9 +125,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
   .info-modal-close-btn:hover { background: rgba(255,255,255,0.32); }
   .info-modal-body { padding: 20px; }
-  .how-to-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-  .how-to-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.9rem; color: #374151; line-height: 1.5; }
-  .how-to-list li .htl-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+  /* Scoring table inside info modal */
+  .scoring-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+  .scoring-table th {
+    text-align: left; padding: 7px 10px; font-size: 0.72rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 1px; color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .scoring-table td { padding: 8px 10px; border-bottom: 1px solid #f3f4f6; color: #374151; }
+  .scoring-table tr:last-child td { border-bottom: none; }
+  .scoring-table .pts { font-weight: 800; color: #e91e8c; }
+  .scoring-note {
+    margin-top: 12px; font-size: 0.78rem; color: #6b7280;
+    background: #fdf2f8; border-radius: 8px; padding: 10px 12px; line-height: 1.5;
+  }
 
   /* ── Section ── */
   .section-header {
@@ -180,12 +184,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   .vs-divider { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
   .vs-text { font-size: 0.9rem; font-weight: 900; color: #9ca3af; letter-spacing: 1px; }
-  .match-num { font-size: 0.65rem; font-weight: 700; color: #d1d5db; text-transform: uppercase; letter-spacing: 1px; }
 
   .match-footer {
     padding: 11px 20px; border-top: 1px solid #f3f4f6;
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    background: #fafafa;
+    background: #fafafa; flex-wrap: wrap;
   }
   .match-status-badge {
     display: inline-flex; align-items: center; gap: 5px;
@@ -196,6 +199,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .badge-open     { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
   .badge-locked   { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
   .badge-closed   { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+
+  /* ── Countdown timer ── */
+  .match-countdown {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.72rem; font-weight: 700; color: #dc2626;
+    background: #fef2f2; border: 1px solid #fecaca;
+    padding: 4px 10px; border-radius: 999px; letter-spacing: 0.2px;
+  }
+  .match-countdown.expired { color: #d97706; background: #fef3c7; border-color: #fde68a; }
 
   .btn-predict {
     display: inline-flex; align-items: center; gap: 6px;
@@ -217,47 +229,235 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px;
   }
 
+  /* ── Prediction modal ── */
+  .predict-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 3000;
+    align-items: flex-end; justify-content: center; padding: 0;
+  }
+  .predict-modal-overlay.show { display: flex; }
+  .predict-modal-box {
+    width: 100%; max-width: 520px; background: #ffffff;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+    max-height: 92vh; display: flex; flex-direction: column;
+  }
+  @media (min-width: 600px) {
+    .predict-modal-overlay { align-items: center; padding: 20px; }
+    .predict-modal-box { border-radius: 20px; max-height: 88vh; }
+  }
+  .predict-modal-header {
+    background: linear-gradient(135deg, #e91e8c, #9c27b0);
+    padding: 16px 20px; border-radius: 24px 24px 0 0;
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  }
+  @media (min-width: 600px) { .predict-modal-header { border-radius: 20px 20px 0 0; } }
+  .predict-modal-title { font-size: 0.95rem; font-weight: 800; color: #fff; line-height: 1.3; }
+  .predict-modal-close {
+    background: rgba(255,255,255,0.2); border: 1.5px solid rgba(255,255,255,0.35);
+    color: #fff; width: 34px; height: 34px; border-radius: 50%; font-size: 16px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; flex-shrink: 0;
+  }
+  .predict-modal-close:hover { background: rgba(255,255,255,0.32); }
+  .predict-modal-body { overflow-y: auto; flex: 1; padding: 0; }
+
+  /* Steps inside prediction modal */
+  .predict-step { padding: 20px; }
+
+  /* Username step */
+  .username-label { font-size: 0.88rem; font-weight: 700; color: #374151; margin-bottom: 6px; display: block; }
+  .username-hint  { font-size: 0.78rem; color: #9ca3af; margin-bottom: 14px; }
+  .username-input {
+    width: 100%; padding: 10px 14px; border: 1.5px solid #e5e7eb;
+    border-radius: 10px; font-size: 0.9rem; outline: none;
+    transition: border-color 0.15s;
+  }
+  .username-input:focus { border-color: #e91e8c; }
+  .username-error { font-size: 0.78rem; color: #dc2626; margin-top: 6px; display: none; }
+
+  /* Phase headers in question list */
+  .phase-header {
+    padding: 10px 20px 6px; font-size: 0.68rem; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 2px; color: #9ca3af;
+    background: #f8fafc; border-top: 1px solid #f3f4f6;
+    sticky: top; position: sticky; top: 0; z-index: 1;
+  }
+  .phase-header:first-child { border-top: none; }
+
+  /* Individual question row */
+  .question-row {
+    padding: 14px 20px; border-bottom: 1px solid #f3f4f6;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .question-row:last-child { border-bottom: none; }
+  .question-text {
+    flex: 1; font-size: 0.84rem; color: #374151; line-height: 1.4; font-weight: 500;
+  }
+  .question-locked-reason {
+    font-size: 0.72rem; color: #9ca3af; margin-top: 3px; font-weight: 400;
+  }
+  .question-input {
+    width: 72px; padding: 7px 10px; border: 1.5px solid #e5e7eb;
+    border-radius: 8px; font-size: 0.9rem; font-weight: 700; text-align: center;
+    outline: none; flex-shrink: 0; transition: border-color 0.15s;
+    -moz-appearance: textfield;
+  }
+  .question-input::-webkit-outer-spin-button,
+  .question-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .question-input:focus { border-color: #e91e8c; }
+  .question-input:disabled {
+    background: #f9fafb; color: #9ca3af; border-color: #e5e7eb; cursor: not-allowed;
+  }
+
+  /* Submit / action buttons inside predict modal */
+  .predict-action-bar {
+    padding: 16px 20px; border-top: 1px solid #f3f4f6; flex-shrink: 0;
+    background: #fff;
+  }
+  .btn-submit-predictions {
+    width: 100%; padding: 12px; border: none; border-radius: 10px;
+    font-size: 0.9rem; font-weight: 800; cursor: pointer; letter-spacing: 0.3px;
+    background: linear-gradient(90deg, #e91e8c, #9c27b0); color: #fff;
+    transition: opacity 0.15s;
+  }
+  .btn-submit-predictions:hover { opacity: 0.9; }
+  .btn-submit-predictions:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-next-step {
+    width: 100%; padding: 12px; border: none; border-radius: 10px;
+    font-size: 0.9rem; font-weight: 800; cursor: pointer;
+    background: linear-gradient(90deg, #e91e8c, #9c27b0); color: #fff;
+    transition: opacity 0.15s;
+  }
+  .btn-next-step:hover { opacity: 0.9; }
+
+  /* Loading / success / error states */
+  .predict-loading, .predict-success, .predict-error-msg {
+    padding: 32px 20px; text-align: center;
+  }
+  .predict-loading-spinner {
+    width: 32px; height: 32px; border: 3px solid #f3f4f6;
+    border-top-color: #e91e8c; border-radius: 50%;
+    animation: spin 0.7s linear infinite; margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .predict-loading p { font-size: 0.85rem; color: #6b7280; }
+  .predict-success-icon { font-size: 2.5rem; margin-bottom: 10px; }
+  .predict-success h3 { font-size: 1rem; font-weight: 800; color: #111827; margin-bottom: 6px; }
+  .predict-success p { font-size: 0.84rem; color: #6b7280; line-height: 1.5; }
+  .predict-error-msg { color: #dc2626; font-size: 0.84rem; }
+
+  /* Submit feedback banner */
+  .submit-feedback {
+    padding: 10px 16px; border-radius: 8px; font-size: 0.8rem; font-weight: 600;
+    margin-top: 10px; display: none;
+  }
+  .submit-feedback.success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .submit-feedback.error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
   @media (max-width: 480px) {
     .team-logo-wrap { width: 50px; height: 50px; }
     .team-name { font-size: 0.74rem; }
     .match-card-inner { padding: 14px 12px; gap: 8px; }
     .match-footer { padding: 10px 12px; }
+    .match-countdown { font-size: 0.68rem; }
   }
 </style>
 </head>
 <body>
 
-<!-- ── How to Play modal ── -->
-<div class="info-modal-overlay" id="howToPlayModal">
+<!-- ── Scoring modal ── -->
+<div class="info-modal-overlay" id="scoringModal">
   <div class="info-modal-box">
     <div class="info-modal-header">
-      <span class="info-modal-header-title">💡 How to Play</span>
-      <button class="info-modal-close-btn" onclick="closeInfoModal('howToPlayModal')">✕</button>
+      <span class="info-modal-header-title">🏆 Scoring Guide</span>
+      <button class="info-modal-close-btn" onclick="closeInfoModal('scoringModal')">✕</button>
     </div>
     <div class="info-modal-body">
-      <ul class="how-to-list">
-        <li><span class="htl-icon">🏏</span><span>Predict team scores, player runs, and wickets for upcoming Women's T20 WC matches</span></li>
-        <li><span class="htl-icon">🎯</span><span>The closer your prediction is to the actual result, the more points you win</span></li>
-        <li><span class="htl-icon">🏆</span><span>Compete across all tournament matches and climb the leaderboard for prizes</span></li>
-        <li><span class="htl-icon">⏰</span><span>Predictions lock when the match starts — make your calls before the toss!</span></li>
-      </ul>
+      <table class="scoring-table">
+        <thead>
+          <tr><th>Question Type</th><th>Max Pts</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>6-over team score</td><td class="pts">100</td></tr>
+          <tr><td>12-over team score</td><td class="pts">100</td></tr>
+          <tr><td>Final innings total</td><td class="pts">100</td></tr>
+          <tr><td>Batter runs</td><td class="pts">150</td></tr>
+          <tr><td>Bowler wickets</td><td class="pts">100</td></tr>
+          <tr><td>Total match sixes</td><td class="pts">100</td></tr>
+        </tbody>
+      </table>
+      <div class="scoring-note">
+        💡 <strong>Closer = more points.</strong> Your score decreases the further your prediction is from the actual result. Exact match earns full points. Answer every question — partial credit always counts!
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- ── Prediction modal ── -->
+<div class="predict-modal-overlay" id="predictModal" onclick="handlePredictOverlayClick(event)">
+  <div class="predict-modal-box">
+    <div class="predict-modal-header">
+      <span class="predict-modal-title" id="predictModalTitle">Make Your Predictions</span>
+      <button class="predict-modal-close" onclick="closePredictModal()">✕</button>
+    </div>
+
+    <div class="predict-modal-body" id="predictModalBody">
+
+      <!-- Step: username not set -->
+      <div id="stepUsername" class="predict-step" style="display:none">
+        <label class="username-label">Enter your username to predict</label>
+        <p class="username-hint">Use the same username every time to track your score.</p>
+        <input id="usernameInput" class="username-input" type="text"
+               placeholder="e.g. cricket_fan_2026" maxlength="30"
+               onkeydown="if(event.key==='Enter') saveUsername()" />
+        <p class="username-error" id="usernameError">Username must be at least 3 letters/numbers.</p>
+      </div>
+
+      <!-- Step: loading questions -->
+      <div id="stepLoading" class="predict-loading" style="display:none">
+        <div class="predict-loading-spinner"></div>
+        <p>Loading questions…</p>
+      </div>
+
+      <!-- Step: questions list (injected dynamically) -->
+      <div id="stepQuestions" style="display:none">
+        <div id="questionsList"></div>
+      </div>
+
+      <!-- Step: success -->
+      <div id="stepSuccess" class="predict-success" style="display:none">
+        <div class="predict-success-icon">🎉</div>
+        <h3>Predictions Saved!</h3>
+        <p>Your predictions have been recorded.<br>Good luck — may your guesses be closest!</p>
+      </div>
+
+    </div><!-- /.predict-modal-body -->
+
+    <!-- Action bar (submit / next) — shown conditionally -->
+    <div class="predict-action-bar" id="predictActionBar" style="display:none">
+      <button id="btnNext"   class="btn-next-step"          onclick="saveUsername()"          style="display:none">Continue →</button>
+      <button id="btnSubmit" class="btn-submit-predictions" onclick="submitPredictions()"     style="display:none">Submit Predictions</button>
+      <div    id="submitFeedback" class="submit-feedback"></div>
+    </div>
+
   </div>
 </div>
 
 <div class="page-wrap">
 
-  <!-- ── Back link ── -->
+  <!-- ── Back link (blue) ── -->
   <div style="margin-bottom:16px;">
-    <a href="closest-call.html" onclick="trackClick('wwc_back_btn')" style="display:inline-flex;align-items:center;gap:6px;font-size:0.85rem;font-weight:700;color:#6b7280;text-decoration:none;padding:7px 14px;border-radius:8px;border:1px solid #e5e7eb;background:#ffffff;transition:background 0.15s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#ffffff'">← Back to Closest Call</a>
+    <a href="closest-call.html" onclick="trackClick('wwc_back_btn')"
+       style="display:inline-flex;align-items:center;gap:6px;font-size:0.85rem;font-weight:700;
+              color:#ffffff;text-decoration:none;padding:7px 16px;border-radius:8px;
+              background:#2563eb;border:1px solid #1d4ed8;transition:background 0.15s;"
+       onmouseover="this.style.background='#1d4ed8'"
+       onmouseout="this.style.background='#2563eb'">← Back to Closest Call</a>
   </div>
 
-  <!-- ── Header ── -->
+  <!-- ── Header (hamburger only) ── -->
   <header class="page-header">
-    <a href="index.html" class="logo-wrap" onclick="trackClick('wwc_logo_click')">
-      <img src="mtgames_logo.png" alt="MT Games logo" class="logo-img" />
-      <span class="logo-text">MT Games</span>
-    </a>
     <div class="hamburger-wrapper">
       <button class="hamburger-menu-btn" id="hamburgerMenuBtn" aria-label="Open navigation menu" onclick="toggleHamburgerMenu()">
         <span></span><span></span><span></span>
@@ -289,7 +489,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <!-- ── Action bar ── -->
   <div class="action-bar">
-    <button class="action-btn action-btn-play" onclick="openInfoModal('howToPlayModal'); trackClick('wwc_how_to_play')">💡 How to Play</button>
+    <button class="action-btn action-btn-play" onclick="openInfoModal('scoringModal'); trackClick('wwc_scoring_btn')">🏆 Scoring</button>
     <a href="wwc2026-leaderboard.html" class="action-btn action-btn-lb" onclick="trackClick('wwc_leaderboard_btn')">📊 Women's T20 WC Leaderboard</a>
   </div>
 
@@ -310,194 +510,103 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   const USER_ID_KEY   = 'mtgames_user_id';
   const USER_NAME_KEY = 'mtgames_user_name';
 
-  /* ─────────────────────────────────────────────────────────────────
-   * TEAM LOGO MAP
-   * Keys are lowercased team name variants. Values are paths inside
-   * the team_logos/ folder. Add new variants freely — the lookup is
-   * case-insensitive and trims whitespace automatically.
-   * ───────────────────────────────────────────────────────────────── */
+  /* ── Team Logo Map ── */
   const TEAM_LOGO_MAP = {
-    // Australia Women
-    'australia women':    'team_logos/aus_w.png',
-    'australia w':        'team_logos/aus_w.png',
-    'aus women':          'team_logos/aus_w.png',
-    'aus-w':              'team_logos/aus_w.png',
-    'aus w':              'team_logos/aus_w.png',
-
-    // India Women
-    'india women':        'team_logos/ind_w.png',
-    'india w':            'team_logos/ind_w.png',
-    'ind women':          'team_logos/ind_w.png',
-    'ind-w':              'team_logos/ind_w.png',
-    'ind w':              'team_logos/ind_w.png',
-
-    // England Women
-    'england women':      'team_logos/eng_w.png',
-    'england w':          'team_logos/eng_w.png',
-    'eng women':          'team_logos/eng_w.png',
-    'eng-w':              'team_logos/eng_w.png',
-    'eng w':              'team_logos/eng_w.png',
-
-    // New Zealand Women
-    'new zealand women':  'team_logos/nz_w.png',
-    'new zealand w':      'team_logos/nz_w.png',
-    'nz women':           'team_logos/nz_w.png',
-    'nz-w':               'team_logos/nz_w.png',
-    'nz w':               'team_logos/nz_w.png',
-
-    // South Africa Women
-    'south africa women': 'team_logos/sa_w.png',
-    'south africa w':     'team_logos/sa_w.png',
-    'sa women':           'team_logos/sa_w.png',
-    'sa-w':               'team_logos/sa_w.png',
-    'sa w':               'team_logos/sa_w.png',
-
-    // West Indies Women
-    'west indies women':  'team_logos/wi_w.png',
-    'west indies w':      'team_logos/wi_w.png',
-    'wi women':           'team_logos/wi_w.png',
-    'wi-w':               'team_logos/wi_w.png',
-    'wi w':               'team_logos/wi_w.png',
-    'windies women':      'team_logos/wi_w.png',
-
-    // Pakistan Women
-    'pakistan women':     'team_logos/pak_w.png',
-    'pakistan w':         'team_logos/pak_w.png',
-    'pak women':          'team_logos/pak_w.png',
-    'pak-w':              'team_logos/pak_w.png',
-    'pak w':              'team_logos/pak_w.png',
-
-    // Sri Lanka Women
-    'sri lanka women':    'team_logos/sl_w.png',
-    'sri lanka w':        'team_logos/sl_w.png',
-    'sl women':           'team_logos/sl_w.png',
-    'sl-w':               'team_logos/sl_w.png',
-    'sl w':               'team_logos/sl_w.png',
-
-    // Bangladesh Women
-    'bangladesh women':   'team_logos/ban_w.png',
-    'bangladesh w':       'team_logos/ban_w.png',
-    'ban women':          'team_logos/ban_w.png',
-    'ban-w':              'team_logos/ban_w.png',
-    'ban w':              'team_logos/ban_w.png',
-
-    // Ireland Women
-    'ireland women':      'team_logos/ire_w.png',
-    'ireland w':          'team_logos/ire_w.png',
-    'ire women':          'team_logos/ire_w.png',
-    'ire-w':              'team_logos/ire_w.png',
-    'ire w':              'team_logos/ire_w.png',
-
-    // Scotland Women
-    'scotland women':     'team_logos/sco_w.png',
-    'scotland w':         'team_logos/sco_w.png',
-    'sco women':          'team_logos/sco_w.png',
-    'sco-w':              'team_logos/sco_w.png',
-    'sco w':              'team_logos/sco_w.png',
-
-    // Netherlands Women
-    'netherlands women':  'team_logos/ned_w.png',
-    'netherlands w':      'team_logos/ned_w.png',
-    'ned women':          'team_logos/ned_w.png',
-    'ned-w':              'team_logos/ned_w.png',
-    'ned w':              'team_logos/ned_w.png',
-    'holland women':      'team_logos/ned_w.png',
-
-    // Zimbabwe Women
-    'zimbabwe women':     'team_logos/zim_w.png',
-    'zimbabwe w':         'team_logos/zim_w.png',
-    'zim women':          'team_logos/zim_w.png',
-    'zim-w':              'team_logos/zim_w.png',
-    'zim w':              'team_logos/zim_w.png',
-
-    // Uganda Women
-    'uganda women':       'team_logos/uga_w.png',
-    'uganda w':           'team_logos/uga_w.png',
-    'uga women':          'team_logos/uga_w.png',
-    'uga-w':              'team_logos/uga_w.png',
-    'uga w':              'team_logos/uga_w.png',
-
-    // UAE Women
-    'uae women':          'team_logos/uae_w.png',
-    'uae w':              'team_logos/uae_w.png',
-    'united arab emirates women': 'team_logos/uae_w.png',
-    'uae-w':              'team_logos/uae_w.png',
-
-    // USA Women
-    'usa women':          'team_logos/usa_w.png',
-    'usa w':              'team_logos/usa_w.png',
-    'united states women':'team_logos/usa_w.png',
-    'us women':           'team_logos/usa_w.png',
-    'usa-w':              'team_logos/usa_w.png',
+    'australia women': 'team_logos/aus_w.png', 'aus-w': 'team_logos/aus_w.png',
+    'india women':     'team_logos/ind_w.png', 'ind-w': 'team_logos/ind_w.png',
+    'england women':   'team_logos/eng_w.png', 'eng-w': 'team_logos/eng_w.png',
+    'new zealand women':'team_logos/nz_w.png', 'nz-w':  'team_logos/nz_w.png',
+    'south africa women':'team_logos/sa_w.png','sa-w':  'team_logos/sa_w.png',
+    'west indies women':'team_logos/wi_w.png', 'wi-w':  'team_logos/wi_w.png', 'windies women':'team_logos/wi_w.png',
+    'pakistan women':  'team_logos/pak_w.png', 'pak-w': 'team_logos/pak_w.png',
+    'sri lanka women': 'team_logos/sl_w.png',  'sl-w':  'team_logos/sl_w.png',
+    'bangladesh women':'team_logos/ban_w.png', 'ban-w': 'team_logos/ban_w.png',
+    'ireland women':   'team_logos/ire_w.png', 'ire-w': 'team_logos/ire_w.png',
+    'scotland women':  'team_logos/sco_w.png', 'sco-w': 'team_logos/sco_w.png',
+    'netherlands women':'team_logos/ned_w.png','ned-w': 'team_logos/ned_w.png',
+    'zimbabwe women':  'team_logos/zim_w.png', 'zim-w': 'team_logos/zim_w.png',
+    'uganda women':    'team_logos/uga_w.png', 'uga-w': 'team_logos/uga_w.png',
+    'uae women':       'team_logos/uae_w.png', 'uae-w': 'team_logos/uae_w.png',
+    'usa women':       'team_logos/usa_w.png', 'usa-w': 'team_logos/usa_w.png',
   };
-
-  /* Fallback emoji per team when logo image is missing */
   const TEAM_EMOJI_MAP = {
-    'australia women':    '🇦🇺',
-    'india women':        '🇮🇳',
-    'england women':      '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
-    'new zealand women':  '🇳🇿',
-    'south africa women': '🇿🇦',
-    'west indies women':  '🌴',
-    'pakistan women':     '🇵🇰',
-    'sri lanka women':    '🇱🇰',
-    'bangladesh women':   '🇧🇩',
-    'ireland women':      '🇮🇪',
-    'scotland women':     '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
-    'netherlands women':  '🇳🇱',
-    'zimbabwe women':     '🇿🇼',
-    'uganda women':       '🇺🇬',
-    'uae women':          '🇦🇪',
-    'usa women':          '🇺🇸',
+    'australia women':'🇦🇺','ind-w':'🇮🇳','india women':'🇮🇳',
+    'england women':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','new zealand women':'🇳🇿','south africa women':'🇿🇦',
+    'west indies women':'🌴','pakistan women':'🇵🇰','sri lanka women':'🇱🇰',
+    'bangladesh women':'🇧🇩','ireland women':'🇮🇪','scotland women':'🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+    'netherlands women':'🇳🇱','zimbabwe women':'🇿🇼','uganda women':'🇺🇬',
+    'uae women':'🇦🇪','usa women':'🇺🇸',
   };
-
-  function getTeamLogo(teamName) {
-    return TEAM_LOGO_MAP[teamName.toLowerCase().trim()] || null;
-  }
-
-  function getTeamEmoji(teamName) {
-    const key = teamName.toLowerCase().trim();
-    return TEAM_EMOJI_MAP[key]
-        || TEAM_EMOJI_MAP[key.replace(/ w$/, ' women')]
-        || '🏏';
-  }
-
-  /* ─────────────────────────────────────────────────────────────────
-   * TEAM CODE → DISPLAY NAME
-   * Maps DB short codes (team_1 / team_2) to full display names.
-   * Matches are loaded dynamically from /api/get-closest-call-matches
-   * so you never need to edit this file to add new games.
-   * ───────────────────────────────────────────────────────────────── */
   const CODE_TO_NAME = {
-    'AUS-W':  'Australia Women',
-    'IND-W':  'India Women',
-    'ENG-W':  'England Women',
-    'NZ-W':   'New Zealand Women',
-    'SA-W':   'South Africa Women',
-    'WI-W':   'West Indies Women',
-    'PAK-W':  'Pakistan Women',
-    'SL-W':   'Sri Lanka Women',
-    'BAN-W':  'Bangladesh Women',
-    'IRE-W':  'Ireland Women',
-    'SCO-W':  'Scotland Women',
-    'NED-W':  'Netherlands Women',
-    'ZIM-W':  'Zimbabwe Women',
-    'UGA-W':  'Uganda Women',
-    'UAE-W':  'UAE Women',
-    'USA-W':  'USA Women',
+    'AUS-W':'Australia Women','IND-W':'India Women','ENG-W':'England Women',
+    'NZ-W':'New Zealand Women','SA-W':'South Africa Women','WI-W':'West Indies Women',
+    'PAK-W':'Pakistan Women','SL-W':'Sri Lanka Women','BAN-W':'Bangladesh Women',
+    'IRE-W':'Ireland Women','SCO-W':'Scotland Women','NED-W':'Netherlands Women',
+    'ZIM-W':'Zimbabwe Women','UGA-W':'Uganda Women','UAE-W':'UAE Women','USA-W':'USA Women',
   };
 
-  // Matches are fetched from the API — no static list needed.
-  // Matches any title containing "WT20 WC" or "WWC" (with or without year).
+  function getTeamLogo(name) { return TEAM_LOGO_MAP[name.toLowerCase().trim()] || null; }
+  function getTeamEmoji(name) {
+    const k = name.toLowerCase().trim();
+    return TEAM_EMOJI_MAP[k] || TEAM_EMOJI_MAP[k.replace(/ w$/, ' women')] || '🏏';
+  }
+
+  // Filter: only show WWC matches
   const WWC_TITLE_PATTERN = /WT20 WC|WWC 2026|women.*wc/i;
 
+  // Global map of matchId → match object (avoids embedding titles in onclick attributes)
+  let matchesById = {};
+
   /* ─────────────────────────────────────────────────────────────────
-   * RENDERER
+   * COUNTDOWN TIMERS
+   * Each open match gets a live countdown to its match_date (lock time).
+   * Intervals are stored by matchId so they can be cleared if needed.
    * ───────────────────────────────────────────────────────────────── */
-  function statusBadge(status) {
+  const countdownIntervals = {};
+
+  function startCountdown(matchId, lockMs) {
+    const el = document.getElementById('cd-' + matchId);
+    if (!el) return;
+
+    function tick() {
+      const diff = lockMs - Date.now();
+      if (diff <= 0) {
+        el.textContent = '🔒 Locked';
+        el.classList.add('expired');
+        clearInterval(countdownIntervals[matchId]);
+        // Disable the predict button for this match
+        const btn = document.getElementById('predict-btn-' + matchId);
+        if (btn) {
+          btn.className = 'btn-predict btn-predict-disabled';
+          btn.removeAttribute('onclick');
+          btn.setAttribute('tabindex', '-1');
+        }
+        return;
+      }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      if (h > 0) {
+        el.textContent = `⏱ Closes in ${h}h ${m}m ${s}s`;
+      } else {
+        el.textContent = `⏱ Closes in ${m}m ${s}s`;
+      }
+    }
+
+    tick();
+    countdownIntervals[matchId] = setInterval(tick, 1000);
+  }
+
+  /* ─────────────────────────────────────────────────────────────────
+   * MATCH CARD RENDERING
+   * ───────────────────────────────────────────────────────────────── */
+  function statusBadge(status, matchId) {
+    if (status === 'open') {
+      // Countdown timer replaces the static badge
+      return `<span class="match-countdown" id="cd-${matchId}">Loading…</span>`;
+    }
     const map = {
       upcoming: '<span class="match-status-badge badge-upcoming">🕐 Upcoming</span>',
-      open:     '<span class="match-status-badge badge-open">🟢 Open</span>',
       locked:   '<span class="match-status-badge badge-locked">🔒 Locked</span>',
       closed:   '<span class="match-status-badge badge-closed">✅ Closed</span>',
     };
@@ -506,23 +615,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   function predictBtn(status, matchId) {
     if (status === 'open') {
-      return `<a href="#" class="btn-predict" onclick="trackClick('wwc_match${matchId}_predict'); return false;">Predict →</a>`;
+      return `<button id="predict-btn-${matchId}" class="btn-predict"
+                onclick="openPredictModal(${matchId}); trackClick('wwc_match${matchId}_predict')">
+                Predict →
+              </button>`;
     }
-    return `<a href="#" class="btn-predict btn-predict-disabled" tabindex="-1">Predict →</a>`;
+    if (status === 'locked') {
+      return `<button id="predict-btn-${matchId}" class="btn-predict"
+                onclick="openPredictModal(${matchId}); trackClick('wwc_match${matchId}_view')">
+                View Picks →
+              </button>`;
+    }
+    return `<button id="predict-btn-${matchId}" class="btn-predict btn-predict-disabled" tabindex="-1">Predict →</button>`;
   }
 
-  function teamHtml(teamName, abbr, side) {
+  function teamHtml(teamName, abbr, side, matchId) {
     const logoSrc = getTeamLogo(teamName);
     const emoji   = getTeamEmoji(teamName);
-    const imgId   = `logo_${side}_${teamName.replace(/\s+/g, '_').toLowerCase()}`;
-
-    const imgTag = logoSrc
+    const imgId   = `logo_${side}_${matchId}_${abbr.replace(/[^a-z0-9]/gi,'').toLowerCase()}`;
+    const imgTag  = logoSrc
       ? `<img id="${imgId}" src="${logoSrc}" alt="${teamName}" class="team-logo"
-             onerror="document.getElementById('${imgId}').style.display='none';
-                      document.getElementById('fb_${imgId}').style.display='block';" />`
+             onerror="document.getElementById('${imgId}').style.display='none';document.getElementById('fb_${imgId}').style.display='block';" />`
       : '';
     const fbStyle = logoSrc ? 'display:none;' : '';
-
     return `
       <div class="team-block">
         <div class="team-logo-wrap">
@@ -543,17 +658,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     grid.innerHTML = matches.map(m => `
       <div class="match-card">
         <div class="match-card-inner">
-          ${teamHtml(m.team1, m.abbr1, 'home')}
-          <div class="vs-divider">
-            <span class="vs-text">VS</span>
-          </div>
-          ${teamHtml(m.team2, m.abbr2, 'away')}
+          ${teamHtml(m.team1, m.abbr1, 'home', m.id)}
+          <div class="vs-divider"><span class="vs-text">VS</span></div>
+          ${teamHtml(m.team2, m.abbr2, 'away', m.id)}
         </div>
         <div class="match-footer">
-          ${statusBadge(m.status)}
+          ${statusBadge(m.status, m.id)}
           ${predictBtn(m.status, m.id)}
         </div>
       </div>`).join('');
+
+    // Start countdowns for all open matches
+    matches.forEach(m => {
+      if (m.status === 'open' && m.lockMs) {
+        startCountdown(m.id, m.lockMs);
+      }
+    });
   }
 
   async function loadMatches() {
@@ -566,13 +686,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       const filtered = (matches || [])
         .filter(m => WWC_TITLE_PATTERN.test(m.match_title))
         .map(m => ({
-          id:    m.id,
-          team1: CODE_TO_NAME[m.team_1] || m.team_1,
-          abbr1: m.team_1,
-          team2: CODE_TO_NAME[m.team_2] || m.team_2,
-          abbr2: m.team_2,
+          id:     m.id,
+          title:  m.match_title,
+          team1:  CODE_TO_NAME[m.team_1] || m.team_1,
+          abbr1:  m.team_1,
+          team2:  CODE_TO_NAME[m.team_2] || m.team_2,
+          abbr2:  m.team_2,
           status: m.status,
+          lockMs: m.match_date_ms ? Number(m.match_date_ms) : null,
         }));
+      matchesById = {};
+      filtered.forEach(m => { matchesById[m.id] = m; });
       renderMatches(filtered);
     } catch (e) {
       grid.innerHTML = '<div class="matches-empty">Could not load matches. Please try again later.</div>';
@@ -580,53 +704,286 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
 
   /* ─────────────────────────────────────────────────────────────────
-   * UTILITIES
+   * PREDICTION MODAL
    * ───────────────────────────────────────────────────────────────── */
-  function openInfoModal(id) {
-    document.getElementById(id).classList.add('show');
+  let predictMatchId    = null;
+  let predictMatchTitle = '';
+  let predictQuestions  = [];
+
+  function openPredictModal(matchId) {
+    const match       = matchesById[matchId] || {};
+    predictMatchId    = matchId;
+    predictMatchTitle = match.title || '';
+    document.getElementById('predictModalTitle').textContent = match.title || 'Your Predictions';
+    document.getElementById('predictModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+
+    const userName = localStorage.getItem(USER_NAME_KEY);
+    if (!userName) {
+      showStep('username');
+    } else {
+      fetchAndRenderQuestions(matchId, userName);
+    }
   }
-  function closeInfoModal(id) {
-    document.getElementById(id).classList.remove('show');
+
+  function closePredictModal() {
+    document.getElementById('predictModal').classList.remove('show');
+    document.body.style.overflow = '';
+    predictMatchId = null;
+    predictQuestions = [];
   }
+
+  function handlePredictOverlayClick(e) {
+    if (e.target === document.getElementById('predictModal')) closePredictModal();
+  }
+
+  /* Show one of the steps inside the predict modal */
+  function showStep(step) {
+    ['stepUsername','stepLoading','stepQuestions','stepSuccess'].forEach(id => {
+      document.getElementById(id).style.display = 'none';
+    });
+    document.getElementById('predictActionBar').style.display = 'none';
+    document.getElementById('btnNext').style.display   = 'none';
+    document.getElementById('btnSubmit').style.display = 'none';
+    document.getElementById('submitFeedback').style.display = 'none';
+
+    if (step === 'username') {
+      document.getElementById('stepUsername').style.display = 'block';
+      document.getElementById('predictActionBar').style.display = 'block';
+      document.getElementById('btnNext').style.display = 'block';
+      setTimeout(() => document.getElementById('usernameInput').focus(), 100);
+    } else if (step === 'loading') {
+      document.getElementById('stepLoading').style.display = 'block';
+    } else if (step === 'questions') {
+      document.getElementById('stepQuestions').style.display = 'block';
+      document.getElementById('predictActionBar').style.display = 'block';
+      document.getElementById('btnSubmit').style.display = 'block';
+    } else if (step === 'success') {
+      document.getElementById('stepSuccess').style.display = 'block';
+    }
+  }
+
+  /* Save username from the input and move to questions */
+  function saveUsername() {
+    const raw   = document.getElementById('usernameInput').value.trim().toLowerCase();
+    const clean = raw.replace(/[^a-z0-9_]/g, '');
+    const errEl = document.getElementById('usernameError');
+    if (clean.length < 3) {
+      errEl.style.display = 'block';
+      return;
+    }
+    errEl.style.display = 'none';
+    localStorage.setItem(USER_NAME_KEY, clean);
+    fetchAndRenderQuestions(predictMatchId, clean);
+  }
+
+  /* Fetch questions from the API and render them */
+  async function fetchAndRenderQuestions(matchId, userName) {
+    showStep('loading');
+    try {
+      const url = `/api/get-closest-call-questions?closest_call_match_id=${matchId}&user_name=${encodeURIComponent(userName)}`;
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error('Failed to load questions');
+      const data = await resp.json();
+      predictQuestions = data.questions || [];
+
+      if (!predictQuestions.length) {
+        document.getElementById('questionsList').innerHTML =
+          '<div style="padding:24px 20px;text-align:center;color:#9ca3af;font-size:0.88rem;">No questions available for this match yet.</div>';
+        showStep('questions');
+        document.getElementById('btnSubmit').style.display = 'none';
+        return;
+      }
+
+      renderQuestions(predictQuestions);
+      showStep('questions');
+    } catch (e) {
+      document.getElementById('questionsList').innerHTML =
+        `<div style="padding:24px 20px;text-align:center;color:#dc2626;font-size:0.88rem;">Could not load questions. Please try again.</div>`;
+      showStep('questions');
+      document.getElementById('btnSubmit').style.display = 'none';
+    }
+  }
+
+  /* Phase display labels */
+  const PHASE_LABELS = {
+    pre_match:   '📋 Pre-Match',
+    powerplay:   '⚡ Powerplay (Overs 1–6)',
+    mid_innings: '🏏 Mid Innings (Overs 7–12)',
+    final:       '🔥 Final Stage (Overs 13–20)',
+  };
+
+  function renderQuestions(questions) {
+    const list = document.getElementById('questionsList');
+    // Group questions by phase in display order
+    const phaseOrder = ['pre_match', 'powerplay', 'mid_innings', 'final'];
+    const byPhase = {};
+    questions.forEach(q => {
+      const p = q.phase || 'pre_match';
+      if (!byPhase[p]) byPhase[p] = [];
+      byPhase[p].push(q);
+    });
+
+    let html = '';
+    phaseOrder.forEach(phase => {
+      if (!byPhase[phase] || !byPhase[phase].length) return;
+      html += `<div class="phase-header">${PHASE_LABELS[phase] || phase}</div>`;
+      byPhase[phase].forEach(q => {
+        const isDualInput = ['TEAM_SCORE_SPLIT_75_25','TEAM_SCORE_INNINGS'].includes(q.scoring_rule_code);
+        const isEditable  = q.is_editable;
+        const existingVal = q.user_prediction != null ? q.user_prediction : '';
+        const lockReason  = q.lock_reason || '';
+
+        if (isDualInput) {
+          // Dual input: runs + wickets
+          const existingRuns    = q.user_predicted_runs    != null ? q.user_predicted_runs    : '';
+          const existingWickets = q.user_predicted_wickets != null ? q.user_predicted_wickets : '';
+          html += `
+            <div class="question-row" data-qid="${q.id}" data-type="dual">
+              <div class="question-text">
+                ${q.question_text}
+                ${lockReason ? `<div class="question-locked-reason">🔒 ${lockReason}</div>` : ''}
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px;align-items:center;flex-shrink:0;">
+                <input class="question-input" style="width:60px;" type="number" min="0" max="300"
+                       data-field="runs" value="${existingRuns}"
+                       placeholder="Runs" ${isEditable ? '' : 'disabled'} />
+                <input class="question-input" style="width:60px;" type="number" min="0" max="10"
+                       data-field="wickets" value="${existingWickets}"
+                       placeholder="Wkts" ${isEditable ? '' : 'disabled'} />
+              </div>
+            </div>`;
+        } else {
+          // Single numeric input
+          html += `
+            <div class="question-row" data-qid="${q.id}" data-type="single">
+              <div class="question-text">
+                ${q.question_text}
+                ${lockReason ? `<div class="question-locked-reason">🔒 ${lockReason}</div>` : ''}
+              </div>
+              <input class="question-input" type="number" min="0" max="500"
+                     value="${existingVal}"
+                     placeholder="—"
+                     ${isEditable ? '' : 'disabled'} />
+            </div>`;
+        }
+      });
+    });
+
+    list.innerHTML = html;
+  }
+
+  /* Collect and submit predictions */
+  async function submitPredictions() {
+    const userName = localStorage.getItem(USER_NAME_KEY);
+    if (!userName || !predictMatchId) return;
+
+    const predictions = [];
+    const rows = document.querySelectorAll('#questionsList .question-row');
+    rows.forEach(row => {
+      const qid  = Number(row.dataset.qid);
+      const type = row.dataset.type;
+      if (type === 'dual') {
+        const runsInput    = row.querySelector('[data-field="runs"]');
+        const wicketsInput = row.querySelector('[data-field="wickets"]');
+        if (runsInput && !runsInput.disabled && runsInput.value !== '') {
+          predictions.push({
+            question_id:       qid,
+            predicted_runs:    parseInt(runsInput.value, 10),
+            predicted_wickets: parseInt(wicketsInput ? wicketsInput.value || '0' : '0', 10),
+          });
+        }
+      } else {
+        const input = row.querySelector('.question-input');
+        if (input && !input.disabled && input.value !== '') {
+          predictions.push({
+            question_id:     qid,
+            predicted_value: parseInt(input.value, 10),
+          });
+        }
+      }
+    });
+
+    if (!predictions.length) {
+      showFeedback('Enter at least one prediction before submitting.', 'error');
+      return;
+    }
+
+    const btn = document.getElementById('btnSubmit');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    try {
+      const resp = await fetch('/api/submit-closest-call-predictions', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          user_name:              userName,
+          closest_call_match_id:  predictMatchId,
+          predictions,
+        }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || 'Submission failed');
+
+      // Save user ID if returned
+      if (data.user && data.user.id) {
+        localStorage.setItem(USER_ID_KEY, data.user.id);
+      }
+      trackClick('wwc_predictions_submitted', { match_id: predictMatchId, count: predictions.length });
+      showStep('success');
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Submit Predictions';
+      showFeedback(e.message || 'Something went wrong. Please try again.', 'error');
+    }
+  }
+
+  function showFeedback(msg, type) {
+    const el = document.getElementById('submitFeedback');
+    el.textContent = msg;
+    el.className = `submit-feedback ${type}`;
+    el.style.display = 'block';
+  }
+
+  /* ── Info modals (Scoring) ── */
+  function openInfoModal(id) { document.getElementById(id).classList.add('show'); }
+  function closeInfoModal(id) { document.getElementById(id).classList.remove('show'); }
   document.addEventListener('click', function(e) {
     document.querySelectorAll('.info-modal-overlay').forEach(function(overlay) {
       if (e.target === overlay) overlay.classList.remove('show');
     });
   });
 
-  function trackClick(buttonName, metadata = {}) {
+  /* ── Click tracking ── */
+  function trackClick(buttonName, metadata) {
     const userId   = localStorage.getItem(USER_ID_KEY);
     const userName = localStorage.getItem(USER_NAME_KEY);
     fetch('/api/track-click', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      keepalive: true,
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
       body: JSON.stringify({
-        user_id:        userId ? Number(userId) : null,
-        user_name:      userName || null,
-        event_name:     'button_click',
-        button_name:    buttonName,
-        page_name:      'womens_t20_worldcup_2026.html',
-        page_url:       window.location.pathname,
-        event_metadata: metadata
+        user_id: userId ? Number(userId) : null, user_name: userName || null,
+        event_name: 'button_click', button_name: buttonName,
+        page_name: 'womens_t20_worldcup_2026.html',
+        page_url: window.location.pathname, event_metadata: metadata || {}
       })
-    }).catch(err => console.warn('Click tracking failed:', err));
+    }).catch(() => {});
   }
 
+  /* ── Hamburger ── */
   function toggleHamburgerMenu() {
     document.getElementById('hamburgerDropdown').classList.toggle('open');
   }
   document.addEventListener('click', function(e) {
-    const btn      = document.getElementById('hamburgerMenuBtn');
-    const dropdown = document.getElementById('hamburgerDropdown');
-    if (dropdown && btn && !btn.contains(e.target) && !dropdown.contains(e.target)) {
-      dropdown.classList.remove('open');
-    }
+    const btn = document.getElementById('hamburgerMenuBtn');
+    const dd  = document.getElementById('hamburgerDropdown');
+    if (dd && btn && !btn.contains(e.target) && !dd.contains(e.target)) dd.classList.remove('open');
   });
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       const d = document.getElementById('hamburgerDropdown');
       if (d) d.classList.remove('open');
+      closePredictModal();
     }
   });
 
