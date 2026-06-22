@@ -407,11 +407,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <span class="logo-text">MT Games</span>
   </a>
   <nav class="header-nav">
-    <a href="fantasy.html"               onclick="trackClick('header_nav_fantasy')">🏏 Fantasy Cricket</a>
     <a href="closest-call.html"          onclick="trackClick('header_nav_closest_call')">🎯 Closest Call</a>
+    <a href="closest-call-leaderboard.html" onclick="trackClick('header_nav_cc_lb')">🏆 Leaderboard</a>
     <a href="sudoku.html"                onclick="trackClick('header_nav_sudoku')">🧩 Sudoku</a>
     <a href="spelling-bee.html"          onclick="trackClick('header_nav_spelling_bee')">🐝 Spelling Bee</a>
-    <a href="fantasy_leaderboard.html"   onclick="trackClick('header_nav_leaderboard')">🏆 Leaderboard</a>
     <a href="prizes.html"                onclick="trackClick('header_nav_prizes')">🎁 Prizes</a>
     <a href="contact.html"               onclick="trackClick('contact_us_menu_click')">✉️ Contact</a>
   </nav>
@@ -421,18 +420,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <section class="hero">
   <h1 class="hero-title">Welcome to MT&nbsp;Games</h1>
   <p class="hero-subtitle">
-    Fantasy Cricket and Daily Puzzles for those who love Strategy and Fun.
+    Closest Call Cricket and Daily Puzzles for those who love Strategy and Fun.
   </p>
   <p class="hero-body">
-    Build your ultimate fantasy XI, solve daily puzzles, and compete your way up the leaderboards for real cash prizes.
+    Predict runs &amp; wickets for IPL 2026 matches, solve daily puzzles, and compete your way up the leaderboards for real cash prizes.
   </p>
   <div class="hero-cta-row">
-    <a class="btn-primary" href="fantasy.html" onclick="trackClick('hero_cta_play_fantasy')">
-      🏏 Play Fantasy Cricket
+    <a class="btn-primary" href="closest-call.html" onclick="trackClick('hero_cta_play_closest_call')">
+      🎯 Play Closest Call
     </a>
-<a class="btn-secondary" href="spelling-bee.html" onclick="trackClick('hero_cta_play_spelling_bee')">
-  🐝 Play Spelling Bee
-</a>
+    <a class="btn-secondary" href="spelling-bee.html" onclick="trackClick('hero_cta_play_spelling_bee')">
+      🐝 Play Spelling Bee
+    </a>
   </div>
 </section>
 
@@ -451,12 +450,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <div class="cards-grid">
 
-    <!-- Fantasy -->
-    <div class="game-card card-fantasy">
-      <div class="card-icon">🏏</div>
-      <div class="card-name">IPL 2026 Fantasy Cricket</div>
-      <a class="card-cta cta-fantasy" href="fantasy.html" onclick="trackClick('card_cta_fantasy')">
-        Play →
+    <!-- Closest Call Cricket -->
+    <div class="game-card card-cc">
+      <div class="card-icon">🎯</div>
+      <div class="card-name">Closest Call Cricket</div>
+      <a class="card-cta cta-cc" href="closest-call.html" onclick="trackClick('card_cta_closest_call')">
+        Play Closest Call →
+      </a>
+    </div>
+
+    <!-- Closest Call Leaderboard -->
+    <div class="game-card card-lb">
+      <div class="card-icon">🏆</div>
+      <div class="card-name">Closest Call Leaderboard</div>
+      <a class="card-cta cta-lb" href="closest-call-leaderboard.html" onclick="trackClick('card_cta_cc_lb')">
+        View Rankings →
       </a>
     </div>
 
@@ -478,15 +486,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </a>
     </div>
 
-    <!-- Closest Call Cricket -->
-    <div class="game-card card-cc">
-      <div class="card-icon">🎯</div>
-      <div class="card-name">Closest Call Cricket</div>
-      <a class="card-cta cta-cc" href="closest-call.html" onclick="trackClick('card_cta_closest_call')">
-        Play Closest Call →
-      </a>
-    </div>
-
     <!-- Prizes -->
     <div class="game-card card-prizes">
       <div class="card-icon">🎁</div>
@@ -503,13 +502,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <footer class="site-footer">
   <img src="mtgames_logo.png" alt="MT Games" class="footer-logo" />
   <div class="footer-links">
-    <a href="fantasy.html"                  onclick="trackClick('footer_fantasy')">Fantasy</a>
-    <a href="closest-call.html"            onclick="trackClick('footer_closest_call')">Closest Call</a>
-    <a href="sudoku.html"                  onclick="trackClick('footer_sudoku')">Sudoku</a>
-    <a href="spelling-bee.html"            onclick="trackClick('footer_spelling_bee')">Spelling Bee</a>
-    <a href="fantasy_leaderboard.html"     onclick="trackClick('footer_leaderboard')">Leaderboard</a>
-    <a href="closest-call-leaderboard.html" onclick="trackClick('footer_cc_leaderboard')">CC Leaderboard</a>
-    <a href="prizes.html"                  onclick="trackClick('footer_prizes')">Prizes</a>
+    <a href="closest-call.html"             onclick="trackClick('footer_closest_call')">Closest Call</a>
+    <a href="closest-call-leaderboard.html" onclick="trackClick('footer_cc_leaderboard')">Leaderboard</a>
+    <a href="sudoku.html"                   onclick="trackClick('footer_sudoku')">Sudoku</a>
+    <a href="spelling-bee.html"             onclick="trackClick('footer_spelling_bee')">Spelling Bee</a>
+    <a href="prizes.html"                   onclick="trackClick('footer_prizes')">Prizes</a>
+    <a href="contact.html"                  onclick="trackClick('footer_contact')">Contact</a>
   </div>
   <div class="footer-copy">© 2025 MT Games. All rights reserved.</div>
 </footer>
