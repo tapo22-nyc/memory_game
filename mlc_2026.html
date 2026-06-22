@@ -90,17 +90,52 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     max-width: 520px; margin: 0 auto;
   }
 
-  /* ── Coming Soon banner ── */
-  .coming-soon-banner {
-    background: linear-gradient(135deg, #eff6ff, #f0f9ff);
-    border: 1px solid #bfdbfe; border-radius: 14px;
-    padding: 18px 22px; text-align: center; margin-bottom: 32px;
-    display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
+  /* ── Action bar ── */
+  .action-bar {
+    display: flex; gap: 8px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 28px;
   }
-  .coming-soon-banner-icon { font-size: 1.6rem; flex-shrink: 0; }
-  .coming-soon-banner-body { text-align: left; }
-  .coming-soon-banner-title { font-size: 0.92rem; font-weight: 800; color: #1a3a6b; margin-bottom: 3px; }
-  .coming-soon-banner-text  { font-size: 0.8rem; color: #6b7280; line-height: 1.45; }
+  .action-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 999px; font-size: 0.82rem;
+    font-weight: 700; cursor: pointer; letter-spacing: 0.2px;
+    transition: background 0.15s, border-color 0.15s;
+    text-decoration: none; border: 1.5px solid;
+  }
+  .action-btn-play { background: #eff6ff; border-color: #bfdbfe; color: #1a3a6b; }
+  .action-btn-play:hover { background: #dbeafe; }
+  .action-btn-lb   { background: #fff1f2; border-color: #fecdd3; color: #c8102e; }
+  .action-btn-lb:hover { background: #ffe4e6; }
+
+  /* ── How to Play modal ── */
+  .info-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 2500;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .info-modal-overlay.show { display: flex; }
+  .info-modal-box {
+    width: 100%; max-width: 440px; background: #ffffff;
+    border: 1px solid #e5e7eb; border-radius: 20px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.12); overflow: hidden;
+  }
+  .info-modal-header {
+    background: linear-gradient(135deg, #1a3a6b, #c8102e);
+    padding: 16px 20px; display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  .info-modal-header-title { font-size: 1rem; font-weight: 800; color: #fff; }
+  .info-modal-close-btn {
+    background: rgba(255,255,255,0.2); border: 1.5px solid rgba(255,255,255,0.35);
+    color: #fff; width: 34px; height: 34px; border-radius: 50%; font-size: 16px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    line-height: 1; font-weight: 700;
+  }
+  .info-modal-close-btn:hover { background: rgba(255,255,255,0.32); }
+  .info-modal-body { padding: 20px; }
+  .how-to-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .how-to-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.9rem; color: #374151; line-height: 1.5; }
+  .how-to-list li .htl-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
 
   /* ── Section ── */
   .section-header {
@@ -192,7 +227,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </head>
 <body>
 
+<!-- ── How to Play modal ── -->
+<div class="info-modal-overlay" id="howToPlayModal">
+  <div class="info-modal-box">
+    <div class="info-modal-header">
+      <span class="info-modal-header-title">💡 How to Play</span>
+      <button class="info-modal-close-btn" onclick="closeInfoModal('howToPlayModal')">✕</button>
+    </div>
+    <div class="info-modal-body">
+      <ul class="how-to-list">
+        <li><span class="htl-icon">🏏</span><span>Predict team scores, player runs, and wickets for upcoming MLC 2026 matches</span></li>
+        <li><span class="htl-icon">🎯</span><span>The closer your prediction is to the actual result, the more points you win</span></li>
+        <li><span class="htl-icon">🏆</span><span>Compete across all MLC matches and climb the leaderboard for prizes</span></li>
+        <li><span class="htl-icon">⏰</span><span>Predictions lock when the match starts — make your calls before the toss!</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
 <div class="page-wrap">
+
+  <!-- ── Back link ── -->
+  <div style="margin-bottom:16px;">
+    <a href="closest-call.html" onclick="trackClick('mlc_back_btn')" style="display:inline-flex;align-items:center;gap:6px;font-size:0.85rem;font-weight:700;color:#6b7280;text-decoration:none;padding:7px 14px;border-radius:8px;border:1px solid #e5e7eb;background:#ffffff;transition:background 0.15s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#ffffff'">← Back to Closest Call</a>
+  </div>
 
   <!-- ── Header ── -->
   <header class="page-header">
@@ -208,7 +266,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <a href="closest-call.html"             onclick="trackClick('nav_closest_call')">🎯 Closest Call</a>
         <a href="womens_t20_worldcup_2026.html" onclick="trackClick('nav_wwc2026')">🏏 Women's T20 WC 2026</a>
         <a href="mlc_2026.html"                 class="active-page" onclick="trackClick('nav_mlc2026')">🏟️ MLC 2026</a>
-        <a href="closest-call-leaderboard.html" onclick="trackClick('nav_cc_lb')">📊 Leaderboard</a>
+        <a href="mlc2026-leaderboard.html"      onclick="trackClick('nav_mlc_lb')">📊 MLC 2026 Leaderboard</a>
+        <a href="closest-call-leaderboard.html" onclick="trackClick('nav_cc_lb')">🏆 Overall Leaderboard</a>
         <a href="earnings.html"                 onclick="trackClick('nav_earnings')">💰 My Earnings</a>
         <a href="prizes.html"                   onclick="trackClick('nav_prizes')">🏅 Prizes</a>
         <a href="index.html"                    onclick="trackClick('nav_main_home')">🏠 Main Home</a>
@@ -228,13 +287,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <p class="hero-subtitle">Make your Closest Call predictions for Major League Cricket 2026 matches. Pick the runs and wickets — the closer you are, the higher you climb.</p>
   </section>
 
-  <!-- ── Coming Soon Notice ── -->
-  <div class="coming-soon-banner">
-    <div class="coming-soon-banner-icon">🔜</div>
-    <div class="coming-soon-banner-body">
-      <div class="coming-soon-banner-title">Predictions Opening Soon</div>
-      <div class="coming-soon-banner-text">Match prediction windows will open closer to each game. Check back to lock in your calls before the toss!</div>
-    </div>
+  <!-- ── Action bar ── -->
+  <div class="action-bar">
+    <button class="action-btn action-btn-play" onclick="openInfoModal('howToPlayModal'); trackClick('mlc_how_to_play')">💡 How to Play</button>
+    <a href="mlc2026-leaderboard.html" class="action-btn action-btn-lb" onclick="trackClick('mlc_leaderboard_btn')">📊 MLC 2026 Leaderboard</a>
   </div>
 
   <!-- ── Matches ── -->
@@ -388,7 +444,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           ${teamHtml(m.team1, m.abbr1, 'home')}
           <div class="vs-divider">
             <span class="vs-text">VS</span>
-            <span class="match-num">Match ${m.id}</span>
           </div>
           ${teamHtml(m.team2, m.abbr2, 'away')}
         </div>
@@ -436,6 +491,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       const d = document.getElementById('hamburgerDropdown');
       if (d) d.classList.remove('open');
     }
+  });
+
+  function openInfoModal(id) {
+    document.getElementById(id).classList.add('show');
+  }
+  function closeInfoModal(id) {
+    document.getElementById(id).classList.remove('show');
+  }
+  document.addEventListener('click', function(e) {
+    document.querySelectorAll('.info-modal-overlay').forEach(function(overlay) {
+      if (e.target === overlay) overlay.classList.remove('show');
+    });
   });
 
   /* Boot */

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtag/js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NGH76BBT');</script>
+<!-- End Google Tag Manager -->
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MLC 2026 Leaderboard | MTGames</title>
+<link rel="icon" type="image/png" href="mtgames_logo.png">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: #f8fafc;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #111827;
+    padding: 28px 20px 64px;
+  }
+
+  .page-wrap { max-width: 960px; margin: 0 auto; }
+
+  .page-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 14px; margin-bottom: 40px;
+  }
+
+  .logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-img  { height: 40px; width: auto; object-fit: contain; }
+  .logo-text {
+    font-size: 1.15rem; font-weight: 800; letter-spacing: 0.5px;
+    background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; line-height: 1;
+  }
+
+  /* ── Hamburger ── */
+  .hamburger-wrapper { position: relative; flex-shrink: 0; }
+  .hamburger-menu-btn {
+    display: flex; flex-direction: column; justify-content: center; gap: 5px;
+    width: 38px; height: 38px; background: #ffffff;
+    border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; padding: 8px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .hamburger-menu-btn:hover { background: #f3f4f6; border-color: #d1d5db; }
+  .hamburger-menu-btn span { display: block; width: 100%; height: 2px; background: #374151; border-radius: 2px; }
+  .hamburger-dropdown {
+    display: none; position: absolute; top: calc(100% + 8px); right: 0;
+    min-width: 220px; background: #ffffff; border: 1px solid #e5e7eb;
+    border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); z-index: 200; overflow: hidden;
+  }
+  .hamburger-dropdown.open { display: block; }
+  .hamburger-dropdown a {
+    display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+    text-decoration: none; font-size: 0.88rem; font-weight: 600; color: #374151;
+    border-bottom: 1px solid #f3f4f6; transition: background 0.12s, color 0.12s;
+  }
+  .hamburger-dropdown a:last-child { border-bottom: none; }
+  .hamburger-dropdown a:hover { background: #f8fafc; color: #2563eb; }
+  .hamburger-dropdown a.active-page { color: #1a3a6b; background: #eff6ff; font-weight: 700; }
+
+  /* ── Hero ── */
+  .hero-section { text-align: center; margin-bottom: 32px; }
+  .hero-logo-wrap { display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+  .hero-logo { max-height: 80px; max-width: 160px; object-fit: contain; }
+  .hero-title {
+    font-size: clamp(1.6rem, 5vw, 2.4rem); font-weight: 800; letter-spacing: 1px;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #1a3a6b, #c8102e);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; line-height: 1.2;
+  }
+  .hero-subtitle { font-size: 0.95rem; color: #6b7280; line-height: 1.65; max-width: 480px; margin: 0 auto; }
+
+  /* ── Back link ── */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.85rem; font-weight: 700; color: #6b7280;
+    text-decoration: none; padding: 7px 14px; border-radius: 8px;
+    border: 1px solid #e5e7eb; background: #ffffff;
+    margin-bottom: 16px; transition: background 0.15s;
+  }
+  .back-link:hover { background: #f3f4f6; }
+
+  /* ── Play CTA ── */
+  .play-cta-strip {
+    background: linear-gradient(135deg, #1a3a6b, #c8102e);
+    border-radius: 16px; padding: 20px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap; margin-bottom: 28px;
+  }
+  .play-cta-text { color: #fff; font-size: 1rem; font-weight: 700; line-height: 1.4; }
+  .play-cta-sub  { color: rgba(255,255,255,0.75); font-size: 0.82rem; margin-top: 3px; }
+  .btn-play-cta  {
+    background: #ffffff; color: #1a3a6b; padding: 10px 22px;
+    border-radius: 999px; font-size: 0.88rem; font-weight: 800;
+    text-decoration: none; white-space: nowrap; flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .btn-play-cta:hover { background: #eff6ff; }
+
+  /* ── Section ── */
+  .content-section { margin-bottom: 40px; }
+  .section-header  { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .section-label   { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a3a6b; white-space: nowrap; }
+  .section-line    { flex: 1; min-width: 80px; height: 1px; background: linear-gradient(90deg, #d1d5db, transparent); }
+
+  /* ── Match chips ── */
+  .lb-match-strip {
+    display: flex; gap: 8px; overflow-x: auto;
+    padding: 0 4px 14px; scrollbar-width: none; flex-wrap: wrap;
+  }
+  .lb-match-strip::-webkit-scrollbar { display: none; }
+  .lb-match-chip {
+    flex: 0 0 auto; border: 1px solid #bfdbfe; background: #eff6ff;
+    color: #374151; border-radius: 999px; padding: 8px 13px;
+    font-size: 0.76rem; font-weight: 800; cursor: pointer; white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+  }
+  .lb-match-chip:hover { background: #dbeafe; color: #1a3a6b; }
+  .lb-match-chip.active { background: #dbeafe; border-color: #93c5fd; color: #1a3a6b; }
+
+  /* ── Refresh ── */
+  .lb-refresh-btn {
+    font-size: 0.78rem; color: #1a3a6b; background: #eff6ff;
+    border: 1px solid #bfdbfe; border-radius: 8px; padding: 5px 12px;
+    cursor: pointer; font-weight: 600; transition: background 0.15s;
+  }
+  .lb-refresh-btn:hover { background: #dbeafe; }
+
+  /* ── Leaderboard table ── */
+  .lb-panel { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 22px; overflow: hidden; }
+  .lb-head-row {
+    display: grid; grid-template-columns: 42px 1fr 80px 80px 80px 90px;
+    gap: 8px; align-items: center; padding: 10px 18px;
+    background: #f8fafc; border-bottom: 1px solid #e5e7eb;
+  }
+  .lb-head-cell { font-size: 0.62rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #6b7280; }
+  .lb-head-cell.right { text-align: right; }
+  .lb-data-row {
+    display: grid; grid-template-columns: 42px 1fr 80px 80px 80px 90px;
+    gap: 8px; align-items: center; padding: 13px 18px;
+    border-bottom: 1px solid #f3f4f6; transition: background 0.12s; cursor: pointer;
+  }
+  .lb-data-row:last-child { border-bottom: none; }
+  .lb-data-row:hover { background: #eff6ff; }
+  .lb-rank {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #f3f4f6; display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 0.82rem; color: #6b7280;
+  }
+  .lb-rank.gold   { background: #fef3c7; color: #d97706; }
+  .lb-rank.silver { background: #f3f4f6; color: #6b7280; }
+  .lb-rank.bronze { background: rgba(180,100,50,0.18); color: #cd7f32; }
+  .lb-player-name { font-weight: 900; font-size: 0.92rem; color: #1a3a6b; display: inline-block; }
+  .lb-player-meta { font-size: 0.76rem; color: #6b7280; margin-top: 2px; }
+  .lb-cell { font-size: 0.88rem; color: #6b7280; text-align: right; font-weight: 600; }
+  .lb-cell.exact  { color: #059669; font-weight: 700; }
+  .lb-cell.closest { color: #1a3a6b; font-weight: 700; }
+  .lb-total { font-size: 1rem; font-weight: 900; color: #059669; text-align: right; white-space: nowrap; }
+  .lb-empty { padding: 44px 20px; text-align: center; color: #9ca3af; font-size: 0.9rem; }
+
+  /* ── Info banner ── */
+  .info-banner {
+    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px;
+    padding: 14px 18px; margin-bottom: 16px; font-size: 0.84rem; color: #6b7280; line-height: 1.5;
+  }
+  .info-banner strong { color: #1a3a6b; }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    .lb-head-row, .lb-data-row { grid-template-columns: 42px 1fr 70px 90px; }
+    .lb-head-cell:nth-child(3), .lb-head-cell:nth-child(5),
+    .lb-data-row > .lb-cell:nth-child(3), .lb-data-row > .lb-cell:nth-child(5) { display: none; }
+  }
+  @media (max-width: 500px) {
+    body { padding: 18px 14px 52px; }
+    .lb-head-row, .lb-data-row { grid-template-columns: 42px 1fr 90px; }
+    .lb-head-cell:nth-child(3), .lb-head-cell:nth-child(4), .lb-head-cell:nth-child(5),
+    .lb-data-row > .lb-cell { display: none; }
+    .lb-total { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ── Back link ── -->
+  <a href="mlc_2026.html" class="back-link" onclick="trackClick('mlc_lb_back')">← Back to MLC 2026</a>
+
+  <header class="page-header">
+    <a href="index.html" class="logo-wrap" onclick="trackClick('mlc_lb_logo')">
+      <img src="mtgames_logo.png" alt="MT Games logo" class="logo-img" />
+      <span class="logo-text">MT Games</span>
+    </a>
+    <div class="hamburger-wrapper">
+      <button class="hamburger-menu-btn" id="hamburgerMenuBtn" aria-label="Open navigation menu" onclick="toggleHamburgerMenu()">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="hamburger-dropdown" id="hamburgerDropdown">
+        <a href="closest-call.html"              onclick="trackClick('nav_closest_call')">🎯 Closest Call</a>
+        <a href="womens_t20_worldcup_2026.html"  onclick="trackClick('nav_wwc2026')">🏏 Women's T20 WC 2026</a>
+        <a href="mlc_2026.html"                  onclick="trackClick('nav_mlc2026')">🏟️ MLC 2026</a>
+        <a href="mlc2026-leaderboard.html"       class="active-page">📊 MLC 2026 Leaderboard</a>
+        <a href="closest-call-leaderboard.html"  onclick="trackClick('nav_cc_lb')">🏆 Overall Leaderboard</a>
+        <a href="earnings.html"                  onclick="trackClick('nav_earnings')">💰 My Earnings</a>
+        <a href="index.html"                     onclick="trackClick('nav_main_home')">🏠 Main Home</a>
+        <a href="contact.html"                   onclick="trackClick('contact_us_menu_click')">✉️ Contact Us</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero-section">
+    <div class="hero-logo-wrap">
+      <img src="team_logos/mlc2026_logo.png" alt="MLC 2026" class="hero-logo"
+           onerror="this.style.display='none';" />
+    </div>
+    <h1 class="hero-title">MLC 2026 Leaderboard</h1>
+    <p class="hero-subtitle">Match-wise standings for the Major League Cricket 2026 Closest Call contest.</p>
+  </section>
+
+  <!-- Play CTA -->
+  <div class="play-cta-strip">
+    <div>
+      <div class="play-cta-text">🏟️ Make Your Predictions</div>
+      <div class="play-cta-sub">Pick scores &amp; wickets — climb this leaderboard</div>
+    </div>
+    <a href="mlc_2026.html" class="btn-play-cta" onclick="trackClick('mlc_lb_play_cta')">Play Now →</a>
+  </div>
+
+  <section class="content-section" id="lbSection">
+    <div class="section-header">
+      <span class="section-label">Leaderboard</span>
+      <div class="section-line"></div>
+      <button class="lb-refresh-btn" onclick="refreshLeaderboard()">↺ Refresh</button>
+    </div>
+
+    <div class="info-banner">
+      Select a match below to see that match's leaderboard. Visit the <a href="closest-call-leaderboard.html" style="color:#1a3a6b;font-weight:700;">Overall Leaderboard</a> for your cross-tournament ranking.
+    </div>
+
+    <div class="lb-match-strip" id="matchStrip">
+      <span style="font-size:0.8rem;color:#9ca3af;padding:8px;">Loading matches…</span>
+    </div>
+
+    <div class="lb-panel">
+      <div class="lb-head-row">
+        <div class="lb-head-cell">#</div>
+        <div class="lb-head-cell">Player</div>
+        <div class="lb-head-cell right">Exact</div>
+        <div class="lb-head-cell right">Closest</div>
+        <div class="lb-head-cell right">Qs</div>
+        <div class="lb-head-cell right">Total Pts</div>
+      </div>
+      <div id="lbBody">
+        <div class="lb-empty">Select a match above to view standings.</div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /.page-wrap -->
+
+<script>
+  const USER_ID_KEY   = 'mtgames_user_id';
+  const USER_NAME_KEY = 'mtgames_user_name';
+
+  /* Tournament match filter */
+  const TOURNAMENT_PATTERN = /mlc 2026/i;
+
+  let allMatches = [];
+  let selectedMatchId = null;
+
+  function escapeHTML(v) {
+    return String(v || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+
+  function toggleHamburgerMenu() {
+    document.getElementById('hamburgerDropdown').classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    const btn = document.getElementById('hamburgerMenuBtn');
+    const dd  = document.getElementById('hamburgerDropdown');
+    if (dd && btn && !btn.contains(e.target) && !dd.contains(e.target)) dd.classList.remove('open');
+  });
+
+  function trackClick(buttonName, metadata = {}) {
+    const userId   = localStorage.getItem(USER_ID_KEY);
+    const userName = localStorage.getItem(USER_NAME_KEY);
+    fetch('/api/track-click', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
+      body: JSON.stringify({
+        user_id: userId ? Number(userId) : null, user_name: userName || null,
+        event_name: 'button_click', button_name: buttonName,
+        page_name: 'mlc2026-leaderboard.html', page_url: window.location.pathname,
+        event_metadata: metadata,
+      }),
+    }).catch(() => {});
+  }
+
+  async function loadMatches() {
+    try {
+      const res  = await fetch('/api/get-closest-call-matches');
+      const data = await res.json();
+      allMatches = (data.matches || []).filter(m =>
+        TOURNAMENT_PATTERN.test(m.match_title || (m.team_1 + ' vs ' + m.team_2))
+      );
+      renderMatchChips();
+      if (allMatches.length) {
+        selectMatch(allMatches[0].id);
+      } else {
+        document.getElementById('lbBody').innerHTML =
+          '<div class="lb-empty">No MLC 2026 matches available yet. Check back soon!</div>';
+      }
+    } catch {
+      document.getElementById('matchStrip').innerHTML =
+        '<span style="font-size:0.8rem;color:#dc2626;padding:8px;">Could not load matches.</span>';
+    }
+  }
+
+  function renderMatchChips() {
+    const strip = document.getElementById('matchStrip');
+    if (!allMatches.length) {
+      strip.innerHTML = '<span style="font-size:0.8rem;color:#9ca3af;padding:8px;">No matches yet.</span>';
+      return;
+    }
+    strip.innerHTML = allMatches.map(m => `
+      <button class="lb-match-chip ${selectedMatchId === m.id ? 'active' : ''}"
+        data-match-id="${m.id}"
+        onclick="selectMatch(${m.id}); trackClick('mlc_lb_chip', {match_id: ${m.id}})">
+        ${escapeHTML(m.match_title || m.team_1 + ' vs ' + m.team_2)}
+      </button>
+    `).join('');
+  }
+
+  function selectMatch(matchId) {
+    selectedMatchId = matchId;
+    document.querySelectorAll('.lb-match-chip').forEach(c => {
+      c.classList.toggle('active', Number(c.dataset.matchId) === matchId);
+    });
+    refreshLeaderboard();
+  }
+
+  async function refreshLeaderboard() {
+    const body = document.getElementById('lbBody');
+    if (!selectedMatchId) {
+      body.innerHTML = '<div class="lb-empty">Select a match above to view standings.</div>';
+      return;
+    }
+    body.innerHTML = '<div class="lb-empty">Loading…</div>';
+    try {
+      const res  = await fetch(`/api/get-closest-call-leaderboard?closest_call_match_id=${selectedMatchId}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not load leaderboard.');
+      const rows = data.leaderboard || [];
+      if (!rows.length) {
+        body.innerHTML = '<div class="lb-empty">No scores yet for this match. Be the first to predict!</div>';
+        return;
+      }
+      body.innerHTML = rows.slice(0, 30).map(p => {
+        const rank = p.rank;
+        const rc   = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
+        const uname   = escapeHTML(p.user_name || 'Player');
+        const total   = Math.round(Number(p.total_points || 0));
+        const exact   = Number(p.exact_calls || 0);
+        const closest = Number(p.closest_calls || 0);
+        const qs      = Number(p.questions_answered || 0);
+        return `
+          <div class="lb-data-row">
+            <div class="lb-rank ${rc}">${rank}</div>
+            <div>
+              <div class="lb-player-name">${uname}</div>
+              <div class="lb-player-meta">This match</div>
+            </div>
+            <div class="lb-cell exact">${exact}</div>
+            <div class="lb-cell closest">${closest}</div>
+            <div class="lb-cell">${qs}</div>
+            <div class="lb-total">${total} pts</div>
+          </div>`;
+      }).join('');
+    } catch (err) {
+      body.innerHTML = `<div class="lb-empty" style="color:#dc2626;">Could not load: ${escapeHTML(err.message)}</div>`;
+    }
+  }
+
+  loadMatches();
+</script>
+
+</body>
+</html>

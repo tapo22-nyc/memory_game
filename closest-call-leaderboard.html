@@ -292,11 +292,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <span></span><span></span><span></span>
       </button>
       <nav class="hamburger-dropdown" id="hamburgerDropdown">
-        <a href="closest-call.html"             onclick="trackClick('nav_closest_call')">🎯 Closest Call Cricket</a>
-        <a href="closest-call-leaderboard.html" class="active-page">📊 Closest Call Leaderboard</a>
+        <a href="closest-call.html"             onclick="trackClick('nav_closest_call')">🎯 Closest Call</a>
+        <a href="closest-call-leaderboard.html" class="active-page">🏆 Overall Leaderboard</a>
+        <a href="ind-eng-t20-leaderboard.html"  onclick="trackClick('nav_ind_eng_lb')">🏏 India vs England T20</a>
+        <a href="wwc2026-leaderboard.html"      onclick="trackClick('nav_wwc_lb')">🏅 Women's T20 WC 2026</a>
+        <a href="mlc2026-leaderboard.html"      onclick="trackClick('nav_mlc_lb')">📊 MLC 2026 Leaderboard</a>
         <a href="earnings.html"                 onclick="trackClick('nav_earnings')">💰 My Earnings</a>
-        <a href="spelling-bee.html"             onclick="trackClick('nav_spelling_bee')">🐝 Spelling Bee</a>
-        <a href="sudoku.html"                   onclick="trackClick('nav_sudoku')">🧩 Sudoku</a>
         <a href="index.html"                    onclick="trackClick('nav_main_home')">🏠 Main Home</a>
         <a href="contact.html"                  onclick="trackClick('contact_us_menu_click')">✉️ Contact Us</a>
       </nav>
@@ -305,7 +306,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <section class="hero-section">
     <h1 class="hero-title">Closest Call Leaderboard</h1>
-    <p class="hero-subtitle">See who's calling it closest. Track overall and match-wise standings.</p>
+    <p class="hero-subtitle">See who's calling it closest across all tournaments.</p>
   </section>
 
   <!-- Play CTA -->
@@ -322,8 +323,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <span class="section-label">Leaderboard</span>
       <div class="section-line"></div>
       <div class="lb-tabs" role="tablist">
-        <button class="lb-tab-btn active" id="tabOverall"    onclick="switchTab('overall')">Overall</button>
-        <button class="lb-tab-btn"        id="tabMatchWise"  onclick="switchTab('match')">Match Wise</button>
+        <button class="lb-tab-btn active" id="tabOverall"  onclick="switchTab('overall')">Overall</button>
+        <button class="lb-tab-btn"        id="tabIndEng"   onclick="switchTab('ind_eng')">Ind vs Eng</button>
+        <button class="lb-tab-btn"        id="tabWWC"      onclick="switchTab('wwc')">Women's T20 WC</button>
+        <button class="lb-tab-btn"        id="tabMLC"      onclick="switchTab('mlc')">MLC 2026</button>
       </div>
       <button class="lb-refresh-btn" onclick="refreshLeaderboard()">↺ Refresh</button>
     </div>
@@ -369,6 +372,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   let selectedMatchId = null;
   let allMatches = [];
 
+  /* Tournament filter patterns — matches match_title text */
+  const TOURNAMENT_FILTERS = {
+    ind_eng: /india.*eng|ind.*eng|ind-eng|india vs eng/i,
+    wwc:     /wt20 wc|wwc 2026|women.*wc|w t20/i,
+    mlc:     /mlc 2026/i,
+  };
+  const TOURNAMENT_TABS = ['overall', 'ind_eng', 'wwc', 'mlc'];
+  const TOURNAMENT_TAB_IDS = {
+    overall: 'tabOverall', ind_eng: 'tabIndEng', wwc: 'tabWWC', mlc: 'tabMLC',
+  };
+
   function getCurrentUser() {
     return { id: localStorage.getItem(USER_ID_KEY), name: localStorage.getItem(USER_NAME_KEY) };
   }
@@ -410,22 +424,37 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   /* ── Tabs ── */
   function switchTab(tab) {
     activeTab = tab;
-    document.getElementById('tabOverall').classList.toggle('active', tab === 'overall');
-    document.getElementById('tabMatchWise').classList.toggle('active', tab === 'match');
+    // Update tab button styles
+    TOURNAMENT_TABS.forEach(function(t) {
+      const el = document.getElementById(TOURNAMENT_TAB_IDS[t]);
+      if (el) el.classList.toggle('active', t === tab);
+    });
 
     const strip = document.getElementById('matchStrip');
-    if (tab === 'match') {
+    if (tab !== 'overall') {
       strip.classList.add('show');
       renderMatchChips();
-      if (!selectedMatchId && allMatches.length) {
-        selectMatch(allMatches[0].id);
-        return;
+      // Auto-select first match for this tournament
+      if (!selectedMatchId) {
+        const tourneyMatches = getTournamentMatches(tab);
+        if (tourneyMatches.length) {
+          selectMatch(tourneyMatches[0].id);
+          return;
+        }
       }
     } else {
       strip.classList.remove('show');
       selectedMatchId = null;
     }
     refreshLeaderboard();
+  }
+
+  function getTournamentMatches(tab) {
+    const pattern = TOURNAMENT_FILTERS[tab];
+    if (!pattern) return allMatches;
+    return allMatches.filter(function(m) {
+      return pattern.test(m.match_title || (m.team_1 + ' vs ' + m.team_2));
+    });
   }
 
   function selectMatch(matchId) {
@@ -439,11 +468,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   function renderMatchChips() {
     const strip = document.getElementById('matchStrip');
-    if (!allMatches.length) {
-      strip.innerHTML = '<span style="font-size:0.8rem;color:#9ca3af;padding:8px;">No matches yet.</span>';
+    const matches = activeTab === 'overall' ? allMatches : getTournamentMatches(activeTab);
+    if (!matches.length) {
+      strip.innerHTML = '<span style="font-size:0.8rem;color:#9ca3af;padding:8px;">No matches for this tournament yet.</span>';
       return;
     }
-    strip.innerHTML = allMatches.map(m => `
+    strip.innerHTML = matches.map(m => `
       <button
         class="lb-match-chip ${selectedMatchId === m.id ? 'active' : ''}"
         data-match-id="${m.id}"

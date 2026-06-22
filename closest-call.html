@@ -831,7 +831,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <!-- ── Contests ── -->
   <section class="content-section">
     <div class="section-header">
-      <span class="section-label">Contests</span>
+      <span class="section-label">Tournaments</span>
       <div class="section-line"></div>
     </div>
     <div class="match-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;">
@@ -858,28 +858,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <a href="mlc_2026.html" onclick="trackClick('contest_card_mlc2026')" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:8px;font-size:0.78rem;font-weight:700;text-decoration:none;cursor:pointer;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;margin-top:auto;justify-content:center;">Play Now →</a>
       </div>
 
-      <!-- Head-to-Head Challenge -->
-      <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 14px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#f72585,#7209b7);border-radius:20px 20px 0 0;"></div>
-        <div style="font-size:1.4rem;">🥊</div>
-        <div style="font-size:0.9rem;font-weight:800;color:#111827;">Head-to-Head Challenge</div>
-        <div style="font-size:0.78rem;color:#6b7280;line-height:1.5;">Go head-to-head against a friend. Whoever's predictions are closest across 5 matches wins.</div>
-        <span style="display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border-radius:8px;font-size:0.78rem;font-weight:700;background:#fdf2f8;border:1px solid #fbcfe8;color:#be185d;margin-top:auto;">🔜 Coming Soon</span>
+      <!-- India vs England T20 Series -->
+      <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 14px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#FF9933,#138808);border-radius:20px 20px 0 0;"></div>
+        <div style="display:flex;align-items:center;justify-content:center;height:64px;gap:10px;">
+          <img src="team_logos/ind_w.png" alt="India" style="max-height:52px;max-width:52px;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';" /><span style="display:none;font-size:1.5rem;">🇮🇳</span>
+          <span style="font-size:0.9rem;font-weight:900;color:#9ca3af;">VS</span>
+          <img src="team_logos/eng_w.png" alt="England" style="max-height:52px;max-width:52px;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';" /><span style="display:none;font-size:1.5rem;">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
+        </div>
+        <div style="font-size:0.9rem;font-weight:800;color:#111827;text-align:center;">India vs England T20 Series</div>
+        <a href="ind-eng-t20-leaderboard.html" onclick="trackClick('contest_card_ind_eng')" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:8px;font-size:0.78rem;font-weight:700;text-decoration:none;cursor:pointer;background:#fff7ed;border:1px solid #fed7aa;color:#c2410c;margin-top:auto;justify-content:center;">Play Now →</a>
       </div>
 
     </div>
   </section>
 
-  <!-- Matches -->
-  <section class="content-section" id="matchesSection">
-    <div class="section-header">
-      <span class="section-label">Upcoming Matches</span>
-      <div class="section-line"></div>
-    </div>
-    <div class="match-grid" id="matchGrid">
-      <div class="match-empty">Loading matches…</div>
-    </div>
-  </section>
 
   <!-- Leaderboard -->
   <section class="content-section" id="lbSection">
@@ -1123,8 +1116,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       renderMatches();
       lbInit();
     } catch {
-      document.getElementById('matchGrid').innerHTML =
-        '<div class="match-empty">Could not load matches. Please refresh.</div>';
+      const g = document.getElementById('matchGrid');
+      if (g) g.innerHTML = '<div class="match-empty">Could not load matches. Please refresh.</div>';
       lbRefresh();
     }
   }
@@ -1132,6 +1125,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   function renderMatches() {
     clearCardTimers();
     const grid = document.getElementById('matchGrid');
+    if (!grid) return;
 
     const visibleMatches = allMatches
       .filter(function(m) { return m.status === 'open' || m.status === 'locked'; })
