@@ -463,39 +463,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
 
   /* ─────────────────────────────────────────────────────────────────
-   * MATCHES DATA
-   * To add a new match, add an object to this array.
-   * status: 'upcoming' | 'open' | 'locked' | 'closed'
-   * abbr1/abbr2 are the short display codes shown under the logo.
+   * TEAM CODE → DISPLAY NAME
+   * Maps DB short codes (team_1 / team_2) to full display names.
+   * Matches are loaded dynamically from /api/get-closest-call-matches
+   * so you never need to edit this file to add new games.
    * ───────────────────────────────────────────────────────────────── */
-  const MATCHES = [
-    {
-      id: 1,
-      team1: 'Sri Lanka Women',  abbr1: 'SL-W',
-      team2: 'Ireland Women',    abbr2: 'IRE-W',
-      status: 'upcoming'
-    },
-    {
-      id: 2,
-      team1: 'Australia Women',  abbr1: 'AUS-W',
-      team2: 'Pakistan Women',   abbr2: 'PAK-W',
-      status: 'upcoming'
-    },
-    {
-      id: 3,
-      team1: 'England Women',    abbr1: 'ENG-W',
-      team2: 'West Indies Women',abbr2: 'WI-W',
-      status: 'upcoming'
-    },
-    /* ── Add more matches below: ──
-    {
-      id: 4,
-      team1: 'India Women',      abbr1: 'IND-W',
-      team2: 'New Zealand Women',abbr2: 'NZ-W',
-      status: 'upcoming'
-    },
-    */
-  ];
+  const CODE_TO_NAME = {
+    'AUS-W':  'Australia Women',
+    'IND-W':  'India Women',
+    'ENG-W':  'England Women',
+    'NZ-W':   'New Zealand Women',
+    'SA-W':   'South Africa Women',
+    'WI-W':   'West Indies Women',
+    'PAK-W':  'Pakistan Women',
+    'SL-W':   'Sri Lanka Women',
+    'BAN-W':  'Bangladesh Women',
+    'IRE-W':  'Ireland Women',
+    'SCO-W':  'Scotland Women',
+    'NED-W':  'Netherlands Women',
+    'ZIM-W':  'Zimbabwe Women',
+    'UGA-W':  'Uganda Women',
+    'UAE-W':  'UAE Women',
+    'USA-W':  'USA Women',
+  };
+
+  // Matches are fetched from the API — no static list needed.
+  // Matches any title containing "WT20 WC" or "WWC" (with or without year).
+  const WWC_TITLE_PATTERN = /WT20 WC|WWC 2026|women.*wc/i;
 
   /* ─────────────────────────────────────────────────────────────────
    * RENDERER
@@ -540,13 +534,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </div>`;
   }
 
-  function renderMatches() {
+  function renderMatches(matches) {
     const grid = document.getElementById('matchesGrid');
-    if (!MATCHES.length) {
+    if (!matches.length) {
       grid.innerHTML = '<div class="matches-empty">No matches scheduled yet. Check back soon!</div>';
       return;
     }
-    grid.innerHTML = MATCHES.map(m => `
+    grid.innerHTML = matches.map(m => `
       <div class="match-card">
         <div class="match-card-inner">
           ${teamHtml(m.team1, m.abbr1, 'home')}
@@ -560,6 +554,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           ${predictBtn(m.status, m.id)}
         </div>
       </div>`).join('');
+  }
+
+  async function loadMatches() {
+    const grid = document.getElementById('matchesGrid');
+    grid.innerHTML = '<div class="matches-empty">Loading matches…</div>';
+    try {
+      const resp = await fetch('/api/get-closest-call-matches');
+      if (!resp.ok) throw new Error('API error ' + resp.status);
+      const { matches } = await resp.json();
+      const filtered = (matches || [])
+        .filter(m => WWC_TITLE_PATTERN.test(m.match_title))
+        .map(m => ({
+          id:    m.id,
+          team1: CODE_TO_NAME[m.team_1] || m.team_1,
+          abbr1: m.team_1,
+          team2: CODE_TO_NAME[m.team_2] || m.team_2,
+          abbr2: m.team_2,
+          status: m.status,
+        }));
+      renderMatches(filtered);
+    } catch (e) {
+      grid.innerHTML = '<div class="matches-empty">Could not load matches. Please try again later.</div>';
+    }
   }
 
   /* ─────────────────────────────────────────────────────────────────
@@ -614,7 +631,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   });
 
   /* Boot */
-  document.addEventListener('DOMContentLoaded', renderMatches);
+  document.addEventListener('DOMContentLoaded', loadMatches);
 </script>
 
 </body>
