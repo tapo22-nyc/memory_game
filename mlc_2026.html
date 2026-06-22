@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtag/js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NGH76BBT');</script>
+<!-- End Google Tag Manager -->
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MLC 2026 | MTGames Closest Call</title>
+<link rel="icon" type="image/png" href="mtgames_logo.png">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: #f8fafc;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #111827;
+    padding: 28px 20px 64px;
+  }
+
+  .page-wrap { max-width: 960px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .page-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 36px;
+  }
+  .logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-img  { height: 40px; width: auto; object-fit: contain; }
+  .logo-text {
+    font-size: 1.15rem; font-weight: 800; letter-spacing: 0.5px;
+    background: linear-gradient(90deg, #f72585, #7209b7, #4cc9f0);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; line-height: 1;
+  }
+
+  /* ── Hamburger ── */
+  .hamburger-wrapper { position: relative; flex-shrink: 0; }
+  .hamburger-menu-btn {
+    display: flex; flex-direction: column; justify-content: center; gap: 5px;
+    width: 38px; height: 38px; background: #ffffff;
+    border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; padding: 8px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .hamburger-menu-btn:hover { background: #f3f4f6; border-color: #d1d5db; }
+  .hamburger-menu-btn span { display: block; width: 100%; height: 2px; background: #374151; border-radius: 2px; }
+  .hamburger-dropdown {
+    display: none; position: absolute; top: calc(100% + 8px); right: 0;
+    min-width: 220px; background: #ffffff; border: 1px solid #e5e7eb;
+    border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); z-index: 200; overflow: hidden;
+  }
+  .hamburger-dropdown.open { display: block; }
+  .hamburger-dropdown a {
+    display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+    text-decoration: none; font-size: 0.88rem; font-weight: 600; color: #374151;
+    border-bottom: 1px solid #f3f4f6; transition: background 0.12s, color 0.12s;
+  }
+  .hamburger-dropdown a:last-child { border-bottom: none; }
+  .hamburger-dropdown a:hover { background: #f8fafc; color: #2563eb; }
+  .hamburger-dropdown a.active-page { color: #1a3a6b; background: #eff6ff; font-weight: 700; }
+
+  /* ── Hero ── */
+  .hero-section { text-align: center; margin-bottom: 36px; }
+  .tournament-logo-wrap {
+    display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+  }
+  .tournament-logo { max-height: 96px; max-width: 200px; object-fit: contain; }
+  .tournament-logo-fallback {
+    display: none; width: 86px; height: 86px; border-radius: 50%;
+    background: linear-gradient(135deg, #1a3a6b, #c8102e);
+    align-items: center; justify-content: center; font-size: 2.2rem; color: #fff;
+  }
+  .hero-title {
+    font-size: clamp(1.7rem, 5vw, 2.6rem); font-weight: 800; letter-spacing: 1px;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #1a3a6b, #c8102e);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; line-height: 1.2;
+  }
+  .hero-subtitle {
+    font-size: 0.95rem; color: #6b7280; line-height: 1.65;
+    max-width: 520px; margin: 0 auto;
+  }
+
+  /* ── Coming Soon banner ── */
+  .coming-soon-banner {
+    background: linear-gradient(135deg, #eff6ff, #f0f9ff);
+    border: 1px solid #bfdbfe; border-radius: 14px;
+    padding: 18px 22px; text-align: center; margin-bottom: 32px;
+    display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
+  }
+  .coming-soon-banner-icon { font-size: 1.6rem; flex-shrink: 0; }
+  .coming-soon-banner-body { text-align: left; }
+  .coming-soon-banner-title { font-size: 0.92rem; font-weight: 800; color: #1a3a6b; margin-bottom: 3px; }
+  .coming-soon-banner-text  { font-size: 0.8rem; color: #6b7280; line-height: 1.45; }
+
+  /* ── Section ── */
+  .section-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  }
+  .section-label {
+    font-size: 0.72rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 2px; color: #1a3a6b; white-space: nowrap;
+  }
+  .section-line { flex: 1; height: 1px; background: linear-gradient(90deg, #d1d5db, transparent); }
+
+  /* ── Match Cards ── */
+  .matches-grid { display: flex; flex-direction: column; gap: 12px; }
+
+  .match-card {
+    background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px;
+    overflow: hidden; transition: transform 0.18s, border-color 0.18s; position: relative;
+  }
+  .match-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #1a3a6b, #c8102e);
+  }
+  .match-card:hover { transform: translateY(-2px); border-color: #93c5fd; }
+
+  .match-card-inner {
+    padding: 18px 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+
+  .team-block {
+    display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; min-width: 0;
+  }
+  .team-logo-wrap {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: #f3f4f6; border: 2px solid #e5e7eb;
+    display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;
+  }
+  .team-logo { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+  .team-emoji-fallback { font-size: 1.8rem; line-height: 1; display: none; }
+  .team-name { font-size: 0.82rem; font-weight: 700; color: #111827; text-align: center; line-height: 1.3; }
+  .team-abbr { font-size: 0.68rem; font-weight: 600; color: #6b7280; text-align: center; letter-spacing: 0.5px; }
+
+  .vs-divider { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
+  .vs-text { font-size: 0.9rem; font-weight: 900; color: #9ca3af; letter-spacing: 1px; }
+  .match-num { font-size: 0.65rem; font-weight: 700; color: #d1d5db; text-transform: uppercase; letter-spacing: 1px; }
+
+  .match-footer {
+    padding: 11px 20px; border-top: 1px solid #f3f4f6;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: #fafafa;
+  }
+  .match-status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.3px;
+  }
+  .badge-upcoming { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+  .badge-open     { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .badge-locked   { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+  .badge-closed   { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+
+  .btn-predict {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 8px; border: none;
+    font-size: 0.78rem; font-weight: 700; cursor: pointer;
+    background: linear-gradient(90deg, #1a3a6b, #c8102e);
+    color: #fff; text-decoration: none;
+    transition: opacity 0.15s, transform 0.12s; letter-spacing: 0.2px;
+  }
+  .btn-predict:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-predict-disabled {
+    background: #f3f4f6; color: #9ca3af; border: 1px solid #e5e7eb;
+    cursor: default; pointer-events: none; background-image: none;
+  }
+  .btn-predict-disabled:hover { transform: none; opacity: 1; }
+
+  .matches-empty {
+    text-align: center; padding: 40px 20px; color: #9ca3af; font-size: 0.9rem;
+    background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px;
+  }
+
+  @media (max-width: 480px) {
+    .team-logo-wrap { width: 50px; height: 50px; }
+    .team-name { font-size: 0.74rem; }
+    .match-card-inner { padding: 14px 12px; gap: 8px; }
+    .match-footer { padding: 10px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ── Header ── -->
+  <header class="page-header">
+    <a href="index.html" class="logo-wrap" onclick="trackClick('mlc_logo_click')">
+      <img src="mtgames_logo.png" alt="MT Games logo" class="logo-img" />
+      <span class="logo-text">MT Games</span>
+    </a>
+    <div class="hamburger-wrapper">
+      <button class="hamburger-menu-btn" id="hamburgerMenuBtn" aria-label="Open navigation menu" onclick="toggleHamburgerMenu()">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="hamburger-dropdown" id="hamburgerDropdown">
+        <a href="closest-call.html"             onclick="trackClick('nav_closest_call')">🎯 Closest Call</a>
+        <a href="womens_t20_worldcup_2026.html" onclick="trackClick('nav_wwc2026')">🏏 Women's T20 WC 2026</a>
+        <a href="mlc_2026.html"                 class="active-page" onclick="trackClick('nav_mlc2026')">🏟️ MLC 2026</a>
+        <a href="closest-call-leaderboard.html" onclick="trackClick('nav_cc_lb')">📊 Leaderboard</a>
+        <a href="earnings.html"                 onclick="trackClick('nav_earnings')">💰 My Earnings</a>
+        <a href="prizes.html"                   onclick="trackClick('nav_prizes')">🏅 Prizes</a>
+        <a href="index.html"                    onclick="trackClick('nav_main_home')">🏠 Main Home</a>
+        <a href="contact.html"                  onclick="trackClick('contact_us_menu_click')">✉️ Contact Us</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Hero ── -->
+  <section class="hero-section">
+    <div class="tournament-logo-wrap">
+      <img src="team_logos/mlc2026_logo.png" alt="MLC 2026" class="tournament-logo"
+           onerror="this.style.display='none';document.getElementById('mlcFallback').style.display='flex';" />
+      <div id="mlcFallback" class="tournament-logo-fallback">🏟️</div>
+    </div>
+    <h1 class="hero-title">MLC 2026</h1>
+    <p class="hero-subtitle">Make your Closest Call predictions for Major League Cricket 2026 matches. Pick the runs and wickets — the closer you are, the higher you climb.</p>
+  </section>
+
+  <!-- ── Coming Soon Notice ── -->
+  <div class="coming-soon-banner">
+    <div class="coming-soon-banner-icon">🔜</div>
+    <div class="coming-soon-banner-body">
+      <div class="coming-soon-banner-title">Predictions Opening Soon</div>
+      <div class="coming-soon-banner-text">Match prediction windows will open closer to each game. Check back to lock in your calls before the toss!</div>
+    </div>
+  </div>
+
+  <!-- ── Matches ── -->
+  <section>
+    <div class="section-header">
+      <span class="section-label">Matches</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="matches-grid" id="matchesGrid">
+      <!-- Rendered by JS -->
+    </div>
+  </section>
+
+</div><!-- /.page-wrap -->
+
+<script>
+  const USER_ID_KEY   = 'mtgames_user_id';
+  const USER_NAME_KEY = 'mtgames_user_name';
+
+  /* ─────────────────────────────────────────────────────────────────
+   * TEAM LOGO MAP — MLC 2026
+   * Keys are lowercased team name variants. Values are paths inside
+   * the team_logos/ folder. Add new team name variants freely.
+   * ───────────────────────────────────────────────────────────────── */
+  const TEAM_LOGO_MAP = {
+    'sf unicorns':            'team_logos/sf_unicorns.png',
+    'san francisco unicorns': 'team_logos/sf_unicorns.png',
+    'sfu':                    'team_logos/sf_unicorns.png',
+
+    'texas super kings':      'team_logos/texas_sk.png',
+    'tsk':                    'team_logos/texas_sk.png',
+
+    'washington freedom':     'team_logos/washington_freedom.png',
+    'wf':                     'team_logos/washington_freedom.png',
+
+    'seattle orcas':          'team_logos/seattle_orcas.png',
+    'seo':                    'team_logos/seattle_orcas.png',
+
+    'mi new york':            'team_logos/mi_ny.png',
+    'mi new york cricket':    'team_logos/mi_ny.png',
+    'miny':                   'team_logos/mi_ny.png',
+
+    'los angeles knight riders': 'team_logos/la_kr.png',
+    'la knight riders':       'team_logos/la_kr.png',
+    'lakr':                   'team_logos/la_kr.png',
+  };
+
+  const TEAM_EMOJI_MAP = {
+    'sf unicorns':         '🦄',
+    'texas super kings':   '👑',
+    'washington freedom':  '🦅',
+    'seattle orcas':       '🐋',
+    'mi new york':         '🗽',
+    'los angeles knight riders': '⚔️',
+  };
+
+  function getTeamLogo(teamName) {
+    return TEAM_LOGO_MAP[teamName.toLowerCase().trim()] || null;
+  }
+
+  function getTeamEmoji(teamName) {
+    return TEAM_EMOJI_MAP[teamName.toLowerCase().trim()] || '🏏';
+  }
+
+  /* ─────────────────────────────────────────────────────────────────
+   * MATCHES DATA
+   * To add a new match, add an object to this array.
+   * status: 'upcoming' | 'open' | 'locked' | 'closed'
+   * ───────────────────────────────────────────────────────────────── */
+  const MATCHES = [
+    {
+      id: 1,
+      team1: 'SF Unicorns',        abbr1: 'SFU',
+      team2: 'Texas Super Kings',  abbr2: 'TSK',
+      status: 'upcoming'
+    },
+    {
+      id: 2,
+      team1: 'Washington Freedom', abbr1: 'WF',
+      team2: 'Seattle Orcas',      abbr2: 'SEO',
+      status: 'upcoming'
+    },
+    {
+      id: 3,
+      team1: 'MI New York',        abbr1: 'MINY',
+      team2: 'Texas Super Kings',  abbr2: 'TSK',
+      status: 'upcoming'
+    },
+    /* ── Add more matches below: ──
+    {
+      id: 4,
+      team1: 'Seattle Orcas',      abbr1: 'SEO',
+      team2: 'MI New York',        abbr2: 'MINY',
+      status: 'upcoming'
+    },
+    */
+  ];
+
+  /* ─────────────────────────────────────────────────────────────────
+   * RENDERER
+   * ───────────────────────────────────────────────────────────────── */
+  function statusBadge(status) {
+    const map = {
+      upcoming: '<span class="match-status-badge badge-upcoming">🕐 Upcoming</span>',
+      open:     '<span class="match-status-badge badge-open">🟢 Open</span>',
+      locked:   '<span class="match-status-badge badge-locked">🔒 Locked</span>',
+      closed:   '<span class="match-status-badge badge-closed">✅ Closed</span>',
+    };
+    return map[status] || map.upcoming;
+  }
+
+  function predictBtn(status, matchId) {
+    if (status === 'open') {
+      return `<a href="#" class="btn-predict" onclick="trackClick('mlc_match${matchId}_predict'); return false;">Predict →</a>`;
+    }
+    return `<a href="#" class="btn-predict btn-predict-disabled" tabindex="-1">Predict →</a>`;
+  }
+
+  function teamHtml(teamName, abbr, side) {
+    const logoSrc = getTeamLogo(teamName);
+    const emoji   = getTeamEmoji(teamName);
+    const imgId   = `logo_${side}_${teamName.replace(/\s+/g, '_').toLowerCase()}`;
+
+    const imgTag = logoSrc
+      ? `<img id="${imgId}" src="${logoSrc}" alt="${teamName}" class="team-logo"
+             onerror="document.getElementById('${imgId}').style.display='none';
+                      document.getElementById('fb_${imgId}').style.display='block';" />`
+      : '';
+    const fbStyle = logoSrc ? 'display:none;' : '';
+
+    return `
+      <div class="team-block">
+        <div class="team-logo-wrap">
+          ${imgTag}
+          <span id="fb_${imgId}" class="team-emoji-fallback" style="${fbStyle}">${emoji}</span>
+        </div>
+        <div class="team-name">${teamName}</div>
+        <div class="team-abbr">${abbr}</div>
+      </div>`;
+  }
+
+  function renderMatches() {
+    const grid = document.getElementById('matchesGrid');
+    if (!MATCHES.length) {
+      grid.innerHTML = '<div class="matches-empty">No matches scheduled yet. Check back soon!</div>';
+      return;
+    }
+    grid.innerHTML = MATCHES.map(m => `
+      <div class="match-card">
+        <div class="match-card-inner">
+          ${teamHtml(m.team1, m.abbr1, 'home')}
+          <div class="vs-divider">
+            <span class="vs-text">VS</span>
+            <span class="match-num">Match ${m.id}</span>
+          </div>
+          ${teamHtml(m.team2, m.abbr2, 'away')}
+        </div>
+        <div class="match-footer">
+          ${statusBadge(m.status)}
+          ${predictBtn(m.status, m.id)}
+        </div>
+      </div>`).join('');
+  }
+
+  /* ─────────────────────────────────────────────────────────────────
+   * UTILITIES
+   * ───────────────────────────────────────────────────────────────── */
+  function trackClick(buttonName, metadata = {}) {
+    const userId   = localStorage.getItem(USER_ID_KEY);
+    const userName = localStorage.getItem(USER_NAME_KEY);
+    fetch('/api/track-click', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      keepalive: true,
+      body: JSON.stringify({
+        user_id:        userId ? Number(userId) : null,
+        user_name:      userName || null,
+        event_name:     'button_click',
+        button_name:    buttonName,
+        page_name:      'mlc_2026.html',
+        page_url:       window.location.pathname,
+        event_metadata: metadata
+      })
+    }).catch(err => console.warn('Click tracking failed:', err));
+  }
+
+  function toggleHamburgerMenu() {
+    document.getElementById('hamburgerDropdown').classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    const btn      = document.getElementById('hamburgerMenuBtn');
+    const dropdown = document.getElementById('hamburgerDropdown');
+    if (dropdown && btn && !btn.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.classList.remove('open');
+    }
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const d = document.getElementById('hamburgerDropdown');
+      if (d) d.classList.remove('open');
+    }
+  });
+
+  /* Boot */
+  document.addEventListener('DOMContentLoaded', renderMatches);
+</script>
+
+</body>
+</html>
