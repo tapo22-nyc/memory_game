@@ -367,6 +367,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .match-countdown { font-size: 0.68rem; }
   }
 
+  /* ── Closed game divider ── */
+  .closed-divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 16px 0 10px;
+    font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.06em; color: #be185d;
+  }
+  .closed-divider::before, .closed-divider::after {
+    content: ''; flex: 1; height: 1px; background: #fbcfe8;
+  }
+
   /* ── Scrollable scoring modal ── */
   .scoring-modal-box {
     max-height: 88dvh; display: flex; flex-direction: column; overflow: hidden;
@@ -857,18 +868,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     return `<div class="team-block"><div class="team-logo-wrap">${imgTag}<span id="fb_${imgId}" class="team-emoji-fallback" style="${fbStyle}">${emoji}</span></div><div class="team-name">${teamName}</div><div class="team-abbr">${abbr}</div></div>`;
   }
 
-  function renderMatches(matches) {
-    const grid = document.getElementById('matchesGrid');
-    if (!matches.length) { grid.innerHTML = '<div class="matches-empty">No matches scheduled yet. Check back soon!</div>'; return; }
-    grid.innerHTML = matches.map(m => `
-      <div class="match-card">
+  function matchCardHtml(m) {
+    return `<div class="match-card">
         <div class="match-card-inner">
           ${teamHtml(m.team1, m.abbr1, 'home', m.id)}
           <div class="vs-divider"><span class="vs-text">VS</span></div>
           ${teamHtml(m.team2, m.abbr2, 'away', m.id)}
         </div>
         <div class="match-footer">${statusBadge(m.status, m.id)}${predictBtn(m.status, m.id)}</div>
-      </div>`).join('');
+      </div>`;
+  }
+
+  function renderMatches(matches) {
+    const grid = document.getElementById('matchesGrid');
+    if (!matches.length) { grid.innerHTML = '<div class="matches-empty">No matches scheduled yet. Check back soon!</div>'; return; }
+    const active = matches.filter(m => m.status !== 'closed');
+    const closed = matches.filter(m => m.status === 'closed');
+    // API returns match_date DESC, so closed[0] is the most recently played game
+    const latestClosed = closed.length ? [closed[0]] : [];
+    let html = active.map(matchCardHtml).join('');
+    if (latestClosed.length) {
+      html += '<div class="closed-divider">Latest Closed Game</div>';
+      html += latestClosed.map(matchCardHtml).join('');
+    }
+    grid.innerHTML = html;
     matches.forEach(m => { if (m.status === 'open' && m.lockMs) startCountdown(m.id, m.lockMs); });
   }
 

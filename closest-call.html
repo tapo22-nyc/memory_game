@@ -665,75 +665,35 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
     <div class="scoring-modal-body">
       <div class="scoring-section">
-        <div class="scoring-section-title">🏏 Team Score (75 runs + 25 wickets)</div>
-        <div class="scoring-row s-exact"><span class="s-label">Exact runs + Exact wickets</span><span class="s-pts">100 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Runs: max(75 − diff, 0); zero if diff ≥ 40</span><span class="s-pts">runs part</span></div>
-        <div class="scoring-row"><span class="s-label">Wickets exact → 25, off by 1 → 20, by 2 → 10</span><span class="s-pts">wickets part</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">Runs diff ≥ 40 or wickets off by 3+</span><span class="s-pts">0 pts</span></div>
-      </div>
-      <div class="scoring-section">
-        <div class="scoring-section-title">🧢 Batter Runs (50 pts)</div>
+        <div class="scoring-section-title">🏏 Team Score (50 pts)</div>
         <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">50 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Off by N runs</span><span class="s-pts">max(50 − N, 0) pts</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">30+ runs away</span><span class="s-pts">0 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by N runs</span><span class="s-pts">50 − N pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">More than 40 runs away</span><span class="s-pts">0 pts</span></div>
       </div>
       <div class="scoring-section">
-        <div class="scoring-section-title">💥 Batter Sixes (20 pts)</div>
-        <div class="scoring-row s-exact"><span class="s-label">Exact or off by 1</span><span class="s-pts">20 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Off by 2</span><span class="s-pts">10 pts</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">Off by 3+</span><span class="s-pts">0 pts</span></div>
-      </div>
-      <div class="scoring-section">
-        <div class="scoring-section-title">🎳 Bowler Wickets (30 pts)</div>
+        <div class="scoring-section-title">⚡ Powerplay Score (30 pts)</div>
         <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">30 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Off by 1</span><span class="s-pts">20 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Off by 2</span><span class="s-pts">10 pts</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">Off by 3+</span><span class="s-pts">0 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by N runs</span><span class="s-pts">30 − N pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">More than 20 runs away</span><span class="s-pts">0 pts</span></div>
       </div>
       <div class="scoring-section">
-        <div class="scoring-section-title">⚡ Death Overs — Runs (40 pts)</div>
-        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">40 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Off by N runs</span><span class="s-pts">max(40 − N, 0) pts</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">20+ runs away</span><span class="s-pts">0 pts</span></div>
+        <div class="scoring-section-title">🧢 Batter Score (20 pts)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">20 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by N runs</span><span class="s-pts">20 − N pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">More than 20 runs away</span><span class="s-pts">0 pts</span></div>
       </div>
       <div class="scoring-section">
-        <div class="scoring-section-title">⚡ Death Overs — Wickets (15 pts)</div>
-        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">15 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Off by 1</span><span class="s-pts">10 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Off by 2</span><span class="s-pts">5 pts</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">Off by 3+</span><span class="s-pts">0 pts</span></div>
-      </div>
-      <div class="scoring-section">
-        <div class="scoring-section-title">⚡ Death Overs — Sixes &amp; Dot Balls (10 pts)</div>
+        <div class="scoring-section-title">💥 Team Sixes Total (10 pts)</div>
         <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">10 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Off by N</span><span class="s-pts">max(10 − N, 0) pts</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">4+ away</span><span class="s-pts">0 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by N sixes</span><span class="s-pts">10 − N pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">More than 5 sixes away</span><span class="s-pts">0 pts</span></div>
       </div>
       <div class="scoring-section">
-        <div class="scoring-section-title">🏆 Playoffs / Categorical</div>
-        <div class="scoring-row s-exact"><span class="s-label">Correct choice</span><span class="s-pts">100 pts</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">Wrong choice</span><span class="s-pts">0 pts</span></div>
-      </div>
-      <div class="scoring-section">
-        <div class="scoring-section-title">🏏 Legacy: Team Score</div>
-        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">100 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±5 runs</span><span class="s-pts">90 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±10 runs</span><span class="s-pts">80 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±20 runs</span><span class="s-pts">60 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±30 runs</span><span class="s-pts">40 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±40 runs</span><span class="s-pts">20 pts</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">±41+ runs away</span><span class="s-pts">0 pts</span></div>
-      </div>
-      <div class="scoring-section">
-        <div class="scoring-section-title">🧢 Legacy: Batter Runs</div>
-        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">150 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±5 runs</span><span class="s-pts">130 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±10 runs</span><span class="s-pts">110 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±15 runs</span><span class="s-pts">90 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±20 runs</span><span class="s-pts">70 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±30 runs</span><span class="s-pts">40 pts</span></div>
-        <div class="scoring-row"><span class="s-label">Within ±40 runs</span><span class="s-pts">20 pts</span></div>
-        <div class="scoring-row s-zero"><span class="s-label">±41+ runs away</span><span class="s-pts">0 pts</span></div>
+        <div class="scoring-section-title">🎳 Bowler Wickets (10 pts)</div>
+        <div class="scoring-row s-exact"><span class="s-label">Exact</span><span class="s-pts">10 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by 1</span><span class="s-pts">9 pts</span></div>
+        <div class="scoring-row"><span class="s-label">Off by 2</span><span class="s-pts">8 pts</span></div>
+        <div class="scoring-row s-zero"><span class="s-label">Off by 3 or more</span><span class="s-pts">0 pts</span></div>
       </div>
     </div>
   </div>
