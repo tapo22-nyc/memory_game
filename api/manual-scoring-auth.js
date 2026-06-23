@@ -13,7 +13,7 @@ const crypto   = require('crypto');
 
 const sql = neon(process.env.DATABASE_URL);
 
-const TOKEN_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
+const TOKEN_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
