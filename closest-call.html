@@ -1462,6 +1462,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     if (hasEditable) {
       footer.style.display = 'block';
       document.getElementById('predSubmitStatus').textContent = '';
+      var btn = document.getElementById('predSubmitBtn');
+      btn.textContent = 'Save Predictions';
+      btn.disabled = true;
       checkAllFilled();
     } else {
       footer.style.display = 'none';
@@ -1775,6 +1778,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not save predictions.');
 
+      btn.textContent = 'Saved ✓';
       trackClick('cc_submit_predictions', { cc_match_id: currentMatchId, count: preds.length });
       showSuccessToast();
 
