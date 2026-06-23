@@ -126,21 +126,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .tourney-btn { min-width: calc(50% - 5px); flex: none; padding: 12px 8px; font-size: 0.76rem; }
   }
 
-  /* ── Match strip ── */
-  .lb-match-strip {
-    display: none; gap: 8px; overflow-x: auto;
-    padding: 0 4px 14px; scrollbar-width: none;
+  /* ── Match dropdown ── */
+  .lb-match-select-wrap { display: none; margin-bottom: 14px; }
+  .lb-match-select-wrap.show { display: block; }
+  .lb-match-select {
+    width: 100%; padding: 12px 16px;
+    border: 1px solid #bfdbfe; border-radius: 12px;
+    background: #eff6ff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 14px center / 18px;
+    color: #374151; font-size: 0.9rem; font-weight: 700;
+    cursor: pointer; appearance: none; -webkit-appearance: none;
+    font-family: inherit;
   }
-  .lb-match-strip.show { display: flex; }
-  .lb-match-strip::-webkit-scrollbar { display: none; }
-  .lb-match-chip {
-    flex: 0 0 auto; border: 1px solid #bfdbfe; background: #eff6ff;
-    color: #374151; border-radius: 999px; padding: 8px 13px;
-    font-size: 0.76rem; font-weight: 800; cursor: pointer; white-space: nowrap;
-    transition: background 0.15s, color 0.15s;
-  }
-  .lb-match-chip:hover { background: #dbeafe; color: #1d4ed8; }
-  .lb-match-chip.active { background: #dbeafe; border-color: #93c5fd; color: #2563eb; }
+  .lb-match-select:focus { outline: none; border-color: #93c5fd; box-shadow: 0 0 0 3px rgba(147,197,253,0.2); }
 
   /* ── Leaderboard table ── */
   .lb-panel { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 22px; overflow: hidden; }
@@ -386,7 +383,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </button>
     </div>
 
-    <div class="lb-match-strip" id="matchStrip"></div>
+    <div class="lb-match-select-wrap" id="matchSelectWrap">
+      <select class="lb-match-select" id="matchSelect"
+        onchange="handleMatchSelect(this.value); trackClick('cc_lb_match_select', {value: this.value})">
+      </select>
+    </div>
 
     <div class="lb-panel">
       <div class="lb-head-row">
@@ -490,13 +491,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       }
     });
 
-    const strip = document.getElementById('matchStrip');
+    const wrap = document.getElementById('matchSelectWrap');
     if (tab !== 'overall') {
-      strip.classList.add('show');
-      renderMatchChips();
-      /* Don't auto-select a match; show tournament aggregate instead */
+      wrap.classList.add('show');
+      renderMatchDropdown();
     } else {
-      strip.classList.remove('show');
+      wrap.classList.remove('show');
       selectedMatchId = null;
     }
     refreshLeaderboard();
@@ -510,29 +510,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     });
   }
 
-  function selectMatch(matchId) {
-    selectedMatchId = matchId;
-    // Update chip styles
-    document.querySelectorAll('.lb-match-chip').forEach(c => {
-      c.classList.toggle('active', Number(c.dataset.matchId) === matchId);
-    });
-    refreshLeaderboard();
-  }
-
-  function renderMatchChips() {
-    const strip = document.getElementById('matchStrip');
-    const matches = activeTab === 'overall' ? allMatches : getTournamentMatches(activeTab);
+  function renderMatchDropdown() {
+    const sel = document.getElementById('matchSelect');
+    const matches = getTournamentMatches(activeTab);
     if (!matches.length) {
-      strip.innerHTML = '<span style="font-size:0.8rem;color:#9ca3af;padding:8px;">No matches for this tournament yet.</span>';
+      sel.innerHTML = '<option value="">No matches for this tournament yet</option>';
       return;
     }
-    strip.innerHTML = matches.map(m => `
-      <button
-        class="lb-match-chip ${selectedMatchId === m.id ? 'active' : ''}"
-        data-match-id="${m.id}"
-        onclick="selectMatch(${m.id}); trackClick('cc_lb_match_chip', {cc_match_id: ${m.id}})"
-      >${escapeHTML(m.match_title || m.team_1 + ' vs ' + m.team_2)}</button>
-    `).join('');
+    const labels = { ind_eng: 'India vs England', wwc: "Women's T20 WC", mlc: 'MLC 2026' };
+    const label  = labels[activeTab] || 'Tournament';
+    sel.innerHTML = `<option value="overall">Overall — ${label}</option>` +
+      matches.map(m => `<option value="${m.id}">${escapeHTML(m.match_title || m.team_1 + ' vs ' + m.team_2)}</option>`).join('');
+    sel.value = 'overall';
+    selectedMatchId = null;
+  }
+
+  function handleMatchSelect(value) {
+    if (value === 'overall' || value === '') {
+      selectedMatchId = null;
+    } else {
+      selectedMatchId = Number(value);
+    }
+    refreshLeaderboard();
   }
 
   /* ── Load data ── */
