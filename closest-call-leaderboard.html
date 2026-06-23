@@ -245,11 +245,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     letter-spacing: 1px; color: #9ca3af; margin: 10px 0 6px;
   }
   .modal-pred-row {
-    display: flex; align-items: center; gap: 8px;
+    display: flex; align-items: flex-start; flex-direction: column; gap: 3px;
     padding: 9px 10px; border-radius: 10px;
-    background: #f8fafc; margin-bottom: 5px; flex-wrap: wrap;
+    background: #f8fafc; margin-bottom: 5px;
   }
-  .modal-pred-question { flex: 1; font-size: 0.81rem; color: #374151; min-width: 120px; }
+  .modal-pred-question { font-size: 0.81rem; color: #374151; font-weight: 600; }
+  .modal-pred-line2 { font-size: 0.74rem; color: #6b7280; }
   .modal-pred-values { display: flex; gap: 6px; align-items: center; flex-shrink: 0; flex-wrap: wrap; }
   .modal-val-tag {
     font-size: 0.73rem; font-weight: 700; padding: 2px 8px;
@@ -277,6 +278,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .modal-no-preds    { text-align: center; padding: 32px 16px; color: #9ca3af; font-size: 0.88rem; }
   .modal-loading     { text-align: center; padding: 32px 16px; color: #9ca3af; font-size: 0.88rem; }
   .modal-error       { text-align: center; padding: 32px 16px; color: #dc2626; font-size: 0.85rem; }
+
+  .modal-other-games {
+    margin-top: 12px; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden;
+  }
+  .modal-other-games > summary {
+    padding: 9px 14px; font-size: 0.78rem; font-weight: 800;
+    color: #2563eb; cursor: pointer; background: #f8fafc; user-select: none;
+    list-style: none; display: flex; align-items: center; gap: 6px;
+  }
+  .modal-other-games > summary::-webkit-details-marker { display: none; }
+  .modal-other-games > summary::before { content: '▶'; font-size: 0.62rem; }
+  .modal-other-games[open] > summary::before { content: '▼'; }
+  .modal-other-games-list { padding: 4px 14px 8px; }
+  .modal-other-game-row {
+    display: flex; align-items: center; gap: 8px; padding: 7px 0;
+    border-bottom: 1px solid #f3f4f6; font-size: 0.79rem;
+  }
+  .modal-other-game-row:last-child { border-bottom: none; }
+  .modal-other-game-name { flex: 1; color: #374151; font-weight: 600; min-width: 0; }
+  .modal-other-game-pts { color: #059669; font-weight: 800; white-space: nowrap; }
 
   /* ── Responsive ── */
   @media (max-width: 700px) {
@@ -591,14 +612,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
 
   /* ── Player Modal ── */
-  function handleLbRowClick(el) {
-    const uid   = Number(el.dataset.uid);
-    const uname = el.dataset.uname;
-    const mid   = el.dataset.mid ? Number(el.dataset.mid) : null;
-    openPlayerModal(uid, uname, mid);
-    trackClick('cc_lb_player_click', { user_id: uid, match_id: mid });
-  }
-
   const PHASE_LABELS = {
     pre_match:   'Pre-Game',
     powerplay:   'Powerplay',
@@ -615,7 +628,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     document.getElementById('playerModal').classList.remove('open');
   }
 
-  function openPlayerModal(userId, userName, matchId) {
+  function handleLbRowClick(el) {
+    const uid   = Number(el.dataset.uid);
+    const uname = el.dataset.uname;
+    const mid   = el.dataset.mid ? Number(el.dataset.mid) : null;
+    const filterMatchIds = (activeTab !== 'overall' && !selectedMatchId)
+      ? getTournamentMatches(activeTab).map(m => m.id)
+      : null;
+    openPlayerModal(uid, uname, mid, filterMatchIds);
+    trackClick('cc_lb_player_click', { user_id: uid, match_id: mid });
+  }
+
+  function openPlayerModal(userId, userName, matchId, filterMatchIds) {
     const overlay = document.getElementById('playerModal');
     document.getElementById('modalPlayerName').textContent = userName;
     document.getElementById('modalMatchTitle').textContent = matchId ? 'This match' : 'All matches';
@@ -629,7 +653,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .then(r => r.json())
       .then(data => {
         if (data.error) throw new Error(data.error);
-        renderModalContent(data);
+        renderModalContent(data, matchId ? null : filterMatchIds);
       })
       .catch(err => {
         document.getElementById('modalBody').innerHTML =
@@ -637,81 +661,101 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       });
   }
 
-  function renderModalContent(data) {
-    const { matches = [], predictions = [], total_points = 0, exact_calls = 0, questions_answered = 0 } = data;
+  function renderPredRow(pred) {
+    const isScored = pred.question_status === 'scored';
+    const isVoid   = pred.question_status === 'void';
+    let line2;
+    if (isScored) {
+      const pts = Math.round(Number(pred.points_awarded || 0));
+      line2 = `User Value: ${pred.predicted_value ?? '—'} | Actual: ${pred.actual_value ?? '—'} | Points Won: ${pts}`;
+    } else if (isVoid) {
+      line2 = `User Value: ${pred.predicted_value ?? '—'} | Void`;
+    } else {
+      line2 = `User Value: ${pred.predicted_value ?? '—'} | Pending`;
+    }
+    return `
+      <div class="modal-pred-row">
+        <div class="modal-pred-question">${escapeHTML(pred.question_text)}</div>
+        <div class="modal-pred-line2">${line2}</div>
+      </div>`;
+  }
+
+  function renderModalContent(data, filterMatchIds) {
+    let { matches = [], predictions = [], total_points = 0, exact_calls = 0, questions_answered = 0 } = data;
+
+    if (filterMatchIds && filterMatchIds.length) {
+      const idSet = new Set(filterMatchIds.map(Number));
+      matches     = matches.filter(m => idSet.has(Number(m.id)));
+      predictions = predictions.filter(p => idSet.has(Number(p.match_id)));
+      total_points       = predictions.reduce((s, p) => s + Number(p.points_awarded || 0), 0);
+      exact_calls        = predictions.filter(p => p.difference != null && Number(p.difference) === 0).length;
+      questions_answered = predictions.length;
+    }
 
     if (!predictions.length) {
       document.getElementById('modalBody').innerHTML = '<div class="modal-no-preds">No predictions found for this player.</div>';
       return;
     }
 
-    // Update subtitle with match name(s)
     if (matches.length === 1) {
       const m = matches[0];
       document.getElementById('modalMatchTitle').textContent = m.match_title || `${m.team_1} vs ${m.team_2}`;
-    } else if (matches.length > 1) {
+    } else {
       document.getElementById('modalMatchTitle').textContent = `${matches.length} matches`;
     }
 
     const matchMap = {};
     for (const m of matches) matchMap[m.id] = m;
 
-    // Group by match
     const byMatch = {};
     for (const p of predictions) {
-      if (!byMatch[p.match_id]) byMatch[p.match_id] = [];
-      byMatch[p.match_id].push(p);
+      const k = String(p.match_id);
+      if (!byMatch[k]) byMatch[k] = [];
+      byMatch[k].push(p);
     }
 
-    const multiMatch = Object.keys(byMatch).length > 1;
+    const sortedMatches = [...matches].sort((a, b) => Number(b.id) - Number(a.id));
+    const latestMatch   = sortedMatches[0];
+    const otherMatches  = sortedMatches.slice(1);
+    const multiMatch    = matches.length > 1;
+
     let html = '';
 
-    for (const mid of Object.keys(byMatch)) {
-      const m = matchMap[mid];
-      const matchLabel = m ? (m.match_title || `${m.team_1} vs ${m.team_2}`) : `Match #${mid}`;
+    if (latestMatch) {
+      const latestPreds = byMatch[String(latestMatch.id)] || [];
+      const latestLabel = latestMatch.match_title || `${latestMatch.team_1} vs ${latestMatch.team_2}`;
 
-      html += '<div class="modal-match-group">';
-      if (multiMatch) html += `<div class="modal-match-label">${escapeHTML(matchLabel)}</div>`;
+      if (multiMatch) html += `<div class="modal-match-label">Latest: ${escapeHTML(latestLabel)}</div>`;
 
-      // Group by phase within the match
       const byPhase = {};
-      for (const p of byMatch[mid]) {
+      for (const p of latestPreds) {
         if (!byPhase[p.phase]) byPhase[p.phase] = [];
         byPhase[p.phase].push(p);
       }
-
       for (const phase of PHASE_ORDER) {
         if (!byPhase[phase]) continue;
         html += `<div class="modal-phase-label">${PHASE_LABELS[phase] || phase}</div>`;
-
-        for (const pred of byPhase[phase]) {
-          const isScored = pred.question_status === 'scored';
-          const isVoid   = pred.question_status === 'void';
-
-          const predTag = `<span class="modal-val-tag modal-val-pred">You: ${pred.predicted_value ?? '—'}</span>`;
-          let actualTag, ptsHtml;
-
-          if (isScored) {
-            const pts = Math.round(Number(pred.points_awarded || 0));
-            actualTag = `<span class="modal-val-tag modal-val-actual">Actual: ${pred.actual_value ?? '—'}</span>`;
-            ptsHtml   = `<div class="modal-pts${pts === 0 ? ' zero' : ''}">${pts} pts</div>`;
-          } else if (isVoid) {
-            actualTag = `<span class="modal-val-tag modal-val-void">Void</span>`;
-            ptsHtml   = `<div class="modal-pts pending">—</div>`;
-          } else {
-            actualTag = `<span class="modal-val-tag modal-val-pending">Pending</span>`;
-            ptsHtml   = `<div class="modal-pts pending">—</div>`;
-          }
-
-          html += `
-            <div class="modal-pred-row">
-              <div class="modal-pred-question">${escapeHTML(pred.question_text)}</div>
-              <div class="modal-pred-values">${predTag}${actualTag}</div>
-              ${ptsHtml}
-            </div>`;
-        }
+        for (const pred of byPhase[phase]) html += renderPredRow(pred);
       }
-      html += '</div>';
+    }
+
+    if (multiMatch && otherMatches.length) {
+      let otherHtml = '';
+      for (const m of otherMatches) {
+        const mPreds = byMatch[String(m.id)] || [];
+        const mPts   = Math.round(mPreds.reduce((s, p) => s + Number(p.points_awarded || 0), 0));
+        const mLabel = m.match_title || `${m.team_1} vs ${m.team_2}`;
+        otherHtml += `
+          <div class="modal-other-game-row">
+            <span class="modal-other-game-name">${escapeHTML(mLabel)}</span>
+            <span class="modal-other-game-pts">${mPts} pts</span>
+          </div>`;
+      }
+      html += `
+        <details class="modal-other-games">
+          <summary>Other Games (${otherMatches.length})</summary>
+          <div class="modal-other-games-list">${otherHtml}</div>
+        </details>`;
     }
 
     html += `
