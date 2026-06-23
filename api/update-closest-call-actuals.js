@@ -23,13 +23,13 @@ const LEGACY_RULES = new Set([
   'TOTAL_SIXES',
 ]);
 
-// Rules that require dual runs+wickets input
+// Rules that require dual runs+wickets input (kept for historical scored questions only)
 const DUAL_INPUT_RULES = new Set([
   'TEAM_SCORE_SPLIT_75_25',
   'TEAM_SCORE_INNINGS',
 ]);
 
-// Score the wickets component for dual-input team score rules
+// Score the wickets component for dual-input team score rules (historical)
 function computeWicketsPoints(ruleCode, wicketsDiff) {
   if (ruleCode === 'TEAM_SCORE_INNINGS') {
     if (wicketsDiff === 0) return 25;
@@ -37,7 +37,7 @@ function computeWicketsPoints(ruleCode, wicketsDiff) {
     if (wicketsDiff === 2) return 10;
     return 0;
   }
-  // TEAM_SCORE_SPLIT_75_25 (legacy)
+  // TEAM_SCORE_SPLIT_75_25 (historical)
   if (wicketsDiff === 0) return 25;
   if (wicketsDiff === 1) return 20;
   if (wicketsDiff === 2) return 10;
@@ -45,28 +45,55 @@ function computeWicketsPoints(ruleCode, wicketsDiff) {
   return 0;
 }
 
-// Score the runs component for dual-input team score rules
+// Score the runs component for dual-input team score rules (historical)
 function computeRunsPoints(ruleCode, runsDiff) {
   if (ruleCode === 'TEAM_SCORE_INNINGS') {
     return runsDiff >= 40 ? 0 : Math.max(75 - runsDiff, 0);
   }
-  // TEAM_SCORE_SPLIT_75_25 (legacy)
+  // TEAM_SCORE_SPLIT_75_25 (historical)
   return Math.max(75 - runsDiff, 0);
 }
 
 // Code-based scoring for single-value rules
 function computePointsCode(ruleCode, diff) {
-  // ── New rules ──────────────────────────────────────────────
+  // ── Active rules (MLC 2026 / WWC 2026 and future tournaments) ──────────
+  if (ruleCode === 'TEAM_SCORE_50') {
+    // Team final innings score: max 50, -1 pt per run, 0 if diff > 40
+    return diff > 40 ? 0 : 50 - diff;
+  }
+  if (ruleCode === 'POWERPLAY_SCORE_30') {
+    // Powerplay (6-over) score: max 30, -1 pt per run, 0 if diff > 20
+    return diff > 20 ? 0 : 30 - diff;
+  }
+  if (ruleCode === 'BATTER_SCORE_20') {
+    // Individual batter runs: max 20, -1 pt per run, 0 if diff > 20
+    return diff > 20 ? 0 : 20 - diff;
+  }
+  if (ruleCode === 'TEAM_SIXES_10') {
+    // Total team sixes in match: max 10, -1 pt per six, 0 if diff > 5
+    return diff > 5 ? 0 : 10 - diff;
+  }
+  if (ruleCode === 'BOWLER_WICKETS_10') {
+    // Bowler wickets: max 10, 0 if diff >= 3
+    if (diff === 0) return 10;
+    if (diff === 1) return 9;
+    if (diff === 2) return 8;
+    return 0;
+  }
+  // ── Categorical ─────────────────────────────────────────────────────────
+  if (ruleCode === 'CATEGORICAL_EXACT') {
+    return diff === 0 ? 100 : 0;
+  }
+  // ── Historical rules (no longer assigned to new questions) ──────────────
   if (ruleCode === 'BATSMAN_RUNS_INNINGS') {
     return diff >= 30 ? 0 : Math.max(50 - diff, 0);
   }
   if (ruleCode === 'BATSMAN_SIXES_INNINGS') {
-    if (diff === 0) return 20;
-    if (diff === 1) return 20;
+    if (diff <= 1) return 20;
     if (diff === 2) return 10;
     return 0;
   }
-  if (ruleCode === 'BOWLER_WICKETS_INNINGS') {
+  if (ruleCode === 'BOWLER_WICKETS_INNINGS' || ruleCode === 'BOWLER_WICKETS_30') {
     if (diff === 0) return 30;
     if (diff === 1) return 20;
     if (diff === 2) return 10;
@@ -81,13 +108,9 @@ function computePointsCode(ruleCode, diff) {
     if (diff === 2) return 5;
     return 0;
   }
-  if (ruleCode === 'DEATH_OVERS_SIXES') {
+  if (ruleCode === 'DEATH_OVERS_SIXES' || ruleCode === 'DEATH_OVERS_DOT_BALLS') {
     return diff >= 4 ? 0 : Math.max(10 - diff, 0);
   }
-  if (ruleCode === 'DEATH_OVERS_DOT_BALLS') {
-    return diff >= 4 ? 0 : Math.max(10 - diff, 0);
-  }
-  // ── Legacy new rules ───────────────────────────────────────
   if (ruleCode === 'BATTER_RUNS_50') {
     return Math.max(50 - diff, 0);
   }
@@ -97,17 +120,8 @@ function computePointsCode(ruleCode, diff) {
     if (diff === 2) return 10;
     return 0;
   }
-  if (ruleCode === 'BOWLER_WICKETS_30') {
-    if (diff === 0) return 30;
-    if (diff === 1) return 20;
-    if (diff === 2) return 10;
-    return 0;
-  }
   if (ruleCode === 'IPL_SIXES_TOTAL_100') {
     return Math.max(100 - Math.floor(diff / 5) * 5, 0);
-  }
-  if (ruleCode === 'CATEGORICAL_EXACT') {
-    return diff === 0 ? 100 : 0;
   }
   // TEAM_SCORE_SPLIT_75_25 / TEAM_SCORE_INNINGS handled separately (dual input)
   return null; // unknown rule — fall back to DB
