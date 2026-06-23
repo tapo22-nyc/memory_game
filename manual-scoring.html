@@ -6,88 +6,121 @@
   <title>Manual Scoring — MT Games Admin</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #f1f5f9; color: #111827; min-height: 100vh;
     }
 
     /* ── Layout ── */
-    .page-wrap { max-width: 640px; margin: 0 auto; padding: 32px 16px 60px; }
+    .page-wrap { max-width: 640px; margin: 0 auto; padding: 20px 14px 120px; }
 
     .page-header {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 28px;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
     }
     .page-header a {
-      font-size: 0.78rem; color: #6b7280; text-decoration: none;
+      font-size: 0.82rem; color: #6b7280; text-decoration: none;
     }
     .page-header a:hover { color: #111827; }
-    .page-title { font-size: 1.25rem; font-weight: 800; color: #111827; }
-    .page-subtitle { font-size: 0.8rem; color: #6b7280; margin-top: 2px; }
+    .page-title { font-size: 1.2rem; font-weight: 800; color: #111827; }
+    .page-subtitle { font-size: 0.78rem; color: #6b7280; margin-top: 2px; }
 
     /* ── Cards ── */
     .card {
       background: #fff; border-radius: 14px; border: 1px solid #e5e7eb;
-      padding: 24px; margin-bottom: 18px;
+      padding: 18px 16px; margin-bottom: 14px;
     }
     .card-title {
-      font-size: 0.82rem; font-weight: 800; color: #374151;
-      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
+      font-size: 0.78rem; font-weight: 800; color: #374151;
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px;
     }
 
     /* ── Form controls ── */
-    .field { margin-bottom: 14px; }
-    .field label { display: block; font-size: 0.78rem; font-weight: 700; color: #374151; margin-bottom: 5px; }
+    .field { margin-bottom: 12px; }
+    .field label {
+      display: block; font-size: 0.82rem; font-weight: 700; color: #374151;
+      margin-bottom: 6px;
+    }
     .field input, .field select {
-      width: 100%; padding: 9px 12px; border: 1.5px solid #e5e7eb;
-      border-radius: 9px; font-size: 0.88rem; outline: none;
+      width: 100%; padding: 13px 14px; border: 1.5px solid #e5e7eb;
+      border-radius: 10px; font-size: 1rem; outline: none;
       transition: border-color 0.15s; background: #fff;
+      -webkit-appearance: none; appearance: none;
     }
     .field input:focus, .field select:focus { border-color: #2563eb; }
-    .field input[type="password"] { letter-spacing: 2px; }
+    .field input[type="password"] { letter-spacing: 3px; }
 
     .error-msg {
-      font-size: 0.78rem; color: #dc2626; margin-top: 8px;
-      padding: 8px 12px; background: #fef2f2; border-radius: 8px;
+      font-size: 0.82rem; color: #dc2626; margin-top: 8px;
+      padding: 10px 14px; background: #fef2f2; border-radius: 8px;
       border: 1px solid #fecaca; display: none;
     }
     .success-msg {
-      font-size: 0.82rem; color: #065f46; margin-top: 8px;
-      padding: 10px 14px; background: #ecfdf5; border-radius: 8px;
+      font-size: 0.84rem; color: #065f46; margin-top: 8px;
+      padding: 12px 14px; background: #ecfdf5; border-radius: 8px;
       border: 1px solid #a7f3d0; display: none;
     }
 
     /* ── Buttons ── */
     .btn {
       display: inline-flex; align-items: center; justify-content: center;
-      padding: 10px 20px; border: none; border-radius: 9px;
-      font-size: 0.88rem; font-weight: 800; cursor: pointer;
-      transition: opacity 0.15s;
+      padding: 14px 20px; border: none; border-radius: 10px;
+      font-size: 1rem; font-weight: 800; cursor: pointer;
+      transition: opacity 0.15s; min-height: 50px;
     }
     .btn:disabled { opacity: 0.45; cursor: not-allowed; }
     .btn:not(:disabled):hover { opacity: 0.88; }
-    .btn-primary  { background: #2563eb; color: #fff; width: 100%; margin-top: 4px; }
-    .btn-score    { background: #059669; color: #fff; width: 100%; margin-top: 8px; font-size: 0.95rem; }
-    .btn-sm       { padding: 6px 14px; font-size: 0.78rem; font-weight: 700; }
+    .btn-primary  { background: #2563eb; color: #fff; width: 100%; margin-top: 6px; }
+    .btn-sm       { padding: 10px 16px; font-size: 0.84rem; font-weight: 700; min-height: 40px; }
     .btn-outline  { background: transparent; border: 1.5px solid #d1d5db; color: #374151; }
+
+    /* ── Sticky submit button ── */
+    .score-sticky-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #fff; border-top: 1px solid #e5e7eb;
+      padding: 12px 16px; z-index: 100;
+    }
+    .btn-score {
+      background: #059669; color: #fff; width: 100%;
+      font-size: 1rem; font-weight: 800; padding: 16px;
+      border: none; border-radius: 12px; cursor: pointer;
+      min-height: 54px; transition: opacity 0.15s;
+    }
+    .btn-score:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-score:not(:disabled):active { opacity: 0.85; }
+    .score-feedback-wrap { padding: 0 0 8px; }
 
     /* ── Auth section ── */
     #authSection  { display: block; }
     #mainSection  { display: none; }
 
+    /* ── Session bar ── */
     .session-bar {
       display: flex; align-items: center; justify-content: space-between;
       background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px;
-      padding: 8px 14px; margin-bottom: 16px; font-size: 0.78rem;
+      padding: 10px 14px; margin-bottom: 14px; gap: 10px;
+      flex-wrap: wrap;
     }
-    .session-bar span { color: #065f46; font-weight: 700; }
-    .session-bar button { font-size: 0.72rem; color: #dc2626; background: none; border: none; cursor: pointer; font-weight: 700; }
+    .session-bar-left { display: flex; flex-direction: column; gap: 2px; }
+    .session-bar span { color: #065f46; font-weight: 700; font-size: 0.82rem; }
+    .session-timer {
+      font-size: 0.72rem; color: #059669; font-weight: 600;
+    }
+    .session-timer.expiring { color: #dc2626; font-weight: 800; }
+    .session-bar button {
+      font-size: 0.78rem; color: #dc2626; background: none; border: none;
+      cursor: pointer; font-weight: 700; padding: 6px 10px;
+      border: 1px solid #fecaca; border-radius: 7px; background: #fef2f2;
+      flex-shrink: 0;
+    }
 
     /* ── Tournament tabs ── */
-    .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 14px; }
     .tab {
-      flex: 1; padding: 9px 12px; border-radius: 9px; border: 1.5px solid #e5e7eb;
-      background: #fff; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+      flex: 1; padding: 12px 8px; border-radius: 10px; border: 1.5px solid #e5e7eb;
+      background: #fff; font-size: 0.84rem; font-weight: 700; cursor: pointer;
       text-align: center; transition: all 0.15s; color: #374151;
+      min-height: 48px; display: flex; align-items: center; justify-content: center;
     }
     .tab.active { background: #2563eb; border-color: #2563eb; color: #fff; }
 
@@ -95,15 +128,17 @@
     .match-list { display: flex; flex-direction: column; gap: 8px; }
     .match-item {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 11px 14px; border-radius: 10px; border: 1.5px solid #e5e7eb;
+      padding: 14px 14px; border-radius: 10px; border: 1.5px solid #e5e7eb;
       background: #f8fafc; cursor: pointer; transition: border-color 0.15s;
+      min-height: 54px;
     }
     .match-item:hover { border-color: #2563eb; background: #eff6ff; }
+    .match-item:active { background: #dbeafe; }
     .match-item.selected { border-color: #2563eb; background: #eff6ff; }
-    .match-item-title { font-size: 0.84rem; font-weight: 700; color: #111827; }
+    .match-item-title { font-size: 0.9rem; font-weight: 700; color: #111827; line-height: 1.3; }
     .match-status-badge {
-      font-size: 0.68rem; font-weight: 800; padding: 3px 8px; border-radius: 20px;
-      text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; margin-left: 10px;
+      font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; margin-left: 8px;
     }
     .badge-open   { background: #dcfce7; color: #166534; }
     .badge-locked { background: #fef9c3; color: #854d0e; }
@@ -111,36 +146,66 @@
 
     /* ── Question scoring form ── */
     .question-card {
-      border: 1.5px solid #e5e7eb; border-radius: 10px; padding: 14px;
-      margin-bottom: 10px; background: #fafafa;
+      border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 16px;
+      margin-bottom: 12px; background: #fafafa;
     }
     .question-card.scored { border-color: #a7f3d0; background: #f0fdf4; }
-    .q-text { font-size: 0.84rem; font-weight: 700; color: #111827; margin-bottom: 10px; }
-    .q-meta { font-size: 0.72rem; color: #9ca3af; margin-bottom: 10px; }
-    .q-inputs { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
-    .q-input-group { display: flex; flex-direction: column; gap: 4px; }
-    .q-input-label { font-size: 0.7rem; font-weight: 700; color: #6b7280; }
+    .q-text {
+      font-size: 0.9rem; font-weight: 700; color: #111827;
+      margin-bottom: 8px; line-height: 1.4;
+    }
+    .q-meta { font-size: 0.72rem; color: #9ca3af; margin-bottom: 12px; line-height: 1.4; }
+    .q-inputs { display: flex; gap: 10px; align-items: flex-start; flex-direction: column; }
+    .q-inputs-row { display: flex; gap: 10px; width: 100%; }
+    .q-input-group { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+    .q-input-label { font-size: 0.74rem; font-weight: 700; color: #6b7280; }
     .q-input {
-      width: 110px; padding: 7px 10px; border: 1.5px solid #e5e7eb;
-      border-radius: 8px; font-size: 0.9rem; outline: none;
+      width: 100%; padding: 12px 12px; border: 1.5px solid #e5e7eb;
+      border-radius: 9px; font-size: 1rem; outline: none;
+      -webkit-appearance: none; appearance: none;
+      transition: border-color 0.15s;
     }
     .q-input:focus { border-color: #2563eb; }
     .q-select {
-      min-width: 160px; padding: 7px 10px; border: 1.5px solid #e5e7eb;
-      border-radius: 8px; font-size: 0.84rem; outline: none;
+      width: 100%; padding: 12px 12px; border: 1.5px solid #e5e7eb;
+      border-radius: 9px; font-size: 0.95rem; outline: none;
+      -webkit-appearance: none; appearance: none;
+      background: #fff;
     }
     .q-select:focus { border-color: #2563eb; }
-    .q-existing { font-size: 0.72rem; color: #059669; font-weight: 700; margin-top: 6px; }
+    .q-existing { font-size: 0.74rem; color: #059669; font-weight: 700; margin-top: 6px; }
 
     .close-match-row {
-      display: flex; align-items: center; gap: 10px;
-      margin-top: 4px; padding: 12px 14px; background: #fef9c3;
+      display: flex; align-items: flex-start; gap: 12px;
+      margin-top: 4px; padding: 14px; background: #fef9c3;
       border: 1px solid #fde68a; border-radius: 10px;
     }
-    .close-match-row label { font-size: 0.82rem; font-weight: 700; color: #854d0e; cursor: pointer; }
+    .close-match-row input[type="checkbox"] {
+      width: 22px; height: 22px; flex-shrink: 0; cursor: pointer; margin-top: 1px;
+    }
+    .close-match-row label {
+      font-size: 0.88rem; font-weight: 700; color: #854d0e; cursor: pointer;
+      line-height: 1.4;
+    }
 
-    .loading-text { font-size: 0.82rem; color: #6b7280; padding: 12px 0; text-align: center; }
-    .empty-text   { font-size: 0.82rem; color: #9ca3af; padding: 12px 0; text-align: center; }
+    .loading-text { font-size: 0.84rem; color: #6b7280; padding: 16px 0; text-align: center; }
+    .empty-text   { font-size: 0.84rem; color: #9ca3af; padding: 16px 0; text-align: center; }
+
+    /* ── Expired session overlay ── */
+    .session-expired-msg {
+      display: none; margin-bottom: 14px;
+      padding: 14px; background: #fef2f2; border: 1px solid #fecaca;
+      border-radius: 10px; font-size: 0.88rem; color: #dc2626; font-weight: 700;
+      text-align: center;
+    }
+
+    /* Desktop tweaks */
+    @media (min-width: 480px) {
+      .page-wrap { padding: 28px 16px 100px; }
+      .q-inputs { flex-direction: row; align-items: flex-end; }
+      .q-inputs-row { width: auto; }
+      .q-input-group { min-width: 110px; }
+    }
   </style>
 </head>
 <body>
@@ -151,7 +216,12 @@
       <div class="page-title">Manual Scoring</div>
       <div class="page-subtitle">Closest Call · Authorized access only</div>
     </div>
-    <a href="earnings.html" style="margin-left:auto;">← Back</a>
+    <a href="closest-call.html" style="margin-left:auto;">← Back</a>
+  </div>
+
+  <!-- ── Session expired message (shown before auth form on expiry) ── -->
+  <div class="session-expired-msg" id="sessionExpiredMsg">
+    Session expired. Please log in again.
   </div>
 
   <!-- ── Auth Section ── -->
@@ -160,15 +230,18 @@
       <div class="card-title">Authentication Required</div>
       <div class="field">
         <label>Username</label>
-        <input type="text" id="authUsername" placeholder="Admin username" autocomplete="off" />
+        <input type="text" id="authUsername" placeholder="Admin username"
+               autocomplete="off" inputmode="text" />
       </div>
       <div class="field">
         <label>Email</label>
-        <input type="email" id="authEmail" placeholder="Admin email" autocomplete="off" />
+        <input type="email" id="authEmail" placeholder="Admin email"
+               autocomplete="off" inputmode="email" />
       </div>
       <div class="field">
         <label>Password</label>
-        <input type="password" id="authPassword" placeholder="Password" autocomplete="off" />
+        <input type="password" id="authPassword" placeholder="Password"
+               autocomplete="off" />
       </div>
       <div class="field">
         <label>6-Digit Code</label>
@@ -184,7 +257,10 @@
   <!-- ── Main Section (shown after auth) ── -->
   <div id="mainSection">
     <div class="session-bar">
-      <span id="sessionLabel">Signed in</span>
+      <div class="session-bar-left">
+        <span id="sessionLabel">Signed in</span>
+        <span class="session-timer" id="sessionTimer"></span>
+      </div>
       <button onclick="doSignOut()">Sign out</button>
     </div>
 
@@ -192,11 +268,11 @@
     <div class="card">
       <div class="card-title">Tournament</div>
       <div class="tabs">
-        <div class="tab active" id="tabWWC" onclick="selectTournament('wwc')">🏏 Women's T20 WC 2026</div>
+        <div class="tab active" id="tabWWC" onclick="selectTournament('wwc')">🏏 Women's T20 WC</div>
         <div class="tab"       id="tabMLC" onclick="selectTournament('mlc')">🏟️ MLC 2026</div>
       </div>
 
-      <div class="card-title" style="margin-top:4px;">Match</div>
+      <div class="card-title" style="margin-top:4px;">Select Match</div>
       <div id="matchList" class="match-list">
         <div class="loading-text">Loading matches…</div>
       </div>
@@ -213,19 +289,71 @@
         </div>
         <div class="error-msg"   id="scoreError"></div>
         <div class="success-msg" id="scoreSuccess"></div>
-        <button class="btn btn-score" id="scoreBtn" onclick="doScore()">Submit Scoring</button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ── Sticky submit bar (only shown when scoring section is visible) ── -->
+<div class="score-sticky-bar" id="scoreStickyBar" style="display:none;">
+  <div class="score-feedback-wrap" id="scoreFeedbackWrap"></div>
+  <button class="btn-score" id="scoreBtn" onclick="doScore()">Submit Scoring</button>
+</div>
+
 <script>
   /* ── State ── */
-  let adminToken      = null;
-  let allMatches      = [];
+  let adminToken        = null;
+  let allMatches        = [];
   let currentTournament = 'wwc';
-  let selectedMatchId = null;
-  let loadedQuestions = [];
+  let selectedMatchId   = null;
+  let loadedQuestions   = [];
+
+  /* ── Session timer ── */
+  const SESSION_MS       = 5 * 60 * 1000; // 5 minutes
+  let sessionTimerInt    = null;
+  let sessionEndTime     = null;
+
+  function startSessionTimer() {
+    clearSessionTimer();
+    sessionEndTime = Date.now() + SESSION_MS;
+    updateTimerDisplay();
+    sessionTimerInt = setInterval(() => {
+      const remaining = sessionEndTime - Date.now();
+      if (remaining <= 0) {
+        clearSessionTimer();
+        // Auto-logout
+        adminToken = null;
+        sessionStorage.removeItem('ms_token');
+        sessionStorage.removeItem('ms_username');
+        hide('mainSection');
+        hide('scoreStickyBar');
+        show('authSection');
+        const expMsg = document.getElementById('sessionExpiredMsg');
+        if (expMsg) expMsg.style.display = 'block';
+        document.getElementById('authPassword').value = '';
+        document.getElementById('authCode').value = '';
+        return;
+      }
+      updateTimerDisplay();
+    }, 1000);
+  }
+
+  function clearSessionTimer() {
+    if (sessionTimerInt) { clearInterval(sessionTimerInt); sessionTimerInt = null; }
+    sessionEndTime = null;
+    const el = document.getElementById('sessionTimer');
+    if (el) el.textContent = '';
+  }
+
+  function updateTimerDisplay() {
+    const el = document.getElementById('sessionTimer');
+    if (!el || !sessionEndTime) return;
+    const remaining = Math.max(0, sessionEndTime - Date.now());
+    const m = Math.floor(remaining / 60000);
+    const s = Math.floor((remaining % 60000) / 1000);
+    el.textContent = `Session expires in ${m}:${String(s).padStart(2,'0')}`;
+    el.className = remaining < 60000 ? 'session-timer expiring' : 'session-timer';
+  }
 
   const WWC_PATTERN = /WT20|WC 2026|WWC/i;
   const MLC_PATTERN = /MLC/i;
@@ -235,7 +363,6 @@
   /* ── Helpers ── */
   function show(id)  { const el = document.getElementById(id); if (el) el.style.display = 'block'; }
   function hide(id)  { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
-  function showFlex(id) { const el = document.getElementById(id); if (el) el.style.display = 'flex'; }
   function setErr(id, msg) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -284,10 +411,15 @@
       adminToken = data.token;
       sessionStorage.setItem('ms_token', adminToken);
       sessionStorage.setItem('ms_username', data.username || username);
+      sessionStorage.setItem('ms_session_end', String(Date.now() + SESSION_MS));
 
       hide('authSection');
+      const expMsg = document.getElementById('sessionExpiredMsg');
+      if (expMsg) expMsg.style.display = 'none';
       show('mainSection');
       document.getElementById('sessionLabel').textContent = `Signed in as ${data.username || username}`;
+
+      startSessionTimer();
       await loadMatches();
 
     } catch (err) {
@@ -298,10 +430,13 @@
   }
 
   function doSignOut() {
+    clearSessionTimer();
     adminToken = null;
     sessionStorage.removeItem('ms_token');
     sessionStorage.removeItem('ms_username');
+    sessionStorage.removeItem('ms_session_end');
     hide('mainSection');
+    hide('scoreStickyBar');
     show('authSection');
     document.getElementById('authPassword').value = '';
     document.getElementById('authCode').value = '';
@@ -324,6 +459,7 @@
     currentTournament = t;
     selectedMatchId   = null;
     hide('scoringSection');
+    hide('scoreStickyBar');
     document.getElementById('tabWWC').classList.toggle('active', t === 'wwc');
     document.getElementById('tabMLC').classList.toggle('active', t === 'mlc');
     renderMatchList();
@@ -351,6 +487,7 @@
     selectedMatchId = matchId;
     renderMatchList();
     hide('scoringSection');
+    hide('scoreStickyBar');
     setErr('scoreError', '');
     setSuccess('scoreSuccess', '');
 
@@ -366,6 +503,7 @@
       const data = await res.json();
       loadedQuestions = data.questions || [];
       renderQuestions();
+      show('scoreStickyBar');
     } catch {
       document.getElementById('questionsList').innerHTML = '<div class="empty-text">Could not load questions.</div>';
     }
@@ -384,20 +522,21 @@
       let inputHtml  = '';
 
       if (DUAL_RULES.has(ruleCode)) {
-        // Two inputs: runs + wickets
         const existingRuns    = q.actual_runs    !== null && q.actual_runs    !== undefined ? q.actual_runs    : '';
         const existingWickets = q.actual_wickets !== null && q.actual_wickets !== undefined ? q.actual_wickets : '';
         inputHtml = `
           <div class="q-inputs">
-            <div class="q-input-group">
-              <div class="q-input-label">Actual Runs</div>
-              <input type="number" min="0" max="999" class="q-input"
-                     id="qruns_${q.id}" value="${escapeHTML(String(existingRuns))}" placeholder="Runs" />
-            </div>
-            <div class="q-input-group">
-              <div class="q-input-label">Actual Wickets</div>
-              <input type="number" min="0" max="10" class="q-input"
-                     id="qwickets_${q.id}" value="${escapeHTML(String(existingWickets))}" placeholder="Wkts" />
+            <div class="q-inputs-row">
+              <div class="q-input-group">
+                <div class="q-input-label">Actual Runs</div>
+                <input type="number" min="0" max="999" class="q-input" inputmode="numeric"
+                       id="qruns_${q.id}" value="${escapeHTML(String(existingRuns))}" placeholder="Runs" />
+              </div>
+              <div class="q-input-group">
+                <div class="q-input-label">Actual Wickets</div>
+                <input type="number" min="0" max="10" class="q-input" inputmode="numeric"
+                       id="qwickets_${q.id}" value="${escapeHTML(String(existingWickets))}" placeholder="Wkts" />
+              </div>
             </div>
           </div>`;
 
@@ -413,13 +552,12 @@
           </div>`;
 
       } else {
-        // Single numeric value
         const existing = q.actual_value !== null && q.actual_value !== undefined ? q.actual_value : '';
         inputHtml = `
           <div class="q-inputs">
             <div class="q-input-group">
               <div class="q-input-label">Actual Value</div>
-              <input type="number" min="0" max="9999" class="q-input"
+              <input type="number" min="0" max="9999" class="q-input" inputmode="numeric"
                      id="qval_${q.id}" value="${escapeHTML(String(existing))}" placeholder="Enter value" />
             </div>
           </div>`;
@@ -454,7 +592,6 @@
     setErr('scoreError', '');
     setSuccess('scoreSuccess', '');
 
-    // Build question_updates from filled inputs only
     const questionUpdates = [];
 
     for (const q of loadedQuestions) {
@@ -521,22 +658,28 @@
       const data = await res.json();
 
       if (!res.ok) {
-        // 401 means session expired
         if (res.status === 401) {
+          clearSessionTimer();
           adminToken = null;
           sessionStorage.removeItem('ms_token');
           setErr('scoreError', 'Session expired. Please sign in again.');
-          setTimeout(doSignOut, 2000);
+          setTimeout(() => {
+            doSignOut();
+            const expMsg = document.getElementById('sessionExpiredMsg');
+            if (expMsg) expMsg.style.display = 'block';
+          }, 1500);
           return;
         }
         throw new Error(data.error || 'Scoring failed.');
       }
 
-      let msg = `Scoring updated successfully for this match. ${data.updated_questions} question(s) scored.`;
+      let msg = `Scoring updated successfully. ${data.updated_questions} question(s) scored.`;
       if (data.match_closed) msg += ' Match has been closed.';
       setSuccess('scoreSuccess', msg);
 
-      // Reload questions to show updated actual values
+      // Scroll to top of scoring section for feedback visibility
+      document.getElementById('scoringSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
       await selectMatch(selectedMatchId);
 
     } catch (err) {
@@ -548,20 +691,56 @@
 
   /* ── Boot ── */
   document.addEventListener('DOMContentLoaded', () => {
-    // Check for existing session in sessionStorage
     const saved         = sessionStorage.getItem('ms_token');
     const savedUsername = sessionStorage.getItem('ms_username');
+    const savedEnd      = sessionStorage.getItem('ms_session_end');
+
     if (saved) {
-      adminToken = saved;
-      hide('authSection');
-      show('mainSection');
-      if (savedUsername) {
-        document.getElementById('sessionLabel').textContent = `Signed in as ${savedUsername}`;
+      // Check if stored session end time is still valid
+      const endTime = savedEnd ? Number(savedEnd) : 0;
+      if (endTime > Date.now()) {
+        adminToken = saved;
+        sessionEndTime = endTime;
+        hide('authSection');
+        show('mainSection');
+        if (savedUsername) {
+          document.getElementById('sessionLabel').textContent = `Signed in as ${savedUsername}`;
+        }
+        // Resume timer with remaining time
+        const remaining = endTime - Date.now();
+        updateTimerDisplay();
+        sessionTimerInt = setInterval(() => {
+          const rem = sessionEndTime - Date.now();
+          if (rem <= 0) {
+            clearSessionTimer();
+            adminToken = null;
+            sessionStorage.removeItem('ms_token');
+            sessionStorage.removeItem('ms_username');
+            sessionStorage.removeItem('ms_session_end');
+            hide('mainSection');
+            hide('scoreStickyBar');
+            show('authSection');
+            const expMsg = document.getElementById('sessionExpiredMsg');
+            if (expMsg) expMsg.style.display = 'block';
+            document.getElementById('authPassword').value = '';
+            document.getElementById('authCode').value = '';
+            return;
+          }
+          updateTimerDisplay();
+        }, 1000);
+        loadMatches();
+      } else {
+        // Session expired while away — clear it
+        sessionStorage.removeItem('ms_token');
+        sessionStorage.removeItem('ms_username');
+        sessionStorage.removeItem('ms_session_end');
+        if (savedEnd) {
+          const expMsg = document.getElementById('sessionExpiredMsg');
+          if (expMsg) expMsg.style.display = 'block';
+        }
       }
-      loadMatches();
     }
 
-    // Enter key support for auth fields
     ['authUsername','authEmail','authPassword','authCode'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') doAuth(); });
