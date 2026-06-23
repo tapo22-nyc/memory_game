@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manual Scoring — MT Games Admin</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f1f5f9; color: #111827; min-height: 100vh;
+    }
+
+    /* ── Layout ── */
+    .page-wrap { max-width: 640px; margin: 0 auto; padding: 32px 16px 60px; }
+
+    .page-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 28px;
+    }
+    .page-header a {
+      font-size: 0.78rem; color: #6b7280; text-decoration: none;
+    }
+    .page-header a:hover { color: #111827; }
+    .page-title { font-size: 1.25rem; font-weight: 800; color: #111827; }
+    .page-subtitle { font-size: 0.8rem; color: #6b7280; margin-top: 2px; }
+
+    /* ── Cards ── */
+    .card {
+      background: #fff; border-radius: 14px; border: 1px solid #e5e7eb;
+      padding: 24px; margin-bottom: 18px;
+    }
+    .card-title {
+      font-size: 0.82rem; font-weight: 800; color: #374151;
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
+    }
+
+    /* ── Form controls ── */
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 0.78rem; font-weight: 700; color: #374151; margin-bottom: 5px; }
+    .field input, .field select {
+      width: 100%; padding: 9px 12px; border: 1.5px solid #e5e7eb;
+      border-radius: 9px; font-size: 0.88rem; outline: none;
+      transition: border-color 0.15s; background: #fff;
+    }
+    .field input:focus, .field select:focus { border-color: #2563eb; }
+    .field input[type="password"] { letter-spacing: 2px; }
+
+    .error-msg {
+      font-size: 0.78rem; color: #dc2626; margin-top: 8px;
+      padding: 8px 12px; background: #fef2f2; border-radius: 8px;
+      border: 1px solid #fecaca; display: none;
+    }
+    .success-msg {
+      font-size: 0.82rem; color: #065f46; margin-top: 8px;
+      padding: 10px 14px; background: #ecfdf5; border-radius: 8px;
+      border: 1px solid #a7f3d0; display: none;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 10px 20px; border: none; border-radius: 9px;
+      font-size: 0.88rem; font-weight: 800; cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn:not(:disabled):hover { opacity: 0.88; }
+    .btn-primary  { background: #2563eb; color: #fff; width: 100%; margin-top: 4px; }
+    .btn-score    { background: #059669; color: #fff; width: 100%; margin-top: 8px; font-size: 0.95rem; }
+    .btn-sm       { padding: 6px 14px; font-size: 0.78rem; font-weight: 700; }
+    .btn-outline  { background: transparent; border: 1.5px solid #d1d5db; color: #374151; }
+
+    /* ── Auth section ── */
+    #authSection  { display: block; }
+    #mainSection  { display: none; }
+
+    .session-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px;
+      padding: 8px 14px; margin-bottom: 16px; font-size: 0.78rem;
+    }
+    .session-bar span { color: #065f46; font-weight: 700; }
+    .session-bar button { font-size: 0.72rem; color: #dc2626; background: none; border: none; cursor: pointer; font-weight: 700; }
+
+    /* ── Tournament tabs ── */
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tab {
+      flex: 1; padding: 9px 12px; border-radius: 9px; border: 1.5px solid #e5e7eb;
+      background: #fff; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+      text-align: center; transition: all 0.15s; color: #374151;
+    }
+    .tab.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+
+    /* ── Match list ── */
+    .match-list { display: flex; flex-direction: column; gap: 8px; }
+    .match-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 14px; border-radius: 10px; border: 1.5px solid #e5e7eb;
+      background: #f8fafc; cursor: pointer; transition: border-color 0.15s;
+    }
+    .match-item:hover { border-color: #2563eb; background: #eff6ff; }
+    .match-item.selected { border-color: #2563eb; background: #eff6ff; }
+    .match-item-title { font-size: 0.84rem; font-weight: 700; color: #111827; }
+    .match-status-badge {
+      font-size: 0.68rem; font-weight: 800; padding: 3px 8px; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; margin-left: 10px;
+    }
+    .badge-open   { background: #dcfce7; color: #166534; }
+    .badge-locked { background: #fef9c3; color: #854d0e; }
+    .badge-closed { background: #f3f4f6; color: #6b7280; }
+
+    /* ── Question scoring form ── */
+    .question-card {
+      border: 1.5px solid #e5e7eb; border-radius: 10px; padding: 14px;
+      margin-bottom: 10px; background: #fafafa;
+    }
+    .question-card.scored { border-color: #a7f3d0; background: #f0fdf4; }
+    .q-text { font-size: 0.84rem; font-weight: 700; color: #111827; margin-bottom: 10px; }
+    .q-meta { font-size: 0.72rem; color: #9ca3af; margin-bottom: 10px; }
+    .q-inputs { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+    .q-input-group { display: flex; flex-direction: column; gap: 4px; }
+    .q-input-label { font-size: 0.7rem; font-weight: 700; color: #6b7280; }
+    .q-input {
+      width: 110px; padding: 7px 10px; border: 1.5px solid #e5e7eb;
+      border-radius: 8px; font-size: 0.9rem; outline: none;
+    }
+    .q-input:focus { border-color: #2563eb; }
+    .q-select {
+      min-width: 160px; padding: 7px 10px; border: 1.5px solid #e5e7eb;
+      border-radius: 8px; font-size: 0.84rem; outline: none;
+    }
+    .q-select:focus { border-color: #2563eb; }
+    .q-existing { font-size: 0.72rem; color: #059669; font-weight: 700; margin-top: 6px; }
+
+    .close-match-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 4px; padding: 12px 14px; background: #fef9c3;
+      border: 1px solid #fde68a; border-radius: 10px;
+    }
+    .close-match-row label { font-size: 0.82rem; font-weight: 700; color: #854d0e; cursor: pointer; }
+
+    .loading-text { font-size: 0.82rem; color: #6b7280; padding: 12px 0; text-align: center; }
+    .empty-text   { font-size: 0.82rem; color: #9ca3af; padding: 12px 0; text-align: center; }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Manual Scoring</div>
+      <div class="page-subtitle">Closest Call · Authorized access only</div>
+    </div>
+    <a href="earnings.html" style="margin-left:auto;">← Back</a>
+  </div>
+
+  <!-- ── Auth Section ── -->
+  <div id="authSection">
+    <div class="card">
+      <div class="card-title">Authentication Required</div>
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="authUsername" placeholder="Admin username" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="authEmail" placeholder="Admin email" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="authPassword" placeholder="Password" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label>6-Digit Code</label>
+        <input type="password" id="authCode" placeholder="••••••" maxlength="6"
+               inputmode="numeric" autocomplete="off"
+               onkeydown="if(event.key==='Enter') doAuth()" />
+      </div>
+      <div class="error-msg" id="authError"></div>
+      <button class="btn btn-primary" id="authBtn" onclick="doAuth()">Authenticate →</button>
+    </div>
+  </div>
+
+  <!-- ── Main Section (shown after auth) ── -->
+  <div id="mainSection">
+    <div class="session-bar">
+      <span id="sessionLabel">Signed in</span>
+      <button onclick="doSignOut()">Sign out</button>
+    </div>
+
+    <!-- Tournament selector -->
+    <div class="card">
+      <div class="card-title">Tournament</div>
+      <div class="tabs">
+        <div class="tab active" id="tabWWC" onclick="selectTournament('wwc')">🏏 Women's T20 WC 2026</div>
+        <div class="tab"       id="tabMLC" onclick="selectTournament('mlc')">🏟️ MLC 2026</div>
+      </div>
+
+      <div class="card-title" style="margin-top:4px;">Match</div>
+      <div id="matchList" class="match-list">
+        <div class="loading-text">Loading matches…</div>
+      </div>
+    </div>
+
+    <!-- Scoring form (shown after match is selected) -->
+    <div id="scoringSection" style="display:none;">
+      <div class="card">
+        <div class="card-title" id="scoringMatchTitle">Questions</div>
+        <div id="questionsList"></div>
+        <div class="close-match-row">
+          <input type="checkbox" id="closeMatchCheck" />
+          <label for="closeMatchCheck">Close this match after scoring (sets status to "closed")</label>
+        </div>
+        <div class="error-msg"   id="scoreError"></div>
+        <div class="success-msg" id="scoreSuccess"></div>
+        <button class="btn btn-score" id="scoreBtn" onclick="doScore()">Submit Scoring</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── State ── */
+  let adminToken      = null;
+  let allMatches      = [];
+  let currentTournament = 'wwc';
+  let selectedMatchId = null;
+  let loadedQuestions = [];
+
+  const WWC_PATTERN = /WT20|WC 2026|WWC/i;
+  const MLC_PATTERN = /MLC/i;
+
+  const DUAL_RULES = new Set(['TEAM_SCORE_SPLIT_75_25', 'TEAM_SCORE_INNINGS']);
+
+  /* ── Helpers ── */
+  function show(id)  { const el = document.getElementById(id); if (el) el.style.display = 'block'; }
+  function hide(id)  { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
+  function showFlex(id) { const el = document.getElementById(id); if (el) el.style.display = 'flex'; }
+  function setErr(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
+  }
+  function setSuccess(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
+  }
+  function escapeHTML(v) {
+    return String(v || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+
+  function statusBadge(status) {
+    const map = { open: 'badge-open', locked: 'badge-locked', closed: 'badge-closed' };
+    return `<span class="match-status-badge ${map[status]||'badge-closed'}">${escapeHTML(status)}</span>`;
+  }
+
+  /* ── Authentication ── */
+  async function doAuth() {
+    const username = document.getElementById('authUsername').value.trim();
+    const email    = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    const code     = document.getElementById('authCode').value.trim();
+    const btn      = document.getElementById('authBtn');
+
+    setErr('authError', '');
+    if (!username || !email || !password || !code) {
+      setErr('authError', 'All four fields are required.');
+      return;
+    }
+
+    try {
+      btn.disabled = true; btn.textContent = 'Authenticating…';
+      const res  = await fetch('/api/manual-scoring-auth', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password, code }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Authentication failed.');
+
+      adminToken = data.token;
+      sessionStorage.setItem('ms_token', adminToken);
+      sessionStorage.setItem('ms_username', data.username || username);
+
+      hide('authSection');
+      show('mainSection');
+      document.getElementById('sessionLabel').textContent = `Signed in as ${data.username || username}`;
+      await loadMatches();
+
+    } catch (err) {
+      setErr('authError', err.message);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Authenticate →';
+    }
+  }
+
+  function doSignOut() {
+    adminToken = null;
+    sessionStorage.removeItem('ms_token');
+    sessionStorage.removeItem('ms_username');
+    hide('mainSection');
+    show('authSection');
+    document.getElementById('authPassword').value = '';
+    document.getElementById('authCode').value = '';
+  }
+
+  /* ── Matches ── */
+  async function loadMatches() {
+    document.getElementById('matchList').innerHTML = '<div class="loading-text">Loading matches…</div>';
+    try {
+      const res  = await fetch('/api/get-closest-call-matches');
+      const data = await res.json();
+      allMatches = data.matches || [];
+      renderMatchList();
+    } catch {
+      document.getElementById('matchList').innerHTML = '<div class="empty-text">Could not load matches.</div>';
+    }
+  }
+
+  function selectTournament(t) {
+    currentTournament = t;
+    selectedMatchId   = null;
+    hide('scoringSection');
+    document.getElementById('tabWWC').classList.toggle('active', t === 'wwc');
+    document.getElementById('tabMLC').classList.toggle('active', t === 'mlc');
+    renderMatchList();
+  }
+
+  function renderMatchList() {
+    const pattern = currentTournament === 'wwc' ? WWC_PATTERN : MLC_PATTERN;
+    const filtered = allMatches.filter(m => pattern.test(m.match_title || ''));
+
+    if (!filtered.length) {
+      document.getElementById('matchList').innerHTML = '<div class="empty-text">No matches found for this tournament.</div>';
+      return;
+    }
+
+    document.getElementById('matchList').innerHTML = filtered.map(m => `
+      <div class="match-item${selectedMatchId === m.id ? ' selected' : ''}"
+           onclick="selectMatch(${m.id})">
+        <div class="match-item-title">${escapeHTML(m.match_title || m.team_1 + ' vs ' + m.team_2)}</div>
+        ${statusBadge(m.status)}
+      </div>
+    `).join('');
+  }
+
+  async function selectMatch(matchId) {
+    selectedMatchId = matchId;
+    renderMatchList();
+    hide('scoringSection');
+    setErr('scoreError', '');
+    setSuccess('scoreSuccess', '');
+
+    const match = allMatches.find(m => m.id === matchId);
+    document.getElementById('scoringMatchTitle').textContent =
+      match ? (match.match_title || 'Selected Match') : 'Selected Match';
+
+    document.getElementById('questionsList').innerHTML = '<div class="loading-text">Loading questions…</div>';
+    show('scoringSection');
+
+    try {
+      const res  = await fetch(`/api/get-closest-call-questions?closest_call_match_id=${matchId}`);
+      const data = await res.json();
+      loadedQuestions = data.questions || [];
+      renderQuestions();
+    } catch {
+      document.getElementById('questionsList').innerHTML = '<div class="empty-text">Could not load questions.</div>';
+    }
+  }
+
+  /* ── Render question input cards ── */
+  function renderQuestions() {
+    if (!loadedQuestions.length) {
+      document.getElementById('questionsList').innerHTML = '<div class="empty-text">No questions found for this match.</div>';
+      return;
+    }
+
+    document.getElementById('questionsList').innerHTML = loadedQuestions.map(q => {
+      const isScored = q.status === 'scored';
+      const ruleCode = q.scoring_rule_code || '';
+      let inputHtml  = '';
+
+      if (DUAL_RULES.has(ruleCode)) {
+        // Two inputs: runs + wickets
+        const existingRuns    = q.actual_runs    !== null && q.actual_runs    !== undefined ? q.actual_runs    : '';
+        const existingWickets = q.actual_wickets !== null && q.actual_wickets !== undefined ? q.actual_wickets : '';
+        inputHtml = `
+          <div class="q-inputs">
+            <div class="q-input-group">
+              <div class="q-input-label">Actual Runs</div>
+              <input type="number" min="0" max="999" class="q-input"
+                     id="qruns_${q.id}" value="${escapeHTML(String(existingRuns))}" placeholder="Runs" />
+            </div>
+            <div class="q-input-group">
+              <div class="q-input-label">Actual Wickets</div>
+              <input type="number" min="0" max="10" class="q-input"
+                     id="qwickets_${q.id}" value="${escapeHTML(String(existingWickets))}" placeholder="Wkts" />
+            </div>
+          </div>`;
+
+      } else if (ruleCode === 'CATEGORICAL_EXACT') {
+        const options = Array.isArray(q.question_options) ? q.question_options : [];
+        const current = q.actual_value !== null && q.actual_value !== undefined ? String(q.actual_value) : '';
+        inputHtml = `
+          <div class="q-inputs">
+            <select class="q-select" id="qcat_${q.id}">
+              <option value="">— Select actual outcome —</option>
+              ${options.map(opt => `<option value="${escapeHTML(opt)}"${current === opt ? ' selected' : ''}>${escapeHTML(opt)}</option>`).join('')}
+            </select>
+          </div>`;
+
+      } else {
+        // Single numeric value
+        const existing = q.actual_value !== null && q.actual_value !== undefined ? q.actual_value : '';
+        inputHtml = `
+          <div class="q-inputs">
+            <div class="q-input-group">
+              <div class="q-input-label">Actual Value</div>
+              <input type="number" min="0" max="9999" class="q-input"
+                     id="qval_${q.id}" value="${escapeHTML(String(existing))}" placeholder="Enter value" />
+            </div>
+          </div>`;
+      }
+
+      const alreadyScored = isScored
+        ? `<div class="q-existing">✓ Already scored — re-entering will overwrite</div>`
+        : '';
+
+      const metaParts = [
+        q.phase       ? `Phase: ${q.phase}`               : '',
+        q.team_code   ? `Team: ${q.team_code}`             : '',
+        q.player_name ? `Player: ${q.player_name}`         : '',
+        `Rule: ${ruleCode}`,
+      ].filter(Boolean).join(' · ');
+
+      return `
+        <div class="question-card${isScored ? ' scored' : ''}" data-qid="${q.id}" data-rule="${ruleCode}">
+          <div class="q-text">${escapeHTML(q.question_text)}</div>
+          <div class="q-meta">${escapeHTML(metaParts)}</div>
+          ${inputHtml}
+          ${alreadyScored}
+        </div>`;
+    }).join('');
+  }
+
+  /* ── Submit scoring ── */
+  async function doScore() {
+    if (!adminToken) { doSignOut(); return; }
+    if (!selectedMatchId) { setErr('scoreError', 'No match selected.'); return; }
+
+    setErr('scoreError', '');
+    setSuccess('scoreSuccess', '');
+
+    // Build question_updates from filled inputs only
+    const questionUpdates = [];
+
+    for (const q of loadedQuestions) {
+      const ruleCode = q.scoring_rule_code || '';
+
+      if (DUAL_RULES.has(ruleCode)) {
+        const runsEl    = document.getElementById(`qruns_${q.id}`);
+        const wicketsEl = document.getElementById(`qwickets_${q.id}`);
+        const runsVal    = runsEl    ? runsEl.value.trim()    : '';
+        const wicketsVal = wicketsEl ? wicketsEl.value.trim() : '';
+        if (runsVal === '' || wicketsVal === '') continue;
+        questionUpdates.push({
+          question_id:        q.id,
+          scoring_rule_code:  ruleCode,
+          actual_runs:        parseInt(runsVal,    10),
+          actual_wickets:     parseInt(wicketsVal, 10),
+        });
+
+      } else if (ruleCode === 'CATEGORICAL_EXACT') {
+        const el  = document.getElementById(`qcat_${q.id}`);
+        const val = el ? el.value.trim() : '';
+        if (!val) continue;
+        questionUpdates.push({
+          question_id:       q.id,
+          scoring_rule_code: ruleCode,
+          actual_value:      val,
+        });
+
+      } else {
+        const el  = document.getElementById(`qval_${q.id}`);
+        const val = el ? el.value.trim() : '';
+        if (val === '') continue;
+        questionUpdates.push({
+          question_id:       q.id,
+          scoring_rule_code: ruleCode,
+          actual_value:      parseInt(val, 10),
+        });
+      }
+    }
+
+    if (!questionUpdates.length) {
+      setErr('scoreError', 'Please enter at least one actual value before submitting.');
+      return;
+    }
+
+    const closeMatch = document.getElementById('closeMatchCheck').checked;
+    const btn        = document.getElementById('scoreBtn');
+
+    try {
+      btn.disabled = true; btn.textContent = 'Scoring…';
+
+      const res  = await fetch('/api/manual-scoring-score', {
+        method: 'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'x-admin-token': adminToken,
+        },
+        body: JSON.stringify({
+          closest_call_match_id: selectedMatchId,
+          question_updates:      questionUpdates,
+          close_match:           closeMatch,
+        }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        // 401 means session expired
+        if (res.status === 401) {
+          adminToken = null;
+          sessionStorage.removeItem('ms_token');
+          setErr('scoreError', 'Session expired. Please sign in again.');
+          setTimeout(doSignOut, 2000);
+          return;
+        }
+        throw new Error(data.error || 'Scoring failed.');
+      }
+
+      let msg = `Scoring updated successfully for this match. ${data.updated_questions} question(s) scored.`;
+      if (data.match_closed) msg += ' Match has been closed.';
+      setSuccess('scoreSuccess', msg);
+
+      // Reload questions to show updated actual values
+      await selectMatch(selectedMatchId);
+
+    } catch (err) {
+      setErr('scoreError', err.message || 'Something went wrong. Please try again.');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Submit Scoring';
+    }
+  }
+
+  /* ── Boot ── */
+  document.addEventListener('DOMContentLoaded', () => {
+    // Check for existing session in sessionStorage
+    const saved         = sessionStorage.getItem('ms_token');
+    const savedUsername = sessionStorage.getItem('ms_username');
+    if (saved) {
+      adminToken = saved;
+      hide('authSection');
+      show('mainSection');
+      if (savedUsername) {
+        document.getElementById('sessionLabel').textContent = `Signed in as ${savedUsername}`;
+      }
+      loadMatches();
+    }
+
+    // Enter key support for auth fields
+    ['authUsername','authEmail','authPassword','authCode'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') doAuth(); });
+    });
+  });
+</script>
+</body>
+</html>
