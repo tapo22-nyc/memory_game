@@ -30,8 +30,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   /* ── Header ── */
   .page-header {
-    display: flex; align-items: center; justify-content: flex-end;
-    margin-bottom: 36px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 36px; gap: 10px;
   }
 
   /* ── Hamburger ── */
@@ -532,6 +532,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .psr-ans { font-size: 0.82rem; font-weight: 800; color: #111827; flex-shrink: 0; white-space: nowrap; }
   .psr-ans.empty { color: #9ca3af; font-weight: 500; font-style: italic; font-size: 0.78rem; }
   .psr-edit-icon { font-size: 0.75rem; flex-shrink: 0; }
+
+  /* ── Read-only view: actual value + points ── */
+  .pred-actual-row {
+    display: flex; align-items: center; gap: 10px; margin-top: 16px;
+    padding: 12px 16px; background: #f0fdf4; border: 1px solid #bbf7d0;
+    border-radius: 12px; flex-wrap: wrap;
+  }
+  .pred-actual-label { font-size: 0.72rem; font-weight: 800; color: #15803d; text-transform: uppercase; letter-spacing: 0.5px; }
+  .pred-actual-val { font-size: 1.1rem; font-weight: 800; color: #111827; flex: 1; }
+  .pred-pts-chip {
+    display: inline-flex; align-items: center; padding: 4px 12px;
+    border-radius: 999px; font-size: 0.78rem; font-weight: 800;
+  }
+  .pts-earned { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+  .pts-zero   { background: #f3f4f6; color: #9ca3af; border: 1px solid #e5e7eb; }
+  .psr-pts { font-size: 0.75rem; font-weight: 800; flex-shrink: 0; padding: 2px 8px; border-radius: 999px; margin-left: 4px; }
+  .psr-pts.pts-earned { background: #dcfce7; color: #15803d; }
+  .psr-pts.pts-zero { background: #f3f4f6; color: #9ca3af; }
+  .pred-no-preds { text-align: center; padding: 32px 20px; }
+  .pred-no-preds-icon { font-size: 2rem; margin-bottom: 10px; }
+  .pred-no-preds h3 { font-size: 0.95rem; font-weight: 800; color: #374151; margin-bottom: 6px; }
+  .pred-no-preds p { font-size: 0.84rem; color: #9ca3af; }
 </style>
 </head>
 <body>
@@ -686,18 +708,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <div class="page-wrap">
 
-  <!-- ── Back link (blue) ── -->
-  <div style="margin-bottom:16px;">
+  <!-- ── Header: back button + hamburger on same row ── -->
+  <header class="page-header">
     <a href="closest-call.html" onclick="trackClick('mlc_back_btn')"
-       style="display:inline-flex;align-items:center;gap:6px;font-size:0.85rem;font-weight:700;
-              color:#ffffff;text-decoration:none;padding:7px 16px;border-radius:8px;
-              background:#2563eb;border:1px solid #1d4ed8;transition:background 0.15s;"
+       style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:700;
+              color:#ffffff;text-decoration:none;padding:7px 14px;border-radius:8px;
+              background:#2563eb;border:1px solid #1d4ed8;transition:background 0.15s;white-space:nowrap;flex-shrink:0;"
        onmouseover="this.style.background='#1d4ed8'"
        onmouseout="this.style.background='#2563eb'">← Back to Closest Call</a>
-  </div>
-
-  <!-- ── Header (hamburger only) ── -->
-  <header class="page-header">
     <div class="hamburger-wrapper">
       <button class="hamburger-menu-btn" id="hamburgerMenuBtn" aria-label="Open navigation menu" onclick="toggleHamburgerMenu()">
         <span></span><span></span><span></span>
@@ -787,7 +805,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         el.textContent = '🔒 Locked'; el.classList.add('expired');
         clearInterval(countdownIntervals[matchId]);
         const btn = document.getElementById('predict-btn-' + matchId);
-        if (btn) { btn.className = 'btn-predict btn-predict-disabled'; btn.removeAttribute('onclick'); btn.setAttribute('tabindex', '-1'); }
+        if (btn) {
+          btn.className = 'btn-predict';
+          btn.textContent = 'View Picks →';
+          btn.setAttribute('onclick', `openPredictModal(${matchId}); trackClick('mlc_match${matchId}_view')`);
+          btn.removeAttribute('tabindex');
+        }
         return;
       }
       if (diff >= 86400000) {
@@ -821,6 +844,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
     if (status === 'locked') {
       return `<button id="predict-btn-${matchId}" class="btn-predict" onclick="openPredictModal(${matchId}); trackClick('mlc_match${matchId}_view')">View Picks →</button>`;
+    }
+    if (status === 'closed') {
+      return `<button id="predict-btn-${matchId}" class="btn-predict" onclick="openPredictModal(${matchId}); trackClick('mlc_match${matchId}_view_closed')">View Results →</button>`;
     }
     return `<button id="predict-btn-${matchId}" class="btn-predict btn-predict-disabled" tabindex="-1">Predict →</button>`;
   }
@@ -873,23 +899,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
 
   /* ── Prediction modal state ── */
-  let predictMatchId    = null;
-  let predictMatchTitle = '';
-  let allQuestions      = [];
-  let pregameQs         = [];
-  let duringGameQs      = [];
-  let currentSection    = 'pregame';
-  let currentQIndex     = 0;
-  let fromSummary       = false;
-  let answers           = {};
+  let predictMatchId     = null;
+  let predictMatchTitle  = '';
+  let predictMatchStatus = 'open';
+  let allQuestions       = [];
+  let pregameQs          = [];
+  let duringGameQs       = [];
+  let currentSection     = 'pregame';
+  let currentQIndex      = 0;
+  let fromSummary        = false;
+  let answers            = {};
 
   function openPredictModal(matchId) {
-    const match       = matchesById[matchId] || {};
-    predictMatchId    = matchId;
-    predictMatchTitle = match.title || '';
-    answers           = {};
-    currentSection    = 'pregame';
-    currentQIndex     = 0;
+    const match        = matchesById[matchId] || {};
+    predictMatchId     = matchId;
+    predictMatchTitle  = match.title || '';
+    predictMatchStatus = match.status || 'open';
+    answers            = {};
+    currentSection     = 'pregame';
+    currentQIndex      = 0;
     document.getElementById('predictModalTitle').textContent = match.title || 'Your Predictions';
     document.getElementById('predictModal').classList.add('show');
     document.body.style.overflow = 'hidden';
@@ -1019,6 +1047,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         document.getElementById('predContent').innerHTML = '<div style="padding:20px;"><div class="pred-q-empty">No questions available for this match yet.</div></div>';
       }
 
+      // For locked/closed matches, check if user has any predictions
+      if (predictMatchStatus !== 'open' && allQuestions.length > 0) {
+        const hasPredictions = allQuestions.some(q => q.prediction_id !== null);
+        if (!hasPredictions) {
+          document.getElementById('stepQuestions').style.display = 'flex';
+          ['stepUsername','stepLoading','stepSuccess'].forEach(id => document.getElementById(id).style.display = 'none');
+          document.getElementById('predContent').innerHTML = `
+            <div class="pred-no-preds">
+              <div class="pred-no-preds-icon">📋</div>
+              <h3>No predictions found</h3>
+              <p>You did not submit predictions for this match.</p>
+            </div>`;
+          document.getElementById('predictActionBar').style.display = 'none';
+          return;
+        }
+      }
+
       currentSection = 'pregame';
       currentQIndex  = 0;
       fromSummary    = false;
@@ -1105,6 +1150,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   function showViewSummary() {
     const qs = getCurrentQuestions();
     const sectionName = currentSection === 'pregame' ? 'Pre Game Questions' : 'During Game Questions';
+    const canSubmit = predictMatchStatus === 'open';
     const rowsHtml = qs.map((q, i) => {
       const ans = answers[q.id];
       const isDual = ['TEAM_SCORE_SPLIT_75_25','TEAM_SCORE_INNINGS'].includes(q.scoring_rule_code);
@@ -1118,13 +1164,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       } else {
         ansHtml = `<span class="psr-ans">${ans.predicted_value != null ? ans.predicted_value : '?'}</span>`;
       }
-      const isEditable = q.is_editable;
+      // Show points for scored questions
+      const pts = (q.status === 'scored' && q.user_points !== null) ? q.user_points
+                : (q.status === 'scored' && q.prediction_id !== null) ? 0 : null;
+      const ptsHtml = pts !== null
+        ? `<span class="psr-pts ${pts > 0 ? 'pts-earned' : 'pts-zero'}">${pts}pts</span>` : '';
+      const isEditable = q.is_editable && canSubmit;
       const rowClass = isEditable ? '' : ' row-locked';
       const clickAttr = isEditable ? `onclick="editFromSummary(${i})"` : '';
       const editIcon = isEditable ? '<span class="psr-edit-icon">✏️</span>' : '';
       return `<div class="pred-summary-row${rowClass}" ${clickAttr}>
         <span class="psr-q">${escapeHtml(q.question_text || '')}</span>
-        ${ansHtml}${editIcon}
+        ${ansHtml}${ptsHtml}${editIcon}
       </div>`;
     }).join('');
     document.getElementById('predContent').innerHTML = `
@@ -1134,7 +1185,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </div>
       <div class="pred-summary-list">${rowsHtml}</div>`;
     document.getElementById('predNavBar').style.display = 'none';
-    document.getElementById('predSummaryBar').style.display = 'flex';
+    if (canSubmit) {
+      document.getElementById('predSummaryBar').style.display = 'flex';
+    } else {
+      document.getElementById('predSummaryBar').style.display = 'none';
+    }
     document.getElementById('submitFeedback').style.display = 'none';
     document.getElementById('predictActionBar').style.display = 'block';
   }
@@ -1177,6 +1232,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       const existing = savedAns.predicted_value != null ? savedAns.predicted_value : (q.user_prediction != null ? q.user_prediction : '');
       inputHtml = `<input id="inputSingle" class="pred-answer-input" type="number" min="0" max="500" value="${existing}" placeholder="Enter your prediction" ${isEditable ? '' : 'disabled'} />`;
     }
+    // Show actual value + points for scored questions (read-only view)
+    let actualHtml = '';
+    if (q.status === 'scored') {
+      const isDualQ = ['TEAM_SCORE_SPLIT_75_25','TEAM_SCORE_INNINGS'].includes(q.scoring_rule_code);
+      let actualDisplay;
+      if (isDualQ && q.actual_runs !== null) {
+        actualDisplay = `${q.actual_runs}/${q.actual_wickets !== null ? q.actual_wickets : '?'} (runs/wkts)`;
+      } else if (q.actual_value !== null) {
+        actualDisplay = String(q.actual_value);
+      }
+      const pts = q.user_points !== null ? q.user_points : (q.prediction_id !== null ? 0 : null);
+      const ptsHtml = pts !== null
+        ? `<span class="pred-pts-chip ${pts > 0 ? 'pts-earned' : 'pts-zero'}">${pts} pts</span>`
+        : '';
+      if (actualDisplay !== undefined) {
+        actualHtml = `<div class="pred-actual-row">
+          <span class="pred-actual-label">Actual</span>
+          <span class="pred-actual-val">${escapeHtml(actualDisplay)}</span>
+          ${ptsHtml}
+        </div>`;
+      }
+    }
+
     document.getElementById('predContent').innerHTML = `
       <div class="pred-progress-bar">
         <span class="pred-progress-label">${sectionLabel}</span>
@@ -1184,18 +1262,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </div>
       <div class="pred-q-wrapper">
         <div class="pred-q-text">${q.question_text || ''}</div>
-        ${statusBadgeHtml}${lockHtml}${inputHtml}
+        ${statusBadgeHtml}${lockHtml}${inputHtml}${actualHtml}
       </div>`;
     if (isEditable) {
       const inp = document.getElementById('inputSingle') || document.getElementById('inputRuns');
       if (inp) setTimeout(() => inp.focus(), 80);
     }
+    const canSubmit = predictMatchStatus === 'open';
     const back   = document.getElementById('predNavBack');
     const next   = document.getElementById('predNavNext');
     const submit = document.getElementById('predNavSubmit');
     back.style.display   = isFirst ? 'none' : '';
     next.style.display   = isLast  ? 'none' : '';
-    submit.style.display = isLast  ? ''     : 'none';
+    submit.style.display = (isLast && canSubmit) ? '' : 'none';
     document.getElementById('predSummaryBar').style.display = 'none';
     document.getElementById('predNavBar').style.display = 'flex';
     document.getElementById('submitFeedback').style.display = 'none';
