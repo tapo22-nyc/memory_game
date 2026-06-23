@@ -649,12 +649,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
       <!-- Step: username -->
       <div id="stepUsername" class="predict-step" style="display:none">
-        <label class="username-label">Enter your username to predict</label>
-        <p class="username-hint">Use the same username every time to track your score.</p>
+        <label class="username-label">Sign in to MTGames</label>
+        <p class="username-hint">Create a username or enter your existing one. Use the same username and email every time to track your score.</p>
         <input id="usernameInput" class="username-input" type="text"
                placeholder="e.g. cricket_fan_2026" maxlength="30"
+               onkeydown="if(event.key==='Enter') document.getElementById('emailInput').focus()" />
+        <input id="emailInput" class="username-input" type="email"
+               placeholder="e.g. yourname@gmail.com"
+               style="margin-top:10px;"
                onkeydown="if(event.key==='Enter') saveUsername()" />
-        <p class="username-error" id="usernameError" style="display:none">Username must be at least 3 letters/numbers.</p>
+        <p class="username-error" id="usernameError" style="display:none"></p>
       </div>
 
       <!-- Step: loading -->
@@ -761,8 +765,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </div><!-- /.page-wrap -->
 
 <script>
-  const USER_ID_KEY   = 'mtgames_user_id';
-  const USER_NAME_KEY = 'mtgames_user_name';
+  const USER_ID_KEY    = 'mtgames_user_id';
+  const USER_NAME_KEY  = 'mtgames_user_name';
+  const USER_EMAIL_KEY = 'mtgames_user_email';
 
   /* ── Team Logo Map ── */
   const TEAM_LOGO_MAP = {
@@ -926,8 +931,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     document.getElementById('predictModal').classList.add('show');
     document.body.style.overflow = 'hidden';
 
-    const userName = localStorage.getItem(USER_NAME_KEY);
-    if (!userName) showStep('username');
+    const userName  = localStorage.getItem(USER_NAME_KEY);
+    const userEmail = localStorage.getItem(USER_EMAIL_KEY);
+    if (!userName || !userEmail) showStep('username');
     else fetchAndRenderQuestions(matchId, userName);
   }
 
@@ -968,14 +974,60 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
   }
 
-  function saveUsername() {
-    const raw   = document.getElementById('usernameInput').value.trim().toLowerCase();
-    const clean = raw.replace(/[^a-z0-9_]/g, '');
-    const errEl = document.getElementById('usernameError');
-    if (clean.length < 3) { errEl.style.display = 'block'; return; }
+  async function saveUsername() {
+    const usernameEl = document.getElementById('usernameInput');
+    const emailEl    = document.getElementById('emailInput');
+    const errEl      = document.getElementById('usernameError');
+    const btn        = document.getElementById('btnNext');
+
+    const raw      = usernameEl ? usernameEl.value.trim() : '';
+    const clean    = raw.toLowerCase().replace(/[^a-z0-9_]/g, '');
+    const rawEmail = emailEl ? emailEl.value.trim() : '';
+
+    errEl.textContent = '';
     errEl.style.display = 'none';
-    localStorage.setItem(USER_NAME_KEY, clean);
-    fetchAndRenderQuestions(predictMatchId, clean);
+
+    if (clean.length < 3) {
+      errEl.textContent = 'Username must be at least 3 letters, numbers, or underscore.';
+      errEl.style.display = 'block';
+      if (usernameEl) usernameEl.focus();
+      return;
+    }
+    if (!rawEmail) {
+      errEl.textContent = 'Please enter your email address.';
+      errEl.style.display = 'block';
+      if (emailEl) emailEl.focus();
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail)) {
+      errEl.textContent = 'Please enter a valid email address.';
+      errEl.style.display = 'block';
+      if (emailEl) emailEl.focus();
+      return;
+    }
+
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+
+      const resp = await fetch('/api/create-ipl-user', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ user_name: clean, email: rawEmail }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || 'Could not save. Please try again.');
+
+      localStorage.setItem(USER_ID_KEY,    String(data.user.id));
+      localStorage.setItem(USER_NAME_KEY,  data.user.user_name);
+      localStorage.setItem(USER_EMAIL_KEY, data.user.email);
+
+      fetchAndRenderQuestions(predictMatchId, data.user.user_name);
+    } catch (err) {
+      errEl.textContent = err.message || 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Continue →'; }
+    }
   }
 
   async function fetchAndRenderQuestions(matchId, userName) {

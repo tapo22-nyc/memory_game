@@ -655,6 +655,14 @@
         <div class="section-line"></div>
       </div>
 
+      <!-- Logged-in user display -->
+      <div id="loggedInUserBanner" style="display:none; margin-bottom:14px; padding:10px 16px;
+           background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe;
+           display:flex; align-items:center; gap:8px;">
+        <span style="font-size:0.8rem; color:#6b7280; font-weight:600;">User:</span>
+        <span id="loggedInUserName" style="font-size:1rem; font-weight:800; color:#1d4ed8; letter-spacing:0.2px;"></span>
+      </div>
+
       <div class="metrics-strip">
         <div class="metric-item">
           <div class="metric-icon">🏅</div>
@@ -1092,6 +1100,12 @@
       if (!user.id || !user.name) {
         showUsernameModal();
       } else {
+        const banner   = document.getElementById('loggedInUserBanner');
+        const nameSpan = document.getElementById('loggedInUserName');
+        if (banner && nameSpan && user.name) {
+          nameSpan.textContent = user.name;
+          banner.style.display = 'flex';
+        }
         loadMyEarnings();
       }
     });
